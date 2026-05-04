@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { usePrediction } from '../context/PredictionContext';
 
 export default function NewPrediction() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { setPredictionResult } = usePrediction();
@@ -49,6 +50,7 @@ export default function NewPrediction() {
       navigate('/report');
     }
     setIsLoading(false);
+    setIsModalOpen(false);
   };
 
   return (
