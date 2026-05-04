@@ -18,10 +18,7 @@ export default function Header() {
         </div>
       </div>
       <div className="flex items-center gap-3">
-        <button className="p-2 text-on-surface hover:bg-surface-container rounded-full transition-colors relative">
-          <span className="material-symbols-outlined">notifications</span>
-          <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
-        </button>
+
         <button className="w-9 h-9 rounded-full overflow-hidden border border-outline-variant/30 hover:border-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary-container">
           <img alt="User Avatar" className="w-full h-full object-cover" src={currentUser.avatar} />
         </button>

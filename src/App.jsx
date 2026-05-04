@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { useEffect } from 'react'
 import Layout from './components/layout/Layout'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -13,6 +14,23 @@ import ModelInsights from './pages/ModelInsights'
 import ProfileSettings from './pages/ProfileSettings'
 
 export default function App() {
+  useEffect(() => {
+    // Persist Dark Mode Globally
+    const isDarkMode = localStorage.getItem('theme') === 'dark';
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark-mode-hack');
+      if (!document.getElementById('dark-mode-style')) {
+        const style = document.createElement('style');
+        style.id = 'dark-mode-style';
+        style.innerHTML = `
+          .dark-mode-hack { filter: invert(1) hue-rotate(180deg) contrast(0.9); }
+          .dark-mode-hack img, .dark-mode-hack video { filter: invert(1) hue-rotate(180deg); }
+        `;
+        document.head.appendChild(style);
+      }
+    }
+  }, []);
+
   return (
     <Routes>
       <Route path="/login" element={<Login />} />

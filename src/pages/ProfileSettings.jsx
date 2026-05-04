@@ -4,7 +4,6 @@ import { currentUser } from '../data/dummyData';
 export default function ProfileSettings() {
   const [user, setUser] = useState(currentUser);
   const [isDark, setIsDark] = useState(false);
-  const [language, setLanguage] = useState('English (US)');
 
   useEffect(() => {
     // Load real user data from localStorage
@@ -17,12 +16,20 @@ export default function ProfileSettings() {
     }
     
     // Check if dark mode is already active
-    setIsDark(document.documentElement.classList.contains('dark-mode-hack'));
+    setIsDark(localStorage.getItem('theme') === 'dark');
   }, []);
 
   const toggleDarkMode = () => {
-    setIsDark(!isDark);
-    document.documentElement.classList.toggle('dark-mode-hack');
+    const newDarkState = !isDark;
+    setIsDark(newDarkState);
+    
+    if (newDarkState) {
+      document.documentElement.classList.add('dark-mode-hack');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark-mode-hack');
+      localStorage.setItem('theme', 'light');
+    }
     
     // Inject the dark mode hack style if it doesn't exist
     if (!document.getElementById('dark-mode-style')) {
@@ -40,9 +47,8 @@ export default function ProfileSettings() {
     }
   };
 
-  const handleLanguageChange = (e) => {
-    setLanguage(e.target.value);
-    alert(`Language preferences updated to: ${e.target.value}. Please refresh to apply.`);
+  const handleSavePreferences = () => {
+    alert('Preferences saved successfully!');
   };
 
   const handleUpdatePhoto = () => {
@@ -110,27 +116,7 @@ export default function ProfileSettings() {
             <h4 className="font-headline font-bold text-on-surface">General</h4>
           </div>
           <div className="p-6 space-y-6">
-            {/* Language */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <label className="font-label text-sm font-semibold text-on-surface block">Language Interface</label>
-                <p className="text-xs font-body text-on-surface-variant mt-1">Select your preferred system language.</p>
-              </div>
-              <div className="w-full md:w-64">
-                <select 
-                  value={language}
-                  onChange={handleLanguageChange}
-                  className="w-full bg-surface border border-outline-variant/50 rounded text-sm font-body px-3 py-2 text-on-surface focus:ring-2 focus:ring-primary-container focus:border-transparent outline-none"
-                >
-                  <option>English (US)</option>
-                  <option>Bahasa Indonesia</option>
-                  <option>German</option>
-                  <option>French</option>
-                </select>
-              </div>
-            </div>
-            
-            <hr className="border-outline-variant/30" />
+
             
             {/* Dark Mode Toggle */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -249,12 +235,14 @@ export default function ProfileSettings() {
 
         {/* Save Actions */}
         <div className="flex justify-end gap-4 pt-4 pb-12 md:pb-4">
-          <button className="border border-primary-container text-primary-container text-sm font-label px-6 py-2.5 rounded hover:bg-surface-variant transition-colors duration-150">
-            Discard Changes
-          </button>
-          <button className="bg-primary-container text-on-primary text-sm font-label px-6 py-2.5 rounded hover:bg-[#005b6f] transition-colors duration-150 shadow-sm">
-            Save Preferences
-          </button>
+          <div className="pt-6 border-t border-outline-variant/30 flex justify-end gap-3">
+            <button className="px-5 py-2 rounded text-sm font-label font-medium text-on-surface hover:bg-surface-container transition-colors duration-150">
+              Discard Changes
+            </button>
+            <button onClick={handleSavePreferences} className="bg-primary hover:bg-[#005b6f] text-white px-5 py-2 rounded text-sm font-label font-medium transition-colors duration-150 shadow-sm">
+              Save Preferences
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { recentProjects, recentValidations } from '../data/dummyData'
 
 export default function Dashboard() {
   const [stats, setStats] = useState([]);
+  const isId = localStorage.getItem('language') === 'Bahasa Indonesia';
 
   useEffect(() => {
     fetch('http://localhost:8888/api/dashboard/stats')
@@ -21,12 +22,12 @@ export default function Dashboard() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <p className="font-label text-sm text-on-surface-variant mb-1 uppercase tracking-wider">Overview</p>
-          <h2 className="font-headline text-3xl font-extrabold text-primary tracking-tight">Dashboard</h2>
+          <p className="font-label text-sm text-on-surface-variant mb-1 uppercase tracking-wider">{isId ? 'Ringkasan' : 'Overview'}</p>
+          <h2 className="font-headline text-3xl font-extrabold text-primary tracking-tight">{isId ? 'Dasbor' : 'Dashboard'}</h2>
         </div>
         <Link to="/new-prediction" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-primary-container text-on-primary font-label text-sm font-semibold rounded-lg hover:bg-primary-container/90 transition-colors shadow-sm w-full sm:w-auto">
           <span className="material-symbols-outlined">add</span>
-          Start Session
+          {isId ? 'Mulai Sesi' : 'Start Session'}
         </Link>
       </div>
 
@@ -50,7 +51,7 @@ export default function Dashboard() {
             <div className={`absolute -right-6 -bottom-6 w-24 h-24 rounded-full blur-2xl transition-colors ${index === 0 ? 'bg-primary-fixed/20 group-hover:bg-primary-fixed/30' : index === 1 ? 'bg-secondary-fixed/20 group-hover:bg-secondary-fixed/30' : index === 2 ? 'bg-tertiary-fixed-dim/10 group-hover:bg-tertiary-fixed-dim/20' : 'bg-primary-fixed/20 group-hover:bg-primary-fixed/30'}`}></div>
           </div>
         )) : (
-          <div className="col-span-4 text-center text-on-surface-variant p-8">Loading metrics from backend...</div>
+          <div className="col-span-4 text-center text-on-surface-variant p-8">{isId ? 'Memuat metrik dari server...' : 'Loading metrics from backend...'}</div>
         )}
       </div>
 
@@ -61,16 +62,16 @@ export default function Dashboard() {
           {/* Recent Projects Glass Card */}
           <div className="bg-surface-container-lowest/80 backdrop-blur-xl border border-outline-variant/40 rounded-2xl flex flex-col shadow-sm">
             <div className="px-6 py-4 border-b border-outline-variant/30 flex justify-between items-center">
-              <h3 className="font-headline text-lg font-bold text-on-surface">Active Projects</h3>
-              <Link to="/projects" className="text-primary font-label text-sm font-medium hover:underline">View All</Link>
+              <h3 className="font-headline text-lg font-bold text-on-surface">{isId ? 'Proyek Aktif' : 'Active Projects'}</h3>
+              <Link to="/projects" className="text-primary font-label text-sm font-medium hover:underline">{isId ? 'Lihat Semua' : 'View All'}</Link>
             </div>
             <div className="p-0">
               {/* Table Header */}
               <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-surface-container-low/50 border-b border-outline-variant/20 font-label text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
-                <div className="col-span-5">Project Name</div>
+                <div className="col-span-5">{isId ? 'Nama Proyek' : 'Project Name'}</div>
                 <div className="col-span-3">Status</div>
-                <div className="col-span-3">Confidence</div>
-                <div className="col-span-1 text-right">Action</div>
+                <div className="col-span-3">{isId ? 'Kepercayaan' : 'Confidence'}</div>
+                <div className="col-span-1 text-right">{isId ? 'Aksi' : 'Action'}</div>
               </div>
               
               {/* Project Rows */}
@@ -111,7 +112,7 @@ export default function Dashboard() {
 
           {/* Model Fidelity Legend Panel */}
           <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6">
-            <h3 className="font-headline text-lg font-bold text-on-surface mb-4">Model Fidelity Index</h3>
+            <h3 className="font-headline text-lg font-bold text-on-surface mb-4">{isId ? 'Indeks Keandalan Model' : 'Model Fidelity Index'}</h3>
             <div className="flex flex-col md:flex-row gap-6">
               <div className="flex-1 space-y-4">
                 <div className="flex items-center justify-between">
@@ -153,7 +154,7 @@ export default function Dashboard() {
             <div className="px-6 py-5 border-b border-outline-variant/30 bg-surface-container-low/30 flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary">science</span>
-                <h3 className="font-headline text-base font-bold text-on-surface">Lab Validations</h3>
+                <h3 className="font-headline text-base font-bold text-on-surface">{isId ? 'Validasi Lab' : 'Lab Validations'}</h3>
               </div>
             </div>
             <div className="flex-1 p-5 space-y-4">
@@ -193,7 +194,7 @@ export default function Dashboard() {
             </div>
             <div className="px-5 py-3 border-t border-outline-variant/20 bg-surface-container-low/30">
               <Link to="/lab-validation" className="block w-full text-center font-label text-xs font-semibold text-primary hover:text-primary-container transition-colors">
-                View Full Audit Trail
+                {isId ? 'Lihat Riwayat Penuh' : 'View Full Audit Trail'}
               </Link>
             </div>
           </div>
