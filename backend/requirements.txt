@@ -1,0 +1,8 @@
+fastapi[all]
+sqlalchemy
+pydantic
+passlib[bcrypt]
+python-jose[cryptography]
+python-multipart
+scikit-learn
+pandas
