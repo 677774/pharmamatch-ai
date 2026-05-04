@@ -10,7 +10,7 @@ export default function Register() {
     const password = e.target.querySelector('input[type="password"]').value;
 
     try {
-      const response = await fetch('http://localhost:8888/api/auth/register', {
+      const response = await fetch('https://dzamar-pharmamatch-backend.hf.space/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password })

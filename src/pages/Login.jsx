@@ -9,7 +9,7 @@ export default function Login() {
     const password = e.target.querySelector('input[type="password"]').value;
     
     try {
-      const response = await fetch('http://localhost:8888/api/auth/login', {
+      const response = await fetch('https://dzamar-pharmamatch-backend.hf.space/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
