@@ -1,9 +1,12 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { usePrediction } from '../context/PredictionContext';
 
 export default function CompatibilityReport() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { predictionResult } = usePrediction();
+  
+  const projectName = location.state?.projectName || "Custom Analysis";
 
   return (
     <div className="flex-1 max-w-7xl mx-auto w-full space-y-8 animate-fade-in">
@@ -12,7 +15,7 @@ export default function CompatibilityReport() {
         <div>
           <div className="flex items-center gap-2 mb-2 text-sm font-medium text-primary-container">
             <span className="material-symbols-outlined text-sm">analytics</span>
-            <span>Project: Alpha-72</span>
+            <span>Project: {projectName}</span>
           </div>
           <h1 className="font-headline text-3xl font-extrabold tracking-tight text-on-surface">Compatibility Report</h1>
           <p className="text-on-surface-variant text-sm mt-1">Comprehensive analysis of Active Pharmaceutical Ingredient interactions.</p>

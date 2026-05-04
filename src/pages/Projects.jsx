@@ -29,6 +29,7 @@ export default function Projects() {
           <Link 
             key={project.id}
             to="/report"
+            state={{ projectName: project.name }}
             className="bg-white border border-outline-variant/50 rounded-xl p-5 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-primary-container/30 transition-all duration-300 flex flex-col h-full group"
           >
             <div className="flex justify-between items-start mb-4">

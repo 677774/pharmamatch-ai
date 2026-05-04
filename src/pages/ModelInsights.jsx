@@ -1,7 +1,14 @@
 import { featureImportance, modelVersions } from '../data/dummyData';
+import { usePrediction } from '../context/PredictionContext';
 
 export default function ModelInsights() {
   const activeModel = modelVersions[0]; // Active version
+  const { predictionResult } = usePrediction();
+  
+  // Ambil API Name dan Excipient yang memiliki warning/incompatible
+  const apiName = predictionResult?.api_name || "Unknown API";
+  const warningExcipient = predictionResult?.predictions?.find(p => p.status === 'Warning' || p.status === 'Incompatible')?.excipient || "Unknown Excipient";
+  const modelStatus = predictionResult?.predictions?.find(p => p.status === 'Warning' || p.status === 'Incompatible')?.status || "Safe";
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-fade-in">
@@ -13,7 +20,7 @@ export default function ModelInsights() {
             <span>SHAP Interpretability Dashboard</span>
           </div>
           <h1 className="font-headline text-3xl font-extrabold tracking-tight text-on-surface">Model Insights</h1>
-          <p className="text-on-surface-variant text-sm mt-1">Understanding the factors driving the ML predictions for Metformin + SLS.</p>
+          <p className="text-on-surface-variant text-sm mt-1">Understanding the factors driving the ML predictions for {apiName} + {warningExcipient}.</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="bg-surface-container-low border border-outline-variant/50 px-4 py-2 rounded-lg flex items-center gap-2 text-sm">
@@ -113,10 +120,10 @@ export default function ModelInsights() {
               
               <div className="space-y-4 text-sm text-on-surface-variant leading-relaxed font-body">
                 <p>
-                  Berdasarkan model <strong>{activeModel.version}</strong>, interaksi antara <strong className="text-on-surface">Metformin HCL</strong> dan <strong className="text-on-surface">SLS</strong> memiliki probabilitas <strong className="text-error">Inkompatibel (Moderate Risk)</strong>.
+                  Berdasarkan model <strong>{activeModel.version}</strong>, interaksi antara <strong className="text-on-surface">{apiName}</strong> dan <strong className="text-on-surface">{warningExcipient}</strong> memiliki probabilitas <strong className="text-error">{modelStatus} Risk</strong>.
                 </p>
                 <p>
-                  Prediksi ini sangat dipengaruhi oleh <strong>LogP Difference (+0.35)</strong>. Perbedaan sifat hidrofobik dan hidrofilik yang mencolok antara kedua molekul menyebabkan risiko pemisahan fase dan agregasi.
+                  Prediksi ini sangat dipengaruhi oleh <strong>LogP Difference (+0.35)</strong>. Perbedaan sifat fisikokimia yang mencolok antara kedua molekul menyebabkan risiko pemisahan fase dan agregasi.
                 </p>
                 <div className="bg-error-container/40 border border-error-container p-3 rounded text-on-surface">
                   <span className="font-semibold text-[#93000a] block mb-1">Rekomendasi Tindakan:</span>
