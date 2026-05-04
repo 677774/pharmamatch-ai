@@ -1,6 +1,60 @@
+import { useState, useEffect } from 'react';
 import { currentUser } from '../data/dummyData';
 
 export default function ProfileSettings() {
+  const [user, setUser] = useState(currentUser);
+  const [isDark, setIsDark] = useState(false);
+  const [language, setLanguage] = useState('English (US)');
+
+  useEffect(() => {
+    // Load real user data from localStorage
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      try {
+        const parsed = JSON.parse(savedUser);
+        setUser({ ...currentUser, name: parsed.name, role: 'Chief Researcher', department: parsed.email });
+      } catch(e) {}
+    }
+    
+    // Check if dark mode is already active
+    setIsDark(document.documentElement.classList.contains('dark-mode-hack'));
+  }, []);
+
+  const toggleDarkMode = () => {
+    setIsDark(!isDark);
+    document.documentElement.classList.toggle('dark-mode-hack');
+    
+    // Inject the dark mode hack style if it doesn't exist
+    if (!document.getElementById('dark-mode-style')) {
+      const style = document.createElement('style');
+      style.id = 'dark-mode-style';
+      style.innerHTML = `
+        .dark-mode-hack {
+          filter: invert(1) hue-rotate(180deg) contrast(0.9);
+        }
+        .dark-mode-hack img, .dark-mode-hack video {
+          filter: invert(1) hue-rotate(180deg);
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  };
+
+  const handleLanguageChange = (e) => {
+    setLanguage(e.target.value);
+    alert(`Language preferences updated to: ${e.target.value}. Please refresh to apply.`);
+  };
+
+  const handleUpdatePhoto = () => {
+    const newName = prompt("Masukkan Nama Baru Anda:", user.name);
+    if (newName) {
+      const updatedUser = { ...user, name: newName };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify({ name: newName, email: user.department }));
+      alert("Nama berhasil diubah!");
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto w-full animate-fade-in">
       {/* Mobile Header */}
@@ -23,22 +77,22 @@ export default function ProfileSettings() {
           </div>
         </div>
         <div className="flex-1 space-y-2">
-          <h3 className="font-headline text-xl font-bold text-on-surface">{currentUser.name}</h3>
+          <h3 className="font-headline text-xl font-bold text-on-surface">{user.name}</h3>
           <div className="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-4 text-sm font-label text-on-surface-variant">
             <span className="flex items-center gap-1">
               <span className="material-symbols-outlined text-[18px]">badge</span>
-              {currentUser.role}
+              {user.role}
             </span>
             <span className="hidden md:inline text-outline-variant">•</span>
             <span className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-[18px]">domain</span>
-              {currentUser.department}
+              <span className="material-symbols-outlined text-[18px]">mail</span>
+              {user.department}
             </span>
           </div>
           <div className="pt-4 flex gap-3 justify-center md:justify-start">
-            <button className="bg-primary-container text-on-primary text-sm font-label px-4 py-2 rounded flex items-center gap-2 hover:bg-[#005b6f] transition-colors duration-150">
-              <span className="material-symbols-outlined text-[18px]">upload</span>
-              Update Photo
+            <button onClick={handleUpdatePhoto} className="bg-primary-container text-on-primary text-sm font-label px-4 py-2 rounded flex items-center gap-2 hover:bg-[#005b6f] transition-colors duration-150">
+              <span className="material-symbols-outlined text-[18px]">edit</span>
+              Edit Profile
             </button>
             <button className="border border-primary-container text-primary-container text-sm font-label px-4 py-2 rounded flex items-center gap-2 hover:bg-surface-variant transition-colors duration-150">
               Remove
@@ -63,7 +117,11 @@ export default function ProfileSettings() {
                 <p className="text-xs font-body text-on-surface-variant mt-1">Select your preferred system language.</p>
               </div>
               <div className="w-full md:w-64">
-                <select className="w-full bg-surface border border-outline-variant/50 rounded text-sm font-body px-3 py-2 text-on-surface focus:ring-2 focus:ring-primary-container focus:border-transparent outline-none">
+                <select 
+                  value={language}
+                  onChange={handleLanguageChange}
+                  className="w-full bg-surface border border-outline-variant/50 rounded text-sm font-body px-3 py-2 text-on-surface focus:ring-2 focus:ring-primary-container focus:border-transparent outline-none"
+                >
                   <option>English (US)</option>
                   <option>Bahasa Indonesia</option>
                   <option>German</option>
@@ -82,7 +140,12 @@ export default function ProfileSettings() {
               </div>
               {/* Toggle Switch */}
               <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" />
+                <input 
+                  type="checkbox" 
+                  className="sr-only peer" 
+                  checked={isDark}
+                  onChange={toggleDarkMode}
+                />
                 <div className="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
               </label>
             </div>

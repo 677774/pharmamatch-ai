@@ -9,8 +9,8 @@ export default function Sidebar() {
           {currentUser.initials}
         </div>
         <div>
-          <h2 className="font-headline text-lg font-black text-primary">PharmaMatch AI</h2>
-          <p className="font-label text-xs text-on-surface-variant">Phase II Active</p>
+          <h1 className="font-headline text-lg font-bold tracking-tight text-primary">PharmaMatch AI</h1>
+          <p className="font-label text-xs text-on-surface-variant">Production Ready</p>
         </div>
       </div>
       <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">

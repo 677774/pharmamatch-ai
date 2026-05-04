@@ -36,7 +36,7 @@ export default function CompatibilityReport() {
                 <span className="material-symbols-outlined text-primary-container">grid_on</span>
                 Excipient Compatibility Matrix
               </h2>
-              <span className="text-xs font-medium text-on-surface-variant bg-surface-container px-2 py-1 rounded-full border border-outline-variant/50">API: Metformin</span>
+              <span className="text-xs font-medium text-on-surface-variant bg-surface-container px-2 py-1 rounded-full border border-outline-variant/50">API: {predictionResult?.api_name || "Unknown"}</span>
             </div>
             <div className="p-5 overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[500px]">
@@ -104,42 +104,34 @@ export default function CompatibilityReport() {
         {/* Right Column: Details & Actions */}
         <div className="lg:col-span-4 space-y-6">
           {/* Detail Card: Warning */}
-          <div className="relative bg-surface-container-lowest/85 backdrop-blur-md rounded-xl border-l-4 border-error shadow-[0_4px_24px_rgba(0,0,0,0.03)] border-t border-r border-b border-outline-variant/30 p-5 overflow-hidden">
-            {/* Ambient background graphic */}
-            <div className="absolute -right-6 -top-6 text-error/5 rotate-12 select-none pointer-events-none">
-              <span className="material-symbols-outlined text-[120px]" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
-            </div>
-            
-            <div className="relative z-10">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <div className="text-xs font-semibold text-error uppercase tracking-wider mb-1 flex items-center gap-1">
-                    Moderate Risk Interaction
+          {predictionResult?.predictions?.filter(p => p.status === 'Warning' || p.status === 'Incompatible').length > 0 ? (
+            (() => {
+              const warningItem = predictionResult.predictions.find(p => p.status === 'Warning' || p.status === 'Incompatible');
+              return (
+                <div className="relative bg-surface-container-lowest/85 backdrop-blur-md rounded-xl border-l-4 border-error shadow-[0_4px_24px_rgba(0,0,0,0.03)] border-t border-r border-b border-outline-variant/30 p-5 overflow-hidden">
+                  <div className="absolute -right-6 -top-6 text-error/5 rotate-12 select-none pointer-events-none">
+                    <span className="material-symbols-outlined text-[120px]" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
                   </div>
-                  <h3 className="font-headline font-bold text-xl text-on-surface">Metformin + SLS</h3>
-                </div>
-                <div className="bg-error-container text-on-error-container font-mono text-xs px-2 py-1 rounded font-semibold border border-error/20">
-                  Score: 0.62
-                </div>
-              </div>
+                  
+                  <div className="relative z-10">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <div className="text-xs font-semibold text-error uppercase tracking-wider mb-1 flex items-center gap-1">
+                          {warningItem.status === 'Incompatible' ? 'High Risk Interaction' : 'Moderate Risk Interaction'}
+                        </div>
+                        <h3 className="font-headline font-bold text-xl text-on-surface">{predictionResult.api_name} + {warningItem.excipient}</h3>
+                      </div>
+                      <div className="bg-error-container text-on-error-container font-mono text-xs px-2 py-1 rounded font-semibold border border-error/20">
+                        Score: {warningItem.compatibility_score}
+                      </div>
+                    </div>
               
               <div className="space-y-4">
                 <div className="bg-surface-container-low p-3 rounded border border-outline-variant/20">
                   <span className="text-xs font-label text-on-surface-variant block mb-1">Source Analysis</span>
                   <div className="flex items-center gap-2 text-sm font-medium text-on-surface">
                     <span className="material-symbols-outlined text-[16px] text-tertiary">psychology</span>
-                    ML Prediction Model v4.2
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-label text-xs font-semibold text-on-surface mb-2 uppercase tracking-wide">Recommended Alternatives</h4>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="inline-flex items-center px-2.5 py-1 rounded bg-secondary-container/50 text-on-secondary-container text-xs font-medium border border-secondary-container">
-                      Poloxamer 188
-                    </span>
-                    <span className="inline-flex items-center px-2.5 py-1 rounded bg-secondary-container/50 text-on-secondary-container text-xs font-medium border border-secondary-container">
-                      Tween 80
-                    </span>
+                    {warningItem.reason}
                   </div>
                 </div>
               </div>
@@ -162,6 +154,14 @@ export default function CompatibilityReport() {
               </div>
             </div>
           </div>
+            );
+          })()
+          ) : (
+          <div className="bg-[#e8f5e9] border border-[#a5d6a7] p-5 rounded-xl shadow-sm">
+             <h3 className="text-[#2e7d32] font-bold flex items-center gap-2 mb-2"><span className="material-symbols-outlined">check_circle</span> All Clear!</h3>
+             <p className="text-sm text-[#1b5e20]">Tidak ada peringatan interaksi untuk formulasi ini. Semua eksipien tergolong aman.</p>
+          </div>
+          )}
 
           {/* Action Bar Card */}
           <div className="bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-5 shadow-sm">

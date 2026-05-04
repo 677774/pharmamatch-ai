@@ -3,20 +3,41 @@ import { Link, useNavigate } from 'react-router-dom';
 import { usePrediction } from '../context/PredictionContext';
 
 export default function NewPrediction() {
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { setPredictionResult } = usePrediction();
 
+  // State untuk Input Dinamis
+  const [apiName, setApiName] = useState('Paracetamol');
+  const [excipientInput, setExcipientInput] = useState('');
+  const [excipientsList, setExcipientsList] = useState(['Magnesium Stearate', 'Lactose']);
+
+  const handleAddExcipient = () => {
+    if (excipientInput.trim() !== '') {
+      setExcipientsList([...excipientsList, excipientInput.trim()]);
+      setExcipientInput('');
+    }
+  };
+
+  const handleRemoveExcipient = (index) => {
+    setExcipientsList(excipientsList.filter((_, i) => i !== index));
+  };
+
   const handlePredict = async () => {
+    if (excipientsList.length === 0) {
+      alert("Harap tambahkan minimal 1 Eksipien!");
+      return;
+    }
+    
     setIsLoading(true);
     try {
       const response = await fetch('http://localhost:8888/api/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          api: 'Metformin HCL',
-          excipients: ['Sodium Lauryl Sulfate (SLS)', 'PEG 6000']
+          api: apiName,
+          excipients: excipientsList
         })
       });
       const data = await response.json();
@@ -68,9 +89,10 @@ export default function NewPrediction() {
                 </div>
                 <input 
                   className="block w-full pl-10 pr-3 py-2.5 border border-outline-variant rounded bg-white text-on-surface text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-shadow" 
-                  readOnly 
                   type="text" 
-                  value="Metformin HCL"
+                  value={apiName}
+                  onChange={(e) => setApiName(e.target.value)}
+                  placeholder="Ketik nama API di sini..."
                 />
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                   <span className="material-symbols-outlined text-[#003a7f] text-[18px]">check_circle</span>
@@ -80,109 +102,50 @@ export default function NewPrediction() {
 
             {/* Excipients List with KB Hit Indicators */}
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <label className="block text-sm font-semibold text-on-surface font-label">Excipients List</label>
-                <button className="text-primary text-sm font-medium hover:text-primary-container transition-colors flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[16px]">add</span> Add Excipient
+              <div className="flex items-center gap-2 mb-3">
+                <input 
+                  className="flex-1 px-3 py-2 border border-outline-variant rounded bg-white text-sm focus:ring-2 focus:ring-primary outline-none"
+                  placeholder="Ketik nama Eksipien..."
+                  value={excipientInput}
+                  onChange={(e) => setExcipientInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAddExcipient()}
+                />
+                <button 
+                  onClick={handleAddExcipient}
+                  className="bg-primary-container text-on-primary-container px-3 py-2 rounded text-sm font-medium hover:bg-[#005b6f] transition-colors flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[16px]">add</span> Tambah
                 </button>
               </div>
               
               <div className="border border-outline-variant rounded-lg bg-white overflow-hidden">
                 <ul className="divide-y divide-outline-variant/50">
-                  {/* Excipient Item: KB Hit */}
-                  <li className="p-3 flex items-center justify-between hover:bg-surface-container-low transition-colors group">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded bg-surface-container-highest flex items-center justify-center text-secondary font-medium text-xs">01</div>
-                      <div>
-                        <p className="font-medium text-on-surface text-sm">MCC</p>
-                        <p className="text-xs text-on-surface-variant">Microcrystalline Cellulose</p>
+                  {excipientsList.map((exc, index) => (
+                    <li key={index} className="p-3 flex items-center justify-between hover:bg-surface-container-low transition-colors group">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded bg-surface-container-highest flex items-center justify-center text-secondary font-medium text-xs">
+                          {String(index + 1).padStart(2, '0')}
+                        </div>
+                        <div>
+                          <p className="font-medium text-on-surface text-sm">{exc}</p>
+                          <p className="text-xs text-on-surface-variant">Excipient Candidate</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-[#003a7f] bg-blue-50 px-2 py-1 rounded">
-                        <span className="material-symbols-outlined text-[14px]">check</span> Ada di KB
-                      </span>
-                      <button className="text-outline hover:text-error opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="material-symbols-outlined text-[18px]">close</span>
-                      </button>
-                    </div>
-                  </li>
-                  
-                  {/* Excipient Item: KB Hit */}
-                  <li className="p-3 flex items-center justify-between hover:bg-surface-container-low transition-colors group">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded bg-surface-container-highest flex items-center justify-center text-secondary font-medium text-xs">02</div>
-                      <div>
-                        <p className="font-medium text-on-surface text-sm">Mg Stear.</p>
-                        <p className="text-xs text-on-surface-variant">Magnesium Stearate</p>
+                      <div className="flex items-center gap-4">
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-[#003a7f] bg-blue-50 px-2 py-1 rounded">
+                          <span className="material-symbols-outlined text-[14px]">science</span> Active
+                        </span>
+                        <button 
+                          onClick={() => handleRemoveExcipient(index)}
+                          className="text-outline hover:text-error transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-[18px]">close</span>
+                        </button>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-[#003a7f] bg-blue-50 px-2 py-1 rounded">
-                        <span className="material-symbols-outlined text-[14px]">check</span> Ada di KB
-                      </span>
-                      <button className="text-outline hover:text-error opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="material-symbols-outlined text-[18px]">close</span>
-                      </button>
-                    </div>
-                  </li>
-                  
-                  {/* Excipient Item: KB Hit */}
-                  <li className="p-3 flex items-center justify-between hover:bg-surface-container-low transition-colors group">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded bg-surface-container-highest flex items-center justify-center text-secondary font-medium text-xs">03</div>
-                      <div>
-                        <p className="font-medium text-on-surface text-sm">Povidone</p>
-                        <p className="text-xs text-on-surface-variant">Polyvinylpyrrolidone</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-[#003a7f] bg-blue-50 px-2 py-1 rounded">
-                        <span className="material-symbols-outlined text-[14px]">check</span> Ada di KB
-                      </span>
-                      <button className="text-outline hover:text-error opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="material-symbols-outlined text-[18px]">close</span>
-                      </button>
-                    </div>
-                  </li>
-                  
-                  {/* Excipient Item: New */}
-                  <li className="p-3 flex items-center justify-between hover:bg-surface-container-low transition-colors group bg-surface-container-lowest">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded bg-surface-container-highest flex items-center justify-center text-secondary font-medium text-xs">04</div>
-                      <div>
-                        <p className="font-medium text-on-surface text-sm">SLS</p>
-                        <p className="text-xs text-on-surface-variant">Sodium Lauryl Sulfate</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-tertiary-container bg-tertiary-fixed px-2 py-1 rounded">
-                        <span className="material-symbols-outlined text-[14px]">new_releases</span> Baru
-                      </span>
-                      <button className="text-outline hover:text-error opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="material-symbols-outlined text-[18px]">close</span>
-                      </button>
-                    </div>
-                  </li>
-                  
-                  {/* Excipient Item: New */}
-                  <li className="p-3 flex items-center justify-between hover:bg-surface-container-low transition-colors group bg-surface-container-lowest">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded bg-surface-container-highest flex items-center justify-center text-secondary font-medium text-xs">05</div>
-                      <div>
-                        <p className="font-medium text-on-surface text-sm">PEG 6000</p>
-                        <p className="text-xs text-on-surface-variant">Polyethylene Glycol</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-tertiary-container bg-tertiary-fixed px-2 py-1 rounded">
-                        <span className="material-symbols-outlined text-[14px]">new_releases</span> Baru
-                      </span>
-                      <button className="text-outline hover:text-error opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="material-symbols-outlined text-[18px]">close</span>
-                      </button>
-                    </div>
-                  </li>
+                    </li>
+                  ))}
+                  {excipientsList.length === 0 && (
+                    <li className="p-4 text-center text-sm text-outline">Belum ada eksipien. Silakan tambah di atas.</li>
+                  )}
                 </ul>
               </div>
             </div>
@@ -220,11 +183,12 @@ export default function NewPrediction() {
             </div>
             
             <button 
-              onClick={() => setIsModalOpen(true)}
-              className="w-full bg-[#004251] hover:bg-[#005b6f] text-white font-semibold py-3 px-4 rounded transition-colors duration-150 flex items-center justify-center gap-2 shadow-sm relative z-10"
+              onClick={handlePredict}
+              disabled={isLoading}
+              className="w-full bg-[#004251] hover:bg-[#005b6f] text-white font-semibold py-3 px-4 rounded transition-colors duration-150 flex items-center justify-center gap-2 shadow-sm relative z-10 disabled:opacity-70"
             >
               <span className="material-symbols-outlined text-[20px]">memory</span>
-              Run Analysis
+              {isLoading ? 'Processing ML...' : 'Run Analysis Now'}
             </button>
           </section>
 

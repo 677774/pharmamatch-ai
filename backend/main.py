@@ -202,6 +202,7 @@ def run_ml_prediction(request: PredictionRequest):
         
     return {
         "status": "success",
+        "api_name": api_name,
         "model_version": "Random Forest v4.2.1 (Scikit-Learn)",
         "global_confidence": f"{global_confidence}%",
         "predictions": results
