@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 import bcrypt
 from jose import JWTError, jwt
 from database import SessionLocal, engine, Molecule, User
+from pubchem_service import search_molecule_pubchem, fetch_features_for_prediction
 
 # JWT & Password Config
 SECRET_KEY = "pharmamatch-super-secret-key-72"
@@ -57,7 +58,13 @@ MODEL_PATH = "rf_model.pkl"
 rf_model = None
 if os.path.exists(MODEL_PATH):
     with open(MODEL_PATH, "rb") as f:
-        rf_model = pickle.load(f)
+        model_data = pickle.load(f)
+        if isinstance(model_data, dict):
+            rf_model = model_data['model']
+            rf_features = model_data['features']
+        else:
+            rf_model = model_data
+            rf_features = ['LogP_Difference', 'Molecular_Weight_Ratio', 'PSA_Difference', 'HBond_Mismatch', 'Temp_Stability_Celsius']
     print("Model ML Asli Berhasil Di-load!")
 else:
     print("Model ML belum ditraining. Menjalankan mode simulasi.")
@@ -160,44 +167,81 @@ def get_molecules(db: Session = Depends(get_db)):
         
     return {"status": "success", "data": db_molecules}
 
+@app.get("/api/molecules/search")
+def search_pubchem(name: str):
+    data = search_molecule_pubchem(name)
+    if data:
+        return {"status": "success", "data": data}
+    return {"status": "error", "message": "Molecule not found in PubChem"}
+
 @app.post("/api/predict")
 def run_ml_prediction(request: PredictionRequest):
     api_name = request.api
     results = []
     global_confidence = random.randint(85, 96)
     
+    api_features = fetch_features_for_prediction(api_name)
+    
     for excipient in request.excipients:
+        excipient_features = fetch_features_for_prediction(excipient)
+        
+        # Calculate real differences based on generated logic
+        logP_diff = abs(api_features['logp'] - excipient_features['logp'])
+        mw_ratio = max(api_features['mw'], excipient_features['mw']) / max(min(api_features['mw'], excipient_features['mw']), 1.0)
+        psa_diff = abs(api_features['psa'] - excipient_features['psa'])
+        h_mismatch = abs(api_features['h_donors'] - excipient_features['h_acceptors']) + abs(api_features['h_acceptors'] - excipient_features['h_donors'])
+        temp_stability = random.uniform(20.0, 80.0) # Assume random temp stability for now
+        
         # Jika model `.pkl` ada, kita gunakan untuk prediksi (contoh dummy input)
         if rf_model is not None:
-            # Di dunia nyata, feature di-extract dari nama molekul
             import numpy as np
-            dummy_features = np.array([[random.uniform(0.1, 4.0), random.uniform(0.5, 2.0), random.randint(0, 3), random.randint(1, 5)]])
-            prediction = rf_model.predict(dummy_features)[0] # 0 = Aman, 1 = Bahaya
+            # Prepare feature array exactly as trained
+            feature_array = np.array([[logP_diff, mw_ratio, psa_diff, h_mismatch, temp_stability]])
+            prediction = rf_model.predict(feature_array)[0] # 0 = Aman, 1 = Bahaya
+            
+            # Extract Feature Importance for this specific decision
+            importances = rf_model.feature_importances_
+            feature_importance_dict = {}
+            for i, f_name in enumerate(rf_features):
+                # Multiply by feature value to get a localized impact score
+                impact = importances[i] * feature_array[0][i]
+                feature_importance_dict[f_name] = float(impact)
+                
+            # Normalize to 100%
+            total_impact = sum(feature_importance_dict.values()) if sum(feature_importance_dict.values()) > 0 else 1
+            for k in feature_importance_dict:
+                feature_importance_dict[k] = round((feature_importance_dict[k] / total_impact) * 100, 1)
+            
+            # Sort to find top reason
+            top_reason = sorted(feature_importance_dict.items(), key=lambda item: item[1], reverse=True)[0]
             
             if prediction == 1:
                 status = "Incompatible"
                 score = round(random.uniform(0.30, 0.65), 2)
-                reason = "ML Detected potential phase separation or degradation."
+                reason = f"ML Detected high risk due to {top_reason[0].replace('_', ' ')} ({top_reason[1]}% impact)."
             else:
                 status = "Compatible"
                 score = round(random.uniform(0.85, 0.98), 2)
-                reason = "No significant chemical interactions predicted."
+                reason = f"No significant chemical interactions predicted. Primary driver: {top_reason[0].replace('_', ' ')}."
         else:
             # Fallback ke rule-based simulasi jika model tidak ada
             if api_name == "Metformin HCL" and excipient == "Sodium Lauryl Sulfate (SLS)":
                 status = "Warning"
                 score = 0.55
                 reason = "Moderate risk due to LogP difference causing phase separation."
+                feature_importance_dict = {"LogP": 100}
             else:
                 status = "Compatible"
                 score = round(random.uniform(0.85, 0.98), 2)
                 reason = "No significant chemical interactions predicted."
+                feature_importance_dict = {"General Stability": 100}
             
         results.append({
             "excipient": excipient,
             "status": status,
             "compatibility_score": score,
-            "reason": reason
+            "reason": reason,
+            "feature_importance": feature_importance_dict
         })
         
     return {

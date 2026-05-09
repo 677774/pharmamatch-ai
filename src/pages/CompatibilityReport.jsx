@@ -137,6 +137,26 @@ export default function CompatibilityReport() {
                     {warningItem.reason}
                   </div>
                 </div>
+
+                {/* Feature Importance Section */}
+                {warningItem.feature_importance && (
+                  <div className="bg-surface-container-lowest p-3 rounded border border-outline-variant/20">
+                    <span className="text-xs font-label text-on-surface-variant block mb-2">AI Feature Importance (Why?)</span>
+                    <div className="space-y-2">
+                      {Object.entries(warningItem.feature_importance).sort((a, b) => b[1] - a[1]).map(([feature, impact]) => (
+                        <div key={feature}>
+                          <div className="flex justify-between text-xs mb-1">
+                            <span className="text-on-surface">{feature.replace(/_/g, ' ')}</span>
+                            <span className="text-on-surface-variant font-mono">{impact}%</span>
+                          </div>
+                          <div className="w-full bg-surface-container-high rounded-full h-1.5 overflow-hidden">
+                            <div className="bg-error h-1.5 rounded-full" style={{ width: `${impact}%` }}></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
               
               <div className="mt-6 flex flex-col gap-2">
