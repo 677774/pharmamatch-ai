@@ -1,7 +1,14 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { allProjects } from '../data/dummyData';
 
 export default function Projects() {
+  const [projects, setProjects] = useState([]);
+
+  useEffect(() => {
+    // Load dynamic projects from localStorage
+    const savedProjects = JSON.parse(localStorage.getItem('pharmamatch_projects') || '[]');
+    setProjects(savedProjects);
+  }, []);
   return (
     <div className="max-w-5xl mx-auto space-y-6 animate-fade-in">
       {/* Action Bar: Search & New Project */}
@@ -25,7 +32,7 @@ export default function Projects() {
 
       {/* Projects Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
-        {allProjects.map((project) => (
+        {projects.length > 0 ? projects.map((project) => (
           <Link 
             key={project.id}
             to="/report"
@@ -35,7 +42,7 @@ export default function Projects() {
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h3 className="font-headline font-bold text-lg text-on-surface group-hover:text-primary-container transition-colors">{project.name}</h3>
-                <p className="text-xs text-on-surface-variant font-body mt-1">ID: PRJ-2026-{project.id.toString().padStart(3, '0')}</p>
+                <p className="text-xs text-on-surface-variant font-body mt-1">ID: PRJ-{new Date(project.date).getFullYear()}-{project.id.toString().slice(-4)}</p>
               </div>
               
               {project.status === 'In Progress' ? (
@@ -59,7 +66,7 @@ export default function Projects() {
             
             <div className="mt-2 space-y-4 flex-1">
               <div className="flex items-center gap-2 text-sm text-on-surface-variant font-body">
-                <span className="material-symbols-outlined text-[18px] text-outline">science</span>
+                <span className="material-symbols-outlined text-[18px] text-outline">{project.icon || 'science'}</span>
                 <span>{project.combinations} active combinations</span>
               </div>
               
@@ -77,7 +84,19 @@ export default function Projects() {
               </div>
             </div>
           </Link>
-        ))}
+        )) : (
+          <div className="col-span-1 md:col-span-2 xl:col-span-3 text-center py-20 bg-surface-container-lowest/50 border border-outline-variant/50 rounded-xl">
+            <span className="material-symbols-outlined text-5xl text-outline mb-4">folder_off</span>
+            <h3 className="text-xl font-bold font-headline text-on-surface">No Projects Found</h3>
+            <p className="text-on-surface-variant mt-2 mb-6">You haven't run any predictions yet. Create a new project to get started.</p>
+            <Link 
+              to="/new-prediction"
+              className="inline-flex bg-[#004251] hover:bg-[#005b6f] text-white px-5 py-2.5 rounded-lg font-body text-sm font-medium items-center justify-center gap-2 transition-colors duration-150 shadow-sm"
+            >
+              Start New Prediction
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

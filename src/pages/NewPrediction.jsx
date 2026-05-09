@@ -43,6 +43,32 @@ export default function NewPrediction() {
       const data = await response.json();
       if (data.status === 'success') {
         setPredictionResult(data);
+        
+        // --- Save to localStorage ---
+        const newProject = {
+          id: Date.now(),
+          name: `${apiName} Formulation`,
+          status: 'In Progress',
+          stability: parseInt(data.global_confidence?.replace('%', '') || 85),
+          combinations: excipientsList.length,
+          date: new Date().toISOString(),
+          icon: 'science'
+        };
+        const existingProjects = JSON.parse(localStorage.getItem('pharmamatch_projects') || '[]');
+        localStorage.setItem('pharmamatch_projects', JSON.stringify([newProject, ...existingProjects]));
+        
+        // Add pending validations
+        const newPending = data.predictions.map((p, idx) => ({
+          id: Date.now() + idx,
+          api: apiName,
+          excipient: p.excipient,
+          predictedStatus: p.status,
+          confidence: Math.round(p.compatibility_score * 100),
+          date: new Date().toISOString()
+        }));
+        const existingPending = JSON.parse(localStorage.getItem('pharmamatch_pending_validations') || '[]');
+        localStorage.setItem('pharmamatch_pending_validations', JSON.stringify([...newPending, ...existingPending]));
+        
         navigate('/report');
       }
     } catch (err) {
@@ -166,12 +192,12 @@ export default function NewPrediction() {
             
             <div className="grid grid-cols-2 gap-4 mb-6 relative z-10">
               <div className="bg-white/60 rounded border border-outline-variant/50 p-3 flex flex-col justify-center items-center text-center">
-                <span className="text-2xl font-black font-headline text-[#003a7f]">3</span>
+                <span className="text-2xl font-black font-headline text-[#003a7f]">0</span>
                 <span className="text-xs font-semibold text-on-surface-variant uppercase tracking-wide mt-1">From KB</span>
                 <span className="text-[10px] text-on-surface-variant mt-0.5">Instant retrieval</span>
               </div>
               <div className="bg-tertiary-fixed/40 rounded border border-tertiary-fixed-dim/50 p-3 flex flex-col justify-center items-center text-center">
-                <span className="text-2xl font-black font-headline text-tertiary-container">2</span>
+                <span className="text-2xl font-black font-headline text-tertiary-container">{excipientsList.length}</span>
                 <span className="text-xs font-semibold text-on-surface-variant uppercase tracking-wide mt-1">Need ML Analysis</span>
                 <span className="text-[10px] text-on-surface-variant mt-0.5">De novo prediction</span>
               </div>
@@ -233,7 +259,7 @@ export default function NewPrediction() {
             
             {/* Modal Body */}
             <div className="p-6">
-              <p className="text-sm text-on-surface-variant mb-6">Initial screening complete. Found existing compatibility data for partial formulation.</p>
+              <p className="text-sm text-on-surface-variant mb-6">Initial screening complete. Evaluating formulation candidates against knowledge base.</p>
               
               <div className="space-y-4">
                 {/* Instant Found Box */}
@@ -242,8 +268,8 @@ export default function NewPrediction() {
                     <span className="material-symbols-outlined text-2xl">database</span>
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-sm font-bold text-[#003a7f] mb-1">3 Excipients Found in Knowledge Base</h4>
-                    <p className="text-xs text-on-surface-variant">Instant retrieval for MCC, Mg Stearate, and Povidone. No new compute required for these interactions.</p>
+                    <h4 className="text-sm font-bold text-[#003a7f] mb-1">0 Excipients Found in Knowledge Base</h4>
+                    <p className="text-xs text-on-surface-variant">No instant retrieval available for the current combinations.</p>
                   </div>
                   <span className="text-xs font-bold text-[#003a7f] bg-white px-2 py-1 rounded border border-[#003a7f]/20 shadow-sm">Instant</span>
                 </div>
@@ -254,8 +280,8 @@ export default function NewPrediction() {
                     <span className="material-symbols-outlined text-2xl">model_training</span>
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-sm font-bold text-tertiary-container mb-1">2 New Excipients Require ML Analysis</h4>
-                    <p className="text-xs text-on-surface-variant">De novo interaction prediction will be executed for SLS and PEG 6000 against Metformin HCL.</p>
+                    <h4 className="text-sm font-bold text-tertiary-container mb-1">{excipientsList.length} New Excipients Require ML Analysis</h4>
+                    <p className="text-xs text-on-surface-variant">De novo interaction prediction will be executed against {apiName}.</p>
                   </div>
                   <span className="text-xs font-bold text-tertiary-container bg-white px-2 py-1 rounded border border-tertiary-fixed-dim/30 shadow-sm">Compute</span>
                 </div>

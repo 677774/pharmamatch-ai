@@ -1,12 +1,58 @@
-import { useState } from 'react';
-import { pendingValidations, recentValidations } from '../data/dummyData';
+import { useState, useEffect } from 'react';
 
 export default function LabValidation() {
-  const [expandedId, setExpandedId] = useState(pendingValidations[0]?.id || null);
+  const [pendingValidations, setPendingValidations] = useState([]);
+  const [recentValidations, setRecentValidations] = useState([]);
+  const [expandedId, setExpandedId] = useState(null);
+
+  useEffect(() => {
+    const savedPending = JSON.parse(localStorage.getItem('pharmamatch_pending_validations') || '[]');
+    const savedRecent = JSON.parse(localStorage.getItem('pharmamatch_recent_validations') || '[]');
+    setPendingValidations(savedPending);
+    setRecentValidations(savedRecent);
+    if (savedPending.length > 0) {
+      setExpandedId(savedPending[0].id);
+    }
+  }, []);
 
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
   };
+
+  const handleSaveValidation = (e, item) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const status = formData.get(`status_${item.id}`);
+    const method = formData.get('method');
+
+    if (!status) {
+      alert('Mohon pilih Hasil Uji Klinis (Kompatibel / Inkompatibel)');
+      return;
+    }
+
+    const newItem = {
+      ...item,
+      result: status === 'Kompatibel' ? 'Compatible' : 'Incompatible',
+      method: method || 'Standard Test',
+      dateValidated: new Date().toISOString()
+    };
+
+    const newPending = pendingValidations.filter(v => v.id !== item.id);
+    const newRecent = [newItem, ...recentValidations];
+
+    setPendingValidations(newPending);
+    setRecentValidations(newRecent);
+
+    localStorage.setItem('pharmamatch_pending_validations', JSON.stringify(newPending));
+    localStorage.setItem('pharmamatch_recent_validations', JSON.stringify(newRecent));
+    setExpandedId(null);
+  };
+
+  const accuracy = recentValidations.length === 0 ? 0 : 
+    Math.round((recentValidations.filter(v => 
+      (v.predictedStatus === 'Compatible' && v.result === 'Compatible') || 
+      (v.predictedStatus !== 'Compatible' && v.result !== 'Compatible')
+    ).length / recentValidations.length) * 100);
 
   return (
     <div className="animate-fade-in max-w-7xl mx-auto">
@@ -19,17 +65,17 @@ export default function LabValidation() {
         <div className="flex flex-wrap items-center gap-4 text-sm font-medium font-body bg-surface-container-low p-3 rounded-lg border border-outline-variant/50">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#cf9c6c]"></span>
-            <span className="text-on-surface">12 Pending</span>
+            <span className="text-on-surface">{pendingValidations.length} Pending</span>
           </div>
           <span className="text-outline-variant">|</span>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#003a7f]"></span>
-            <span className="text-on-surface">847 Validated</span>
+            <span className="text-on-surface">{recentValidations.length} Validated</span>
           </div>
           <span className="text-outline-variant">|</span>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-primary-container"></span>
-            <span className="text-on-surface">98.2% Prediction Accuracy</span>
+            <span className="text-on-surface">{accuracy}% Prediction Accuracy</span>
           </div>
         </div>
       </div>
@@ -79,18 +125,18 @@ export default function LabValidation() {
               {/* Validation Form (Expanded State) */}
               {expandedId === item.id && (
                 <div className="border-t border-outline-variant/40 bg-surface-container-lowest p-5 animate-fade-in">
-                  <form className="space-y-5">
+                  <form className="space-y-5" onSubmit={(e) => handleSaveValidation(e, item)}>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                       {/* Status */}
                       <div>
                         <label className="block font-label text-xs font-semibold text-secondary uppercase mb-3">Hasil Uji Klinis</label>
                         <div className="flex gap-4">
                           <label className="flex items-center gap-2 cursor-pointer">
-                            <input className="form-radio text-[#003a7f] focus:ring-[#003a7f] border-outline-variant h-4 w-4" name={`status_${item.id}`} type="radio" />
+                            <input className="form-radio text-[#003a7f] focus:ring-[#003a7f] border-outline-variant h-4 w-4" name={`status_${item.id}`} value="Kompatibel" type="radio" />
                             <span className="font-body text-sm font-medium text-on-surface">Kompatibel</span>
                           </label>
                           <label className="flex items-center gap-2 cursor-pointer">
-                            <input className="form-radio text-[#ba1a1a] focus:ring-[#ba1a1a] border-outline-variant h-4 w-4" name={`status_${item.id}`} type="radio" />
+                            <input className="form-radio text-[#ba1a1a] focus:ring-[#ba1a1a] border-outline-variant h-4 w-4" name={`status_${item.id}`} value="Inkompatibel" type="radio" />
                             <span className="font-body text-sm font-medium text-on-surface">Inkompatibel</span>
                           </label>
                         </div>
@@ -100,7 +146,7 @@ export default function LabValidation() {
                       <div>
                         <label className="block font-label text-xs font-semibold text-secondary uppercase mb-2">Tanggal Validasi</label>
                         <div className="relative">
-                          <input className="w-full bg-white border border-outline-variant/70 text-on-surface text-sm rounded-md focus:ring-2 focus:ring-primary-container focus:border-primary-container block p-2.5 font-body" type="date" />
+                          <input className="w-full bg-white border border-outline-variant/70 text-on-surface text-sm rounded-md focus:ring-2 focus:ring-primary-container focus:border-primary-container block p-2.5 font-body" type="date" required />
                         </div>
                       </div>
                     </div>
@@ -108,8 +154,8 @@ export default function LabValidation() {
                     {/* Dropdown */}
                     <div>
                       <label className="block font-label text-xs font-semibold text-secondary uppercase mb-2">Metode Uji</label>
-                      <select className="bg-white border border-outline-variant/70 text-on-surface text-sm rounded-md focus:ring-2 focus:ring-primary-container focus:border-primary-container block w-full p-2.5 font-body">
-                        <option value="" disabled selected>Select method...</option>
+                      <select name="method" className="bg-white border border-outline-variant/70 text-on-surface text-sm rounded-md focus:ring-2 focus:ring-primary-container focus:border-primary-container block w-full p-2.5 font-body" required defaultValue="">
+                        <option value="" disabled>Select method...</option>
                         <option value="dsc">DSC (Differential Scanning Calorimetry)</option>
                         <option value="ftir">FTIR (Fourier Transform Infrared Spectroscopy)</option>
                         <option value="xrd">XRD (X-Ray Diffraction)</option>
@@ -131,8 +177,7 @@ export default function LabValidation() {
                     <div className="flex justify-end pt-2">
                       <button 
                         className="bg-primary-container hover:bg-[#005b6f] text-white font-body font-medium text-sm px-5 py-2.5 rounded transition-colors duration-150 focus:ring-2 focus:ring-offset-2 focus:ring-primary-container" 
-                        type="button"
-                        onClick={() => toggleExpand(item.id)}
+                        type="submit"
                       >
                         Simpan Validasi
                       </button>
@@ -142,6 +187,12 @@ export default function LabValidation() {
               )}
             </article>
           ))}
+          {pendingValidations.length === 0 && (
+            <div className="bg-white border border-outline-variant/50 rounded-xl p-8 text-center text-on-surface-variant shadow-sm">
+              <span className="material-symbols-outlined text-4xl mb-2 text-outline">done_all</span>
+              <p>No pending validations. All clean!</p>
+            </div>
+          )}
         </section>
 
         {/* Recently Validated Column */}
@@ -157,19 +208,22 @@ export default function LabValidation() {
                 <div key={item.id} className="relative pl-6">
                   <span className={`absolute -left-[5px] top-1 w-2.5 h-2.5 rounded-full ring-4 ring-surface-container-lowest ${item.result === 'Compatible' ? 'bg-[#003a7f]' : 'bg-[#ba1a1a]'}`}></span>
                   <div className="flex flex-col">
-                    <h4 className="font-headline font-bold text-sm text-on-surface mb-0.5">{item.api} + {item.excipient.split(' ')[0]}</h4>
+                    <h4 className="font-headline font-bold text-sm text-on-surface mb-0.5">{item.api} + {item.excipient}</h4>
                     <div className="flex items-center gap-2 mb-1">
                       {item.result === 'Compatible' ? (
                         <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#e2e2e4] text-[#003a7f] uppercase font-label">Kompatibel</span>
                       ) : (
                         <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#ffdad6] text-[#ba1a1a] uppercase font-label">Inkompatibel</span>
                       )}
-                      <span className="text-xs text-secondary font-body">Lab, {item.method}</span>
+                      <span className="text-xs text-secondary font-body">Lab, {item.method.toUpperCase()}</span>
                     </div>
-                    <span className="text-xs text-outline font-body">{index === 0 ? '2 hours ago' : 'Yesterday'} by Dr. Sarah J.</span>
+                    <span className="text-xs text-outline font-body">Just now by Current User</span>
                   </div>
                 </div>
               ))}
+              {recentValidations.length === 0 && (
+                 <p className="text-sm text-on-surface-variant pl-4 py-2">Belum ada data validasi.</p>
+              )}
             </div>
             
             <button className="w-full mt-4 text-center text-sm font-medium text-primary-container hover:text-[#005b6f] py-2 transition-colors duration-150 font-body">
