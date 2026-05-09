@@ -27,45 +27,45 @@ export default function ModelInsights() {
       risk: 'Perbedaan sifat hidrofilik dan lipofilik dapat menyebabkan pemisahan fase dan agregasi partikel dalam suspensi atau emulsi.',
       solution: 'Gunakan surfaktan tambahan (seperti Polysorbate 80) atau kosolven untuk menjembatani perbedaan kelarutan.'
     },
-    'pKa_Difference': {
-      desc: 'Perbedaan kekuatan asam-basa (pKa) yang ekstrem.',
-      risk: 'Memicu reaksi perpindahan proton spontan yang mengarah pada degradasi atau perubahan profil pelepasan zat aktif.',
-      solution: 'Pertimbangkan penambahan larutan penyangga (buffer pH) atau hindari eksipien basa/asam kuat secara langsung.'
-    },
-    'Steric_Hindrance': {
-      desc: 'Halangan sterik molekul yang tinggi.',
-      risk: 'Ukuran gugus fungsi yang besar mengganggu pembentukan ikatan hidrogen, membuat campuran tidak stabil secara mekanis.',
-      solution: 'Ganti eksipien dengan molekul berukuran lebih kecil atau polimer pengikat yang strukturnya lebih fleksibel.'
-    },
-    'Solubility_Difference': {
-      desc: 'Perbedaan batas kelarutan antar senyawa.',
-      risk: 'Memicu pengendapan (presipitasi) tiba-tiba ketika dicampur dalam sediaan cair, atau pembentukan kristal keras.',
-      solution: 'Sesuaikan suhu pencampuran atau gunakan agen peningkat kelarutan (solubilizer/cyclodextrin).'
-    },
-    'Reactivity_Score': {
-      desc: 'Indeks reaktivitas kimiawi yang sangat tinggi.',
-      risk: 'Molekul sangat rentan mengalami oksidasi, hidrolisis, atau reaksi silang (cross-linking) ketika kontak langsung.',
-      solution: 'Tambahkan antioksidan pengorbanan, simpan pada wadah kedap cahaya, atau gunakan teknologi penyalutan (coating).'
-    },
-    'HBond_Mismatch': {
-      desc: 'Ketidakcocokan donor-akseptor Ikatan Hidrogen.',
-      risk: 'Menyebabkan kompetisi ikatan yang melemahkan stabilitas matriks eksipien dan seringkali mengubah laju disolusi obat.',
-      solution: 'Pilih polimer pengikat alternatif yang memiliki profil donor-akseptor yang lebih selaras dengan API.'
-    },
     'Molecular_Weight_Ratio': {
       desc: 'Rasio berat molekul yang sangat tidak seimbang.',
-      risk: 'Perbedaan ukuran yang terlalu jauh menyebabkan segregasi serbuk selama proses pencampuran kering (dry blending).',
-      solution: 'Gunakan teknik granulasi basah atau sesuaikan ukuran partikel (milling) sebelum proses pencampuran akhir.'
+      risk: 'Perbedaan ukuran molekul yang jauh dapat mengganggu homogenitas pencampuran dan memicu segregasi fisik.',
+      solution: 'Pertimbangkan teknik granulasi basah atau pengayakan (milling) untuk memastikan distribusi ukuran partikel seragam.'
     },
     'PSA_Difference': {
-      desc: 'Perbedaan luas permukaan polar (Polar Surface Area).',
-      risk: 'Mempengaruhi afinitas permukaan partikel yang menyebabkan distribusi tidak merata dari zat aktif di dalam matriks campuran.',
+      desc: 'Perbedaan luas permukaan polar (Topological Polar Surface Area).',
+      risk: 'Perbedaan daya tembus dan afinitas kelembapan menyebabkan interaksi antarmuka yang buruk antara zat aktif dan matriks penyalut.',
       solution: 'Evaluasi penggunaan wetting agent yang tepat untuk meratakan interaksi permukaan partikel obat.'
     },
-    'Temp_Stability_Celsius': {
-      desc: 'Stabilitas termal/panas yang rendah.',
-      risk: 'Salah satu komponen rentan meleleh atau terdegradasi secara eksotermik pada suhu pemrosesan standar.',
-      solution: 'Gunakan metode pemrosesan suhu rendah (seperti direct compression) dan hindari tahapan yang memicu paparan panas berlebih.'
+    'H_Donor_Difference': {
+      desc: 'Perbedaan kapasitas donor Ikatan Hidrogen.',
+      risk: 'Memicu kompetisi ikatan hidrogen intramolekuler yang tidak merata, berisiko mengganggu kestabilan polimer pengikat.',
+      solution: 'Pilih eksipien turunan selulosa yang memiliki profil donor H lebih stabil.'
+    },
+    'H_Acceptor_Difference': {
+      desc: 'Perbedaan kapasitas akseptor Ikatan Hidrogen.',
+      risk: 'Dapat memicu kristalisasi spontan atau perubahan polimorfisme zat aktif akibat interaksi dipol yang berlebihan.',
+      solution: 'Uji polimorfisme tambahan dan pertimbangkan penggunaan PVP untuk menstabilkan struktur amorf.'
+    },
+    'Rotatable_Bonds_Difference': {
+      desc: 'Perbedaan fleksibilitas molekul (Rotatable Bonds).',
+      risk: 'Ketidakcocokan fleksibilitas konformasi menyulitkan eksipien untuk "membungkus" zat aktif, menyebabkan pelepasan obat yang tidak terkontrol.',
+      solution: 'Gunakan plasticizer atau eksipien polimerik panjang untuk mengakomodasi molekul kaku.'
+    },
+    'FractionCSP3_Difference': {
+      desc: 'Perbedaan tingkat saturasi karbon dan kompleksitas molekul (Fraction C sp3).',
+      risk: 'Molekul datar (aromatik) vs molekul 3D (saturasi tinggi) menyebabkan gangguan penumpukan kristal (crystal packing disruption).',
+      solution: 'Tinjau kembali kompatibilitas sterik dan pertimbangkan agen pengisi (filler) yang amorf.'
+    },
+    'Ring_Count_Difference': {
+      desc: 'Perbedaan jumlah struktur cincin (Ring Count).',
+      risk: 'Kekakuan cincin aromatik vs alifatik dapat memicu pemisahan fisik seiring berjalannya waktu (shelf-life stability issue).',
+      solution: 'Periksa kembali studi kompatibilitas long-term dan gunakan agen pengikat yang mampu menjembatani perbedaan sterik.'
+    },
+    'Heavy_Atom_Difference': {
+      desc: 'Ketidakseimbangan jumlah atom berat (Heavy Atom Count).',
+      risk: 'Perbedaan ukuran elektron/atom yang besar dapat mengubah kerapatan elektron lokal dan memicu reaksi elektrofilik lemah.',
+      solution: 'Gunakan eksipien penstabil non-reaktif dan hindari pemanasan suhu tinggi saat pencampuran.'
     }
   };
 

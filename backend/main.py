@@ -64,7 +64,7 @@ if os.path.exists(MODEL_PATH):
             rf_features = model_data['features']
         else:
             rf_model = model_data
-            rf_features = ['LogP_Difference', 'Molecular_Weight_Ratio', 'PSA_Difference', 'HBond_Mismatch', 'Temp_Stability_Celsius']
+            rf_features = ['LogP_Difference', 'Molecular_Weight_Ratio', 'PSA_Difference', 'H_Donor_Difference', 'H_Acceptor_Difference', 'Rotatable_Bonds_Difference', 'FractionCSP3_Difference', 'Ring_Count_Difference', 'Heavy_Atom_Difference']
     print("Model ML Asli Berhasil Di-load!")
 else:
     print("Model ML belum ditraining. Menjalankan mode simulasi.")
@@ -192,32 +192,36 @@ def run_ml_prediction(request: PredictionRequest):
         mol2_features = fetch_features_for_prediction(mol2)
         
         # Calculate real differences based on generated logic
-        logP_diff = abs(mol1_features['logp'] - mol2_features['logp'])
-        mw_ratio = max(mol1_features['mw'], mol2_features['mw']) / max(min(mol1_features['mw'], mol2_features['mw']), 1.0)
-        psa_diff = abs(mol1_features['psa'] - mol2_features['psa'])
-        h_mismatch = abs(mol1_features['h_donors'] - mol2_features['h_acceptors']) + abs(mol1_features['h_acceptors'] - mol2_features['h_donors'])
+        logP_diff = abs(mol1_features.get('logp', 0) - mol2_features.get('logp', 0))
         
-        # Simulated features for the new model
-        temp_stability = random.uniform(20.0, 80.0) 
-        steric_hindrance = random.uniform(0.0, 10.0)
-        pka_diff = random.uniform(0.0, 14.0)
-        reactivity_score = random.uniform(0.0, 100.0)
-        solubility_diff = random.uniform(0.0, 50.0)
+        mw1 = mol1_features.get('mw', 1.0)
+        mw2 = mol2_features.get('mw', 1.0)
+        mw_ratio = max(mw1, mw2) / max(min(mw1, mw2), 1.0)
+        
+        psa_diff = abs(mol1_features.get('tpsa', 0) - mol2_features.get('tpsa', 0))
+        h_donor_diff = abs(mol1_features.get('h_donors', 0) - mol2_features.get('h_donors', 0))
+        h_acceptor_diff = abs(mol1_features.get('h_acceptors', 0) - mol2_features.get('h_acceptors', 0))
+        rotatable_bonds_diff = abs(mol1_features.get('rotatable_bonds', 0) - mol2_features.get('rotatable_bonds', 0))
+        fraction_csp3_diff = abs(mol1_features.get('fraction_csp3', 0) - mol2_features.get('fraction_csp3', 0))
+        ring_count_diff = abs(mol1_features.get('ring_count', 0) - mol2_features.get('ring_count', 0))
+        heavy_atoms_diff = abs(mol1_features.get('heavy_atoms', 0) - mol2_features.get('heavy_atoms', 0))
         
         pair_name = f"{mol1} + {mol2}"
         
         if rf_model is not None:
             import numpy as np
             # Prepare feature array exactly as trained (9 features)
-            # Order: LogP_Difference, Molecular_Weight_Ratio, PSA_Difference, HBond_Mismatch, Temp_Stability_Celsius, Steric_Hindrance, pKa_Difference, Reactivity_Score, Solubility_Difference
-            feature_array = np.array([[logP_diff, mw_ratio, psa_diff, h_mismatch, temp_stability, steric_hindrance, pka_diff, reactivity_score, solubility_diff]])
+            feature_array = np.array([[logP_diff, mw_ratio, psa_diff, h_donor_diff, h_acceptor_diff, rotatable_bonds_diff, fraction_csp3_diff, ring_count_diff, heavy_atoms_diff]])
             prediction = rf_model.predict(feature_array)[0] # 0 = Aman, 1 = Bahaya
             
             # Extract Feature Importance for this specific decision
             importances = rf_model.feature_importances_
             feature_importance_dict = {}
             for i, f_name in enumerate(rf_features):
-                impact = importances[i] * feature_array[0][i]
+                # Use log-scale for feature value to avoid massive skewing by ranges (0-100 vs 0-5)
+                val = feature_array[0][i]
+                scaled_val = np.log1p(val) if val >= 0 else 0
+                impact = importances[i] * (1.0 + scaled_val)
                 feature_importance_dict[f_name] = float(impact)
                 
             # Normalize to 100%

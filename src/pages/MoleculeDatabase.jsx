@@ -82,7 +82,7 @@ export default function MoleculeDatabase() {
             <div className="flex-1 bg-black relative">
               {/* MolView iframe for robust 3D viewing */}
               <iframe 
-                src={`https://embed.molview.org/v1/?mode=balls&smiles=${encodeURIComponent(selectedMolFor3D.smiles)}`}
+                src={`https://embed.molview.org/v1/?mode=balls&q=${encodeURIComponent(selectedMolFor3D.name)}`}
                 className="w-full h-full border-0"
                 title="3D MolView"
               />
