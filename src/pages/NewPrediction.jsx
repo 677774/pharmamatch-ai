@@ -9,9 +9,9 @@ export default function NewPrediction() {
   const { setPredictionResult } = usePrediction();
 
   // State untuk Input Dinamis
-  const [apiName, setApiName] = useState('Paracetamol');
+  const [apiName, setApiName] = useState('');
   const [excipientInput, setExcipientInput] = useState('');
-  const [excipientsList, setExcipientsList] = useState(['Magnesium Stearate', 'Lactose']);
+  const [excipientsList, setExcipientsList] = useState([]);
 
   const handleAddExcipient = () => {
     if (excipientInput.trim() !== '') {
@@ -120,9 +120,11 @@ export default function NewPrediction() {
                   onChange={(e) => setApiName(e.target.value)}
                   placeholder="Ketik nama API di sini..."
                 />
+                {apiName && (
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                   <span className="material-symbols-outlined text-[#003a7f] text-[18px]">check_circle</span>
                 </div>
+                )}
               </div>
             </div>
 
