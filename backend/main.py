@@ -176,34 +176,47 @@ def search_pubchem(name: str):
 
 @app.post("/api/predict")
 def run_ml_prediction(request: PredictionRequest):
+    import itertools
     api_name = request.api
     results = []
     global_confidence = random.randint(85, 96)
     
-    api_features = fetch_features_for_prediction(api_name)
+    # Kumpulkan semua molekul yang dianalisis
+    all_molecules = [api_name] + request.excipients
     
-    for excipient in request.excipients:
-        excipient_features = fetch_features_for_prediction(excipient)
+    # Buat semua kombinasi pasangan (All-to-All)
+    pairs = list(itertools.combinations(all_molecules, 2))
+    
+    for mol1, mol2 in pairs:
+        mol1_features = fetch_features_for_prediction(mol1)
+        mol2_features = fetch_features_for_prediction(mol2)
         
         # Calculate real differences based on generated logic
-        logP_diff = abs(api_features['logp'] - excipient_features['logp'])
-        mw_ratio = max(api_features['mw'], excipient_features['mw']) / max(min(api_features['mw'], excipient_features['mw']), 1.0)
-        psa_diff = abs(api_features['psa'] - excipient_features['psa'])
-        h_mismatch = abs(api_features['h_donors'] - excipient_features['h_acceptors']) + abs(api_features['h_acceptors'] - excipient_features['h_donors'])
-        temp_stability = random.uniform(20.0, 80.0) # Assume random temp stability for now
+        logP_diff = abs(mol1_features['logp'] - mol2_features['logp'])
+        mw_ratio = max(mol1_features['mw'], mol2_features['mw']) / max(min(mol1_features['mw'], mol2_features['mw']), 1.0)
+        psa_diff = abs(mol1_features['psa'] - mol2_features['psa'])
+        h_mismatch = abs(mol1_features['h_donors'] - mol2_features['h_acceptors']) + abs(mol1_features['h_acceptors'] - mol2_features['h_donors'])
         
-        # Jika model `.pkl` ada, kita gunakan untuk prediksi (contoh dummy input)
+        # Simulated features for the new model
+        temp_stability = random.uniform(20.0, 80.0) 
+        steric_hindrance = random.uniform(0.0, 10.0)
+        pka_diff = random.uniform(0.0, 14.0)
+        reactivity_score = random.uniform(0.0, 100.0)
+        solubility_diff = random.uniform(0.0, 50.0)
+        
+        pair_name = f"{mol1} + {mol2}"
+        
         if rf_model is not None:
             import numpy as np
-            # Prepare feature array exactly as trained
-            feature_array = np.array([[logP_diff, mw_ratio, psa_diff, h_mismatch, temp_stability]])
+            # Prepare feature array exactly as trained (9 features)
+            # Order: LogP_Difference, Molecular_Weight_Ratio, PSA_Difference, HBond_Mismatch, Temp_Stability_Celsius, Steric_Hindrance, pKa_Difference, Reactivity_Score, Solubility_Difference
+            feature_array = np.array([[logP_diff, mw_ratio, psa_diff, h_mismatch, temp_stability, steric_hindrance, pka_diff, reactivity_score, solubility_diff]])
             prediction = rf_model.predict(feature_array)[0] # 0 = Aman, 1 = Bahaya
             
             # Extract Feature Importance for this specific decision
             importances = rf_model.feature_importances_
             feature_importance_dict = {}
             for i, f_name in enumerate(rf_features):
-                # Multiply by feature value to get a localized impact score
                 impact = importances[i] * feature_array[0][i]
                 feature_importance_dict[f_name] = float(impact)
                 
@@ -222,22 +235,16 @@ def run_ml_prediction(request: PredictionRequest):
             else:
                 status = "Compatible"
                 score = round(random.uniform(0.85, 0.98), 2)
-                reason = f"No significant chemical interactions predicted. Primary driver: {top_reason[0].replace('_', ' ')}."
+                reason = f"No significant interactions predicted. Primary driver: {top_reason[0].replace('_', ' ')}."
         else:
             # Fallback ke rule-based simulasi jika model tidak ada
-            if api_name == "Metformin HCL" and excipient == "Sodium Lauryl Sulfate (SLS)":
-                status = "Warning"
-                score = 0.55
-                reason = "Moderate risk due to LogP difference causing phase separation."
-                feature_importance_dict = {"LogP": 100}
-            else:
-                status = "Compatible"
-                score = round(random.uniform(0.85, 0.98), 2)
-                reason = "No significant chemical interactions predicted."
-                feature_importance_dict = {"General Stability": 100}
+            status = "Compatible"
+            score = round(random.uniform(0.85, 0.98), 2)
+            reason = "No significant chemical interactions predicted (Fallback)."
+            feature_importance_dict = {"General Stability": 100}
             
         results.append({
-            "excipient": excipient,
+            "excipient": pair_name, # Displayed in the UI under "Excipient" column
             "status": status,
             "compatibility_score": score,
             "reason": reason,
@@ -247,7 +254,7 @@ def run_ml_prediction(request: PredictionRequest):
     return {
         "status": "success",
         "api_name": api_name,
-        "model_version": "Random Forest v4.2.1 (Scikit-Learn)",
+        "model_version": "Random Forest v4.3.0 (All-to-All)",
         "global_confidence": f"{global_confidence}%",
         "predictions": results
     }

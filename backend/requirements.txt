@@ -4,5 +4,7 @@ pydantic
 passlib[bcrypt]
 python-jose[cryptography]
 python-multipart
-scikit-learn
 pandas
+scikit-learn
+numpy
+requests
