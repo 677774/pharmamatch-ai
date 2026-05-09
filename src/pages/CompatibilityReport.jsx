@@ -54,8 +54,13 @@ export default function CompatibilityReport() {
                 <tbody className="font-body text-sm divide-y divide-outline-variant/20">
                   {predictionResult && predictionResult.predictions ? (
                     predictionResult.predictions.map((item, index) => (
-                      <tr key={index} className={`hover:bg-surface-container-low transition-colors ${item.status === 'Warning' || item.status === 'Incompatible' ? 'bg-error-container/20' : ''}`}>
-                        <td className="px-4 py-3 font-medium text-on-surface flex items-center gap-2">
+                      <tr 
+                        key={index} 
+                        onClick={() => navigate('/model-insights', { state: { predictionItem: item, apiName: predictionResult.api_name } })}
+                        className={`cursor-pointer group hover:bg-surface-container-highest transition-colors ${item.status === 'Warning' || item.status === 'Incompatible' ? 'bg-error-container/20 hover:bg-error-container/40' : ''}`}
+                        title="Click to view Model Insights for this specific pair"
+                      >
+                        <td className="px-4 py-3 font-medium text-on-surface flex items-center gap-2 group-hover:text-primary transition-colors">
                           {item.excipient}
                           {(item.status === 'Warning' || item.status === 'Incompatible') && (
                             <span className="material-symbols-outlined text-error text-[16px]">warning</span>
@@ -168,7 +173,7 @@ export default function CompatibilityReport() {
                   Tandai Validasi Lab
                 </button>
                 <button 
-                  onClick={() => navigate('/model-insights')}
+                  onClick={() => navigate('/model-insights', { state: { predictionItem: warningItem, apiName: predictionResult.api_name } })}
                   className="w-full px-4 py-2 border border-outline text-on-surface bg-transparent rounded font-label text-sm font-semibold hover:bg-surface transition-colors duration-150 flex justify-center items-center gap-2"
                 >
                   <span className="material-symbols-outlined text-[18px]">visibility</span>
