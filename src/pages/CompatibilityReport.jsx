@@ -211,11 +211,11 @@ export default function CompatibilityReport() {
               </button>
               <div className="pt-3 mt-3 border-t border-outline-variant/30">
                 <button 
-                  onClick={() => navigate('/projects')}
+                  onClick={() => navigate('/lab-validation')}
                   className="w-full px-4 py-2.5 bg-[#004251] text-white rounded font-label text-sm font-semibold hover:bg-[#005b6f] transition-colors duration-150 flex justify-center items-center gap-2 shadow-sm"
                 >
-                  <span className="material-symbols-outlined text-[18px]">verified</span>
-                  Validasi Report
+                  <span className="material-symbols-outlined text-[18px]">science</span>
+                  Validasi Lab
                 </button>
               </div>
             </div>

@@ -11,6 +11,7 @@ export default function Sidebar() {
     { name: 'New Prediction', icon: 'query_stats', path: '/new-prediction' },
     { name: 'Projects', icon: 'folder_open', path: '/projects' },
     { name: 'Molecule Database', icon: 'science', path: '/molecules' },
+    { name: 'Lab Validation', icon: 'biotech', path: '/lab-validation' },
     { name: 'History / Reports', icon: 'analytics', path: '/report' },
     { name: 'Model Insights', icon: 'psychology', path: '/model-insights' },
   ];
