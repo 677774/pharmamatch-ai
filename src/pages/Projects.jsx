@@ -41,7 +41,40 @@ export default function Projects() {
           >
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h3 className="font-headline font-bold text-lg text-on-surface group-hover:text-primary-container transition-colors">{project.name}</h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-headline font-bold text-lg text-on-surface group-hover:text-primary-container transition-colors">{project.name}</h3>
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const newName = prompt("Enter new project name:", project.name);
+                        if (newName && newName.trim() !== "") {
+                          const updated = projects.map(p => p.id === project.id ? { ...p, name: newName.trim() } : p);
+                          setProjects(updated);
+                          localStorage.setItem('pharmamatch_projects', JSON.stringify(updated));
+                        }
+                      }}
+                      className="p-1 rounded text-outline hover:text-primary hover:bg-surface-container-high transition-colors"
+                      title="Rename Project"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">edit</span>
+                    </button>
+                    <button 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (window.confirm(`Are you sure you want to delete ${project.name}?`)) {
+                          const updated = projects.filter(p => p.id !== project.id);
+                          setProjects(updated);
+                          localStorage.setItem('pharmamatch_projects', JSON.stringify(updated));
+                        }
+                      }}
+                      className="p-1 rounded text-outline hover:text-error hover:bg-error-container/30 transition-colors"
+                      title="Delete Project"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">delete</span>
+                    </button>
+                  </div>
+                </div>
                 <p className="text-xs text-on-surface-variant font-body mt-1">ID: PRJ-{new Date(project.date).getFullYear()}-{project.id.toString().slice(-4)}</p>
               </div>
               

@@ -10,7 +10,20 @@ export default function Dashboard() {
       .then(res => res.json())
       .then(data => {
         if (data.status === 'success') {
-          setStats(data.data);
+          // Sync with local storage
+          const localProjects = JSON.parse(localStorage.getItem('pharmamatch_projects') || '[]');
+          const localPending = JSON.parse(localStorage.getItem('pharmamatch_pending_validations') || '[]');
+          
+          const syncedData = data.data.map(stat => {
+            if (stat.label === 'Total Molecules Analyzed') {
+              return { ...stat, value: localProjects.length.toString() };
+            }
+            if (stat.label === 'Recent Predictions') {
+              return { ...stat, value: localPending.length.toString() };
+            }
+            return stat;
+          });
+          setStats(syncedData);
         }
       })
       .catch(err => console.error("Error fetching stats:", err));

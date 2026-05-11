@@ -259,13 +259,25 @@ def run_ml_prediction(request: PredictionRequest):
             if prediction == 1:
                 status = "Incompatible"
                 score = round(random.uniform(0.30, 0.65), 2)
-                reason = f"AI mendeteksi risiko tinggi karena {top_reason[0]} ({top_reason[1]}% pengaruh)."
-                solution = "Lakukan pengujian kompatibilitas fisikokimia lanjutan (DSC, FTIR). Pertimbangkan penggunaan metode separasi fisik (misal: penyalutan granul atau penggunaan tablet lapis ganda) untuk memisahkan kontak langsung antar komponen."
+                reason = f"AI mendeteksi risiko tinggi karena {top_reason[0]} ({top_reason[1]}% pengaruh terhadap ketidakstabilan)."
+                
+                # Dynamic solutions based on RDKit feature
+                if top_reason[0] == 'Sensitivitas suhu/termodinamika':
+                    solution = "Hindari proses granulasi basah bersuhu tinggi. Pertimbangkan metode direct compression atau simpan sediaan secara ketat di bawah suhu 25°C."
+                elif top_reason[0] == 'Perbedaan kelarutan lemak (LogP)':
+                    solution = "Gunakan surfaktan tambahan (misal: SLS atau Tween 80) atau bentuk sistem dispersi padat untuk meningkatkan profil disolusi dan ketersediaan hayati."
+                elif top_reason[0] == 'Ketidakcocokan kepolaran permukaan (PSA)':
+                    solution = "Gunakan pelapis polimer hidrofilik (seperti HPMC) pada granul API untuk meminimalisasi kontak langsung akibat perbedaan tegangan permukaan ekstrim."
+                elif top_reason[0] == 'Ketidakstabilan ikatan hidrogen':
+                    solution = "Terdeteksi potensi pembentukan donor-akseptor ireversibel. Pisahkan komponen secara fisik menggunakan tablet lapis ganda (bilayer tablet) atau mikroenkapsulasi."
+                else:
+                    solution = "Lakukan pengujian kompatibilitas fisikokimia lanjutan (DSC, FTIR). Pertimbangkan penggunaan metode separasi fisik untuk memisahkan kontak langsung antar komponen."
+                    
             else:
                 status = "Compatible"
                 score = round(random.uniform(0.85, 0.98), 2)
-                reason = f"Properti fisikokimia senyawa selaras. Faktor penentu utama keselamatan: {top_reason[0]}."
-                solution = "Lanjutkan ke uji stabilitas jangka pendek. Properti fisikokimia diprediksi tidak akan memicu interaksi merugikan."
+                reason = f"Properti fisikokimia senyawa selaras. Faktor penentu utama keselamatan: {top_reason[0]} dengan pengaruh stabilisasi {top_reason[1]}%."
+                solution = "Lanjutkan ke formulasi standar dan uji stabilitas jangka pendek (accelerated stability testing). Properti fisikokimia diprediksi saling mendukung tanpa reaksi degradasi yang signifikan."
         else:
             status = "Compatible"
             score = round(random.uniform(0.85, 0.98), 2)

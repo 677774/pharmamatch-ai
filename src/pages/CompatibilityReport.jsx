@@ -68,10 +68,17 @@ export default function CompatibilityReport() {
                         </td>
                         <td className="px-4 py-3 text-on-surface-variant">Predicted</td>
                         <td className="px-4 py-3 text-center">
-                          <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold ${item.status === 'Warning' || item.status === 'Incompatible' ? 'bg-tertiary-fixed text-tertiary border border-tertiary-fixed-dim' : 'bg-[#e3f2fd] text-[#003a7f] border border-[#bbdefb]'}`}>
-                            <span className="material-symbols-outlined text-[14px]">psychology</span>
-                            ML
-                          </span>
+                          {item.source && item.source.includes('Knowledge Base') ? (
+                            <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold ${item.status === 'Warning' || item.status === 'Incompatible' ? 'bg-error-container text-on-error-container border border-error/30' : 'bg-[#e6f4ea] text-[#137333] border border-[#a8dab5]'}`}>
+                              <span className="material-symbols-outlined text-[14px]">check_circle</span>
+                              KB
+                            </span>
+                          ) : (
+                            <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold ${item.status === 'Warning' || item.status === 'Incompatible' ? 'bg-tertiary-fixed text-tertiary border border-tertiary-fixed-dim' : 'bg-[#e3f2fd] text-[#003a7f] border border-[#bbdefb]'}`}>
+                              <span className="material-symbols-outlined text-[14px]">psychology</span>
+                              ML
+                            </span>
+                          )}
                         </td>
                         <td className={`px-4 py-3 text-right font-mono text-xs font-medium ${item.status === 'Warning' || item.status === 'Incompatible' ? 'text-error' : 'text-on-surface-variant'}`}>
                           {item.compatibility_score}
@@ -211,11 +218,11 @@ export default function CompatibilityReport() {
               </button>
               <div className="pt-3 mt-3 border-t border-outline-variant/30">
                 <button 
-                  onClick={() => navigate('/lab-validation')}
+                  onClick={() => navigate('/projects')}
                   className="w-full px-4 py-2.5 bg-[#004251] text-white rounded font-label text-sm font-semibold hover:bg-[#005b6f] transition-colors duration-150 flex justify-center items-center gap-2 shadow-sm"
                 >
-                  <span className="material-symbols-outlined text-[18px]">science</span>
-                  Validasi Lab
+                  <span className="material-symbols-outlined text-[18px]">verified</span>
+                  Validasi Report
                 </button>
               </div>
             </div>

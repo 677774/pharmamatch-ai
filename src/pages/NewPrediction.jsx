@@ -8,9 +8,10 @@ export default function NewPrediction() {
   const navigate = useNavigate();
   const { setPredictionResult } = usePrediction();
 
-  const [apiName, setApiName] = useState('Paracetamol');
+  const [projectName, setProjectName] = useState('');
+  const [apiName, setApiName] = useState('');
   const [excipientInput, setExcipientInput] = useState('');
-  const [excipientsList, setExcipientsList] = useState(['Magnesium Stearate', 'Lactose']);
+  const [excipientsList, setExcipientsList] = useState([]);
   const [kbData, setKbData] = useState([]);
 
   // Fetch KB Data for Smart Check
@@ -52,8 +53,8 @@ export default function NewPrediction() {
   };
 
   const handlePredict = async () => {
-    if (excipientsList.length === 0) {
-      alert("Harap tambahkan minimal 1 Eksipien!");
+    if (excipientsList.length === 0 || !apiName.trim() || !projectName.trim()) {
+      alert("Harap isi Nama Proyek, API, dan minimal 1 Eksipien!");
       return;
     }
     
@@ -74,7 +75,7 @@ export default function NewPrediction() {
         // --- Save to localStorage ---
         const newProject = {
           id: Date.now(),
-          name: `${apiName} Formulation`,
+          name: projectName.trim(),
           status: 'In Progress',
           stability: parseInt(data.global_confidence?.replace('%', '') || 85),
           combinations: excipientsList.length,
@@ -96,11 +97,11 @@ export default function NewPrediction() {
         const existingPending = JSON.parse(localStorage.getItem('pharmamatch_pending_validations') || '[]');
         localStorage.setItem('pharmamatch_pending_validations', JSON.stringify([...newPending, ...existingPending]));
         
-        navigate('/report');
+        navigate('/report', { state: { projectName: projectName.trim() } });
       }
     } catch (err) {
       console.error(err);
-      navigate('/report');
+      navigate('/report', { state: { projectName: projectName.trim() } });
     }
     setIsLoading(false);
     setIsModalOpen(false);
@@ -131,6 +132,23 @@ export default function NewPrediction() {
                 Formulation Components
               </h2>
               <span className="bg-secondary-container text-on-secondary-container text-xs font-semibold px-2.5 py-1 rounded-sm uppercase tracking-wider">Draft Mode</span>
+            </div>
+
+            {/* Project Name Input */}
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-on-surface mb-2 font-label">Project Name</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <span className="material-symbols-outlined text-outline text-[18px]">folder</span>
+                </div>
+                <input 
+                  className="block w-full pl-10 pr-3 py-2.5 border border-outline-variant rounded bg-white text-on-surface text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-shadow" 
+                  type="text" 
+                  value={projectName}
+                  onChange={(e) => setProjectName(e.target.value)}
+                  placeholder="Ketik nama proyek (misal: Aspirin V2)"
+                />
+              </div>
             </div>
 
             {/* API Input */}
