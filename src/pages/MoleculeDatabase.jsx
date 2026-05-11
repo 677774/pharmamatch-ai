@@ -82,7 +82,11 @@ export default function MoleculeDatabase() {
             <div className="flex-1 bg-black relative">
               {/* MolView iframe for robust 3D viewing */}
               <iframe 
-                src={`https://embed.molview.org/v1/?mode=balls&q=${encodeURIComponent(selectedMolFor3D.name)}`}
+                src={`https://embed.molview.org/v1/?mode=balls&${
+                  selectedMolFor3D.smiles && selectedMolFor3D.smiles !== "Unknown" && !selectedMolFor3D.smiles.match(/^[\d-]+$/) 
+                  ? `smiles=${encodeURIComponent(selectedMolFor3D.smiles)}` 
+                  : `q=${encodeURIComponent(selectedMolFor3D.name.replace(/\s*\(.*?\)\s*/g, '').replace(' HCL', ''))}`
+                }`}
                 className="w-full h-full border-0"
                 title="3D MolView"
               />
