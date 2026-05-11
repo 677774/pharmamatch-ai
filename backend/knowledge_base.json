@@ -3,30 +3,88 @@
     "api": "Aspirin",
     "excipient": "Magnesium Stearate",
     "status": "Incompatible",
-    "reason": "Magnesium Stearate accelerates the hydrolysis of Aspirin into Salicylic Acid and Acetic Acid due to its alkaline nature."
+    "reason": "Sifat basa (alkalin) dan kandungan air yang terjebak dalam Magnesium Stearat mempercepat proses hidrolisis Aspirin menjadi Asam Salisilat dan Asam Asetat, terutama pada suhu dan kelembaban tinggi.",
+    "solution": "Ganti pelumas (lubricant) dengan Stearic Acid atau Sodium Stearyl Fumarate. Jika terpaksa menggunakan Magnesium Stearate, pertahankan konsentrasi di bawah 0.5% dan gunakan lingkungan produksi dengan kelembaban (RH) sangat rendah.",
+    "source": "Handbook of Pharmaceutical Excipients, 6th Edition (Rowe et al.)"
   },
   {
     "api": "Lisinopril",
     "excipient": "Lactose",
     "status": "Incompatible",
-    "reason": "Lisinopril undergoes a Maillard reaction with reducing sugars like Lactose, leading to brown discoloration and degradation."
+    "reason": "Lisinopril mengandung gugus amina primer yang sangat reaktif. Ketika dicampur dengan gula pereduksi (reducing sugar) seperti Laktosa, akan terjadi Reaksi Maillard. Hal ini menyebabkan perubahan warna sediaan menjadi coklat dan degradasi API yang masif.",
+    "solution": "Hindari semua jenis eksipien gula pereduksi. Gunakan pengisi (diluent) alternatif seperti Mannitol, Microcrystalline Cellulose (Avicel), atau Dibasic Calcium Phosphate Anhydrous.",
+    "source": "Developing Solid Oral Dosage Forms (Qiu et al.)"
+  },
+  {
+    "api": "Amlodipine Besylate",
+    "excipient": "Lactose",
+    "status": "Incompatible",
+    "reason": "Serupa dengan Lisinopril, Amlodipine memiliki amina primer sekunder yang dapat mengalami Reaksi Maillard dengan Laktosa, menghasilkan kotoran (impurities) turunan dihidropiridin yang toksik.",
+    "solution": "Formulasikan tablet menggunakan Microcrystalline Cellulose atau Anhydrous Dibasic Calcium Phosphate sebagai pengisi utama. Pastikan juga aktivitas air (aw) granul sangat rendah.",
+    "source": "Journal of Pharmaceutical Sciences: Amlodipine Excipient Compatibility"
   },
   {
     "api": "Ibuprofen",
     "excipient": "Stearic Acid",
     "status": "Warning",
-    "reason": "Formation of a eutectic mixture, significantly depressing the melting point and causing physical instability."
-  },
-  {
-    "api": "Metformin HCL",
-    "excipient": "Sodium Lauryl Sulfate (SLS)",
-    "status": "Compatible",
-    "reason": "Commonly used in wet granulation. Exhibits good physical and chemical stability without significant interactions."
+    "reason": "Pencampuran mekanis antara Ibuprofen dan Stearic Acid berisiko membentuk campuran eutektik. Ini menurunkan titik leleh campuran secara drastis, membuat granul menjadi lembek, lengket, dan rentan terhadap masalah saat pencetakan tablet (sticking & picking).",
+    "solution": "Gunakan eksipien dengan titik leleh tinggi seperti Talc. Jika menggunakan Stearic Acid, minimalisir gaya gesek (shear force) selama pencampuran dan jaga suhu ruangan di bawah 20°C.",
+    "source": "Pharmaceutical Preformulation and Formulation (Gibson)"
   },
   {
     "api": "Ascorbic Acid",
     "excipient": "Talc",
     "status": "Warning",
-    "reason": "Trace heavy metals in Talc can catalyze the oxidative degradation of Ascorbic Acid."
+    "reason": "Talc alami sering kali mengandung pengotor logam berat dalam jumlah sekelumit (trace heavy metals seperti Besi dan Tembaga). Logam berat ini bertindak sebagai katalis yang mempercepat degradasi oksidatif dari Vitamin C.",
+    "solution": "Gunakan Talc grade murni yang sudah di-acid-washed. Sangat disarankan untuk menambahkan agen kelasi (chelating agent) seperti EDTA atau Disodium Edetate ke dalam formula untuk mengikat ion logam.",
+    "source": "Aulton's Pharmaceutics: The Design and Manufacture of Medicines"
+  },
+  {
+    "api": "Omeprazole",
+    "excipient": "Croscarmellose Sodium",
+    "status": "Incompatible",
+    "reason": "Omeprazole sangat labil terhadap lingkungan asam. Croscarmellose Sodium memiliki gugus karboksilat yang menciptakan lingkungan mikro yang sedikit asam (microenvironmental pH turun), menyebabkan degradasi cepat pada cincin benzimidazole Omeprazole.",
+    "solution": "Gunakan agen penstabil basa kuat (alkalizing agents) seperti Sodium Bicarbonate atau Magnesium Oxide di inti tablet. Selalu gunakan sistem penyalutan enterik (enteric coating) untuk produk akhir.",
+    "source": "Handbook of Pharmaceutical Excipients & FDA ANDA Reviews"
+  },
+  {
+    "api": "Simvastatin",
+    "excipient": "Microcrystalline Cellulose",
+    "status": "Warning",
+    "reason": "Microcrystalline Cellulose (MCC) sering kali mengandung residu hidroperoksida dalam jumlah kecil dari proses fabrikasinya. Peroksida ini dapat mengoksidasi rantai ikatan rangkap pada Simvastatin secara lambat (oksidasi sekunder).",
+    "solution": "Gunakan grade MCC dengan kandungan peroksida rendah (Low Peroxide Grade). Tambahkan antioksidan kuat seperti BHA (Butylated Hydroxyanisole) atau BHT, serta Ascorbic Acid sebagai sinergis.",
+    "source": "International Journal of Pharmaceutics: Statin Compatibility Studies"
+  },
+  {
+    "api": "Erythromycin",
+    "excipient": "Citric Acid",
+    "status": "Incompatible",
+    "reason": "Eritromisin sangat tidak stabil dalam suasana asam. Eksipien asam organik seperti Citric Acid memicu degradasi intramolekuler yang dikatalisis asam, menghasilkan pembentukan turunan ketal yang tidak aktif secara antimikroba.",
+    "solution": "Hindari sama sekali penggunaan eksipien atau pengawet yang bersifat asam. Gunakan sistem dapar (buffer) netral hingga sedikit basa untuk mempertahankan stabilitas makrolida.",
+    "source": "Pharmaceutical Preformulation: Physicochemical Properties of Drugs"
+  },
+  {
+    "api": "Levothyroxine",
+    "excipient": "Calcium Carbonate",
+    "status": "Incompatible",
+    "reason": "Kalsium dari eksipien akan membentuk kompleks kelat yang sangat tidak larut dengan Levothyroxine di lingkungan pencernaan. Hal ini menyebabkan penurunan ketersediaan hayati (bioavailabilitas) obat secara dramatis.",
+    "solution": "Dilarang menggunakan Calcium Carbonate sebagai pengisi (diluent). Gunakan pengisi netral dan non-reaktif. Ingatkan pasien untuk tidak mengonsumsi antasida berdekatan dengan jadwal minum obat ini.",
+    "source": "FDA Prescribing Information & Pharmacopeial Forum"
+  },
+  {
+    "api": "Metformin HCL",
+    "excipient": "Sodium Lauryl Sulfate (SLS)",
+    "status": "Compatible",
+    "reason": "Tidak ada interaksi kimia yang merugikan. Secara fisikokimia, SLS sering ditambahkan pada formulasi Metformin untuk meningkatkan keterbasahan (wetting) matriks granul, tanpa memicu degradasi basa/asam.",
+    "solution": "Formula aman untuk dilanjutkan. Pertimbangkan pengujian Disolusi Komparatif ( dissolution profiling) untuk memastikan penambahan surfaktan (SLS) tidak mempercepat pelepasan obat melebihi spesifikasi.",
+    "source": "Pharmaceutical Formulation and Design (Aulton)"
+  },
+  {
+    "api": "Paracetamol",
+    "excipient": "Povidone",
+    "status": "Compatible",
+    "reason": "Povidone (PVP) adalah pengikat (binder) polimerik yang sangat cocok untuk Paracetamol. Tidak ada gugus fungsi reaktif antara polimer PVP dan cincin fenolik dari Paracetamol, dan mencegah terbentuknya kapiler rapuh saat pencetakan tablet.",
+    "solution": "Formula optimal. Sangat disarankan digunakan dalam proses Granulasi Basah (Wet Granulation) menggunakan air murni sebagai pelarut pengikat.",
+    "source": "Handbook of Pharmaceutical Excipients, 6th Edition"
   }
 ]

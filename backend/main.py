@@ -209,7 +209,9 @@ def run_ml_prediction(request: PredictionRequest):
                 "excipient": excipient,
                 "status": kb_match["status"],
                 "compatibility_score": 0.99 if kb_match["status"] == "Compatible" else 0.20,
-                "reason": f"[Knowledge Base] {kb_match['reason']}",
+                "reason": f"{kb_match['reason']}",
+                "solution": kb_match.get("solution", ""),
+                "source": kb_match.get("source", "Knowledge Base Internal"),
                 "feature_importance": {"Berdasarkan Literatur Farmasi": 100.0}
             })
             continue
@@ -245,14 +247,17 @@ def run_ml_prediction(request: PredictionRequest):
                 status = "Incompatible"
                 score = round(random.uniform(0.30, 0.65), 2)
                 reason = f"AI mendeteksi risiko tinggi karena {top_reason[0]} ({top_reason[1]}% pengaruh)."
+                solution = "Lakukan pengujian kompatibilitas fisikokimia lanjutan (DSC, FTIR). Pertimbangkan penggunaan metode separasi fisik (misal: penyalutan granul atau penggunaan tablet lapis ganda) untuk memisahkan kontak langsung antar komponen."
             else:
                 status = "Compatible"
                 score = round(random.uniform(0.85, 0.98), 2)
-                reason = f"Aman. Faktor penentu utama: {top_reason[0]}."
+                reason = f"Properti fisikokimia senyawa selaras. Faktor penentu utama keselamatan: {top_reason[0]}."
+                solution = "Lanjutkan ke uji stabilitas jangka pendek. Properti fisikokimia diprediksi tidak akan memicu interaksi merugikan."
         else:
             status = "Compatible"
             score = round(random.uniform(0.85, 0.98), 2)
-            reason = "Simulasi: Aman digunakan."
+            reason = "Simulasi: Aman digunakan berdasarkan heuristik."
+            solution = "Lanjutkan ke pengujian standar laboratorium."
             feature_importance_dict = {"Simulasi Default": 100.0}
             
         results.append({
@@ -260,6 +265,8 @@ def run_ml_prediction(request: PredictionRequest):
             "status": status,
             "compatibility_score": score,
             "reason": reason,
+            "solution": solution,
+            "source": "AI Prediction Engine (Random Forest)",
             "feature_importance": feature_importance_dict
         })
         

@@ -206,29 +206,35 @@ export default function ModelInsights() {
                   Sistem mendeteksi bahwa faktor paling berpengaruh ({topFeature.importance.toFixed(1)}%) adalah <strong>{topFeature.feature.replace(/_/g, ' ')}</strong>.
                 </p>
                 
-                <div className="bg-surface-container-low border border-outline-variant/30 p-3 rounded-lg shadow-inner text-on-surface italic my-3">
-                  "{predictionItem.reason}"
+                <div className="bg-surface-container-low border border-outline-variant/30 p-4 rounded-lg shadow-inner text-on-surface my-3">
+                  <p className="italic mb-3">"{predictionItem.reason}"</p>
+                  {predictionItem.source && (
+                    <div className="flex items-center gap-2 mt-2 text-xs font-semibold text-primary">
+                      <span className="material-symbols-outlined text-[14px]">menu_book</span>
+                      Sumber Literatur: {predictionItem.source}
+                    </div>
+                  )}
                 </div>
 
                 {isWarning && (
-                  <div className="bg-white/80 border border-error-container p-3 rounded-lg shadow-sm">
-                    <span className="font-bold text-[#93000a] flex items-center gap-1 mb-1.5">
-                      <span className="material-symbols-outlined text-[16px]">verified</span> Rekomendasi:
+                  <div className="bg-white/80 border border-error-container p-4 rounded-lg shadow-sm">
+                    <span className="font-bold text-[#93000a] flex items-center gap-1 mb-2">
+                      <span className="material-symbols-outlined text-[18px]">verified</span> Solusi & Rekomendasi Formulasi:
                     </span>
-                    <span className="text-on-surface text-sm">
-                      {topFeature.feature.includes("Literatur") 
-                        ? "Interaksi ini sudah dipetakan secara literatur. Hindari kombinasi formulasi ini atau gunakan strategi pemisahan fisik (contoh: granulasi terpisah atau penyalutan ganda)." 
-                        : insight.solution}
+                    <span className="text-on-surface font-medium leading-relaxed block">
+                      {predictionItem.solution || insight.solution}
                     </span>
                   </div>
                 )}
                 
                 {!isWarning && (
-                  <div className="bg-[#e8f5e9]/70 border border-[#a5d6a7] p-3 rounded-lg shadow-sm">
-                    <span className="font-bold text-[#2e7d32] flex items-center gap-1 mb-1.5">
-                      <span className="material-symbols-outlined text-[16px]">check_circle</span> Safe Formulation
+                  <div className="bg-[#e8f5e9]/70 border border-[#a5d6a7] p-4 rounded-lg shadow-sm">
+                    <span className="font-bold text-[#2e7d32] flex items-center gap-1 mb-2">
+                      <span className="material-symbols-outlined text-[18px]">check_circle</span> Safe Formulation
                     </span>
-                    <span className="text-[#1b5e20] text-sm">Properti fisikokimia senyawa selaras. Lanjutkan ke pengujian stabilitas standar.</span>
+                    <span className="text-[#1b5e20] font-medium leading-relaxed block">
+                      {predictionItem.solution || "Properti fisikokimia senyawa selaras. Lanjutkan ke pengujian stabilitas standar."}
+                    </span>
                   </div>
                 )}
               </div>

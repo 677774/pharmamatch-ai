@@ -58,54 +58,19 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Left Column (Projects) */}
         <div className="lg:col-span-2 flex flex-col gap-6">
-          {/* Recent Projects Glass Card */}
-          <div className="bg-surface-container-lowest/80 backdrop-blur-xl border border-outline-variant/40 rounded-2xl flex flex-col shadow-sm">
+          {/* Active Projects Empty State */}
+          <div className="bg-surface-container-lowest/80 backdrop-blur-xl border border-outline-variant/40 rounded-2xl flex flex-col shadow-sm min-h-[300px]">
             <div className="px-6 py-4 border-b border-outline-variant/30 flex justify-between items-center">
               <h3 className="font-headline text-lg font-bold text-on-surface">Active Projects</h3>
-              <Link to="/projects" className="text-primary font-label text-sm font-medium hover:underline">View All</Link>
             </div>
-            <div className="p-0">
-              {/* Table Header */}
-              <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-surface-container-low/50 border-b border-outline-variant/20 font-label text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
-                <div className="col-span-5">Project Name</div>
-                <div className="col-span-3">Status</div>
-                <div className="col-span-3">Confidence</div>
-                <div className="col-span-1 text-right">Action</div>
-              </div>
-              
-              {/* Project Rows */}
-              <div className="divide-y divide-outline-variant/20">
-                {recentProjects.map((project, index) => (
-                  <div key={project.id} className="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-surface-container-low/30 transition-colors cursor-pointer group">
-                    <div className="col-span-5 flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded ${index === 0 ? 'bg-primary-container text-on-primary' : index === 1 ? 'bg-secondary-container text-on-secondary-container' : 'bg-surface-container-highest text-on-surface-variant'} flex items-center justify-center shrink-0`}>
-                        <span className="material-symbols-outlined text-[18px]">{project.icon}</span>
-                      </div>
-                      <div>
-                        <p className="font-label text-sm font-bold text-on-surface group-hover:text-primary transition-colors">{project.name.split(' ')[0]}</p>
-                        <p className="font-label text-xs text-outline">Target: {index === 0 ? 'Kinase Inhibitor' : index === 1 ? 'GPCR' : 'Ion Channel'}</p>
-                      </div>
-                    </div>
-                    <div className="col-span-3">
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${project.status === 'In Progress' ? 'bg-primary-fixed/30 text-on-primary-fixed border-primary-fixed' : project.status === 'Validated' ? 'bg-tertiary-fixed/30 text-on-tertiary-fixed-variant border-tertiary-fixed' : 'bg-surface-container-high text-on-surface-variant border-outline-variant/50'} font-label text-xs font-medium border`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${project.status === 'In Progress' ? 'bg-primary' : project.status === 'Validated' ? 'bg-tertiary-container' : 'bg-outline'}`}></span>
-                        {project.status === 'In Progress' ? 'In Progress' : project.status === 'Validated' ? 'Validating' : 'Paused'}
-                      </span>
-                    </div>
-                    <div className="col-span-3 flex items-center gap-3">
-                      <div className="w-full bg-surface-container-highest rounded-full h-1.5">
-                        <div className={`h-1.5 rounded-full ${project.stability > 80 ? 'bg-primary' : 'bg-outline'}`} style={{ width: `${project.stability}%` }}></div>
-                      </div>
-                      <span className="font-label text-xs font-bold text-on-surface">{project.stability}%</span>
-                    </div>
-                    <div className="col-span-1 text-right">
-                      <button className="text-outline hover:text-primary transition-colors">
-                        <span className="material-symbols-outlined text-[20px]">chevron_right</span>
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="flex-1 flex flex-col items-center justify-center p-10 text-center">
+              <span className="material-symbols-outlined text-5xl text-outline-variant mb-4" style={{ fontVariationSettings: "'wght' 200" }}>folder_open</span>
+              <h4 className="font-headline text-lg font-bold text-on-surface mb-2">No Active Projects</h4>
+              <p className="text-on-surface-variant text-sm max-w-sm mb-6">Start a new formulation analysis session to create a project and track its compatibility over time.</p>
+              <Link to="/new-prediction" className="px-5 py-2.5 bg-[#004251] text-white rounded font-label text-sm font-semibold hover:bg-[#005b6f] transition-colors shadow-sm flex items-center gap-2">
+                <span className="material-symbols-outlined text-[18px]">add</span>
+                Start New Session
+              </Link>
             </div>
           </div>
 
@@ -148,52 +113,24 @@ export default function Dashboard() {
 
         {/* Right Column (Validations Widget) */}
         <div className="lg:col-span-1 flex flex-col gap-6">
-          {/* Recent Validations Panel */}
-          <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl flex flex-col h-full overflow-hidden">
+          {/* Recent Validations Empty State */}
+          <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl flex flex-col h-full overflow-hidden min-h-[300px]">
             <div className="px-6 py-5 border-b border-outline-variant/30 bg-surface-container-low/30 flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary">science</span>
                 <h3 className="font-headline text-base font-bold text-on-surface">Lab Validations</h3>
               </div>
             </div>
-            <div className="flex-1 p-5 space-y-4">
-              {/* Validation Item 1 */}
-              <div className="bg-surface border border-outline-variant/20 rounded-xl p-4 hover:border-outline-variant/50 transition-colors">
-                <div className="flex justify-between items-start mb-2">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary-fixed/30 text-on-primary-fixed font-label text-[10px] font-bold uppercase tracking-wide">
-                    Confirmed
-                  </span>
-                  <span className="font-label text-xs text-outline">2h ago</span>
-                </div>
-                <h4 className="font-headline text-sm font-bold text-on-surface mb-1">Metformin + SLS</h4>
-                <p className="font-label text-xs text-on-surface-variant">Solubility increased by 42%. Stability confirmed at 40°C/75% RH.</p>
-              </div>
-              {/* Validation Item 2 */}
-              <div className="bg-surface border border-outline-variant/20 rounded-xl p-4 hover:border-outline-variant/50 transition-colors">
-                <div className="flex justify-between items-start mb-2">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary-fixed/30 text-on-primary-fixed font-label text-[10px] font-bold uppercase tracking-wide">
-                    Confirmed
-                  </span>
-                  <span className="font-label text-xs text-outline">5h ago</span>
-                </div>
-                <h4 className="font-headline text-sm font-bold text-on-surface mb-1">Aspirin + PVP</h4>
-                <p className="font-label text-xs text-on-surface-variant">Crystallization inhibited successfully over 30-day accelerated trial.</p>
-              </div>
-              {/* Validation Item 3 */}
-              <div className="bg-surface border border-outline-variant/20 rounded-xl p-4 hover:border-outline-variant/50 transition-colors">
-                <div className="flex justify-between items-start mb-2">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-error-container/50 text-on-error-container font-label text-[10px] font-bold uppercase tracking-wide">
-                    Anomalous
-                  </span>
-                  <span className="font-label text-xs text-outline">1d ago</span>
-                </div>
-                <h4 className="font-headline text-sm font-bold text-on-surface mb-1">Compound X-12 + PEG</h4>
-                <p className="font-label text-xs text-on-surface-variant">Phase separation observed after 48h. Model updated.</p>
-              </div>
+            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-surface-container-lowest/50">
+               <div className="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center text-outline-variant mb-4">
+                 <span className="material-symbols-outlined text-3xl">biotech</span>
+               </div>
+               <p className="font-label text-sm font-bold text-on-surface mb-1">No Validations Yet</p>
+               <p className="text-xs text-on-surface-variant leading-relaxed">Submit your first formulation to the laboratory to see physical validation results appear here.</p>
             </div>
             <div className="px-5 py-3 border-t border-outline-variant/20 bg-surface-container-low/30">
               <Link to="/lab-validation" className="block w-full text-center font-label text-xs font-semibold text-primary hover:text-primary-container transition-colors">
-                View Full Audit Trail
+                Go to Validation Hub
               </Link>
             </div>
           </div>
