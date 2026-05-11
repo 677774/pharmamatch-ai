@@ -98,9 +98,17 @@ export default function Projects() {
             </div>
             
             <div className="mt-2 space-y-4 flex-1">
-              <div className="flex items-center gap-2 text-sm text-on-surface-variant font-body">
-                <span className="material-symbols-outlined text-[18px] text-outline">{project.icon || 'science'}</span>
-                <span>{project.combinations} active combinations</span>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2 text-sm text-on-surface-variant font-body">
+                  <span className="material-symbols-outlined text-[18px] text-outline">{project.icon || 'science'}</span>
+                  <span>{project.combinations} active combinations</span>
+                </div>
+                {project.dosage_form && (
+                  <div className="flex items-center gap-2 text-sm text-on-surface-variant font-body">
+                    <span className="material-symbols-outlined text-[18px] text-outline">medication</span>
+                    <span>{project.dosage_form}</span>
+                  </div>
+                )}
               </div>
               
               <div className="pt-4 border-t border-outline-variant/30">

@@ -9,6 +9,7 @@ export default function NewPrediction() {
   const { setPredictionResult } = usePrediction();
 
   const [projectName, setProjectName] = useState('');
+  const [dosageForm, setDosageForm] = useState('Tablet / Kapsul');
   const [apiName, setApiName] = useState('');
   const [excipientInput, setExcipientInput] = useState('');
   const [excipientsList, setExcipientsList] = useState([]);
@@ -65,7 +66,8 @@ export default function NewPrediction() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           api: apiName,
-          excipients: excipientsList
+          excipients: excipientsList,
+          dosage_form: dosageForm
         })
       });
       const data = await response.json();
@@ -76,6 +78,7 @@ export default function NewPrediction() {
         const newProject = {
           id: Date.now(),
           name: projectName.trim(),
+          dosage_form: dosageForm,
           status: 'In Progress',
           stability: parseInt(data.global_confidence?.replace('%', '') || 85),
           combinations: excipientsList.length,
@@ -97,11 +100,11 @@ export default function NewPrediction() {
         const existingPending = JSON.parse(localStorage.getItem('pharmamatch_pending_validations') || '[]');
         localStorage.setItem('pharmamatch_pending_validations', JSON.stringify([...newPending, ...existingPending]));
         
-        navigate('/report', { state: { projectName: projectName.trim() } });
+        navigate('/report', { state: { projectName: projectName.trim(), dosageForm: dosageForm } });
       }
     } catch (err) {
       console.error(err);
-      navigate('/report', { state: { projectName: projectName.trim() } });
+      navigate('/report', { state: { projectName: projectName.trim(), dosageForm: dosageForm } });
     }
     setIsLoading(false);
     setIsModalOpen(false);
@@ -135,19 +138,43 @@ export default function NewPrediction() {
             </div>
 
             {/* Project Name Input */}
-            <div className="mb-6">
-              <label className="block text-sm font-semibold text-on-surface mb-2 font-label">Project Name</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="material-symbols-outlined text-outline text-[18px]">folder</span>
+            <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-on-surface mb-2 font-label">Project Name</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span className="material-symbols-outlined text-outline text-[18px]">folder</span>
+                  </div>
+                  <input 
+                    className="block w-full pl-10 pr-3 py-2.5 border border-outline-variant rounded bg-white text-on-surface text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-shadow" 
+                    type="text" 
+                    value={projectName}
+                    onChange={(e) => setProjectName(e.target.value)}
+                    placeholder="Ketik nama proyek (misal: Aspirin V2)"
+                  />
                 </div>
-                <input 
-                  className="block w-full pl-10 pr-3 py-2.5 border border-outline-variant rounded bg-white text-on-surface text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-shadow" 
-                  type="text" 
-                  value={projectName}
-                  onChange={(e) => setProjectName(e.target.value)}
-                  placeholder="Ketik nama proyek (misal: Aspirin V2)"
-                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-on-surface mb-2 font-label">Bentuk Sediaan (Dosage Form)</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span className="material-symbols-outlined text-outline text-[18px]">medication</span>
+                  </div>
+                  <select 
+                    className="block w-full pl-10 pr-10 py-2.5 border border-outline-variant rounded bg-white text-on-surface text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-shadow appearance-none" 
+                    value={dosageForm}
+                    onChange={(e) => setDosageForm(e.target.value)}
+                  >
+                    <option value="Tablet / Kapsul">Tablet / Kapsul (Solid)</option>
+                    <option value="Suspensi / Sirup">Suspensi / Sirup (Liquid Oral)</option>
+                    <option value="Injeksi / IV">Injeksi / IV (Parenteral)</option>
+                    <option value="Krim / Salep">Krim / Salep (Topikal)</option>
+                    <option value="Suppositoria">Suppositoria</option>
+                  </select>
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    <span className="material-symbols-outlined text-outline text-[18px]">expand_more</span>
+                  </div>
+                </div>
               </div>
             </div>
 

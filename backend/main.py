@@ -82,6 +82,7 @@ class RegisterRequest(BaseModel):
 class PredictionRequest(BaseModel):
     api: str
     excipients: List[str]
+    dosage_form: str = "Tablet / Kapsul"
 
 # --- ENDPOINTS ---
 @app.get("/")
@@ -190,6 +191,7 @@ def search_pubchem(name: str):
 @app.post("/api/predict")
 def run_ml_prediction(request: PredictionRequest):
     api_name = request.api
+    dosage_form = request.dosage_form
     results = []
     global_confidence = random.randint(85, 96)
     
@@ -213,29 +215,33 @@ def run_ml_prediction(request: PredictionRequest):
         'Temp_Stability_Celsius': 'Sensitivitas suhu/termodinamika'
     }
 
-    for excipient in request.excipients:
+    def evaluate_interaction(mol1_name, mol2_name, is_exc_exc=False):
         # 1. Check Knowledge Base First
-        kb_match = next((item for item in kb_data if item["api"].lower() in api_name.lower() and item["excipient"].lower() in excipient.lower()), None)
+        kb_match = next((item for item in kb_data if 
+            (item["api"].lower() in mol1_name.lower() and item["excipient"].lower() in mol2_name.lower()) or 
+            (item["api"].lower() in mol2_name.lower() and item["excipient"].lower() in mol1_name.lower())), None)
+        
+        display_name = f"{mol2_name}" if not is_exc_exc else f"[Exc-Exc] {mol1_name} + {mol2_name}"
         
         if kb_match:
-            results.append({
-                "excipient": excipient,
+            return {
+                "excipient": display_name,
                 "status": kb_match["status"],
                 "compatibility_score": 0.99 if kb_match["status"] == "Compatible" else 0.20,
                 "reason": f"{kb_match['reason']}",
                 "solution": kb_match.get("solution", ""),
                 "source": kb_match.get("source", "Knowledge Base Internal"),
                 "feature_importance": {"Berdasarkan Literatur Farmasi": 100.0}
-            })
-            continue
+            }
             
         # 2. If not in KB, use Machine Learning
-        excipient_features = fetch_features_for_prediction(excipient)
+        mol1_features = fetch_features_for_prediction(mol1_name)
+        mol2_features = fetch_features_for_prediction(mol2_name)
         
-        logP_diff = abs(api_features['logp'] - excipient_features['logp'])
-        mw_ratio = max(api_features['mw'], excipient_features['mw']) / max(min(api_features['mw'], excipient_features['mw']), 1.0)
-        psa_diff = abs(api_features['psa'] - excipient_features['psa'])
-        h_mismatch = abs(api_features['h_donors'] - excipient_features['h_acceptors']) + abs(api_features['h_acceptors'] - excipient_features['h_donors'])
+        logP_diff = abs(mol1_features['logp'] - mol2_features['logp'])
+        mw_ratio = max(mol1_features['mw'], mol2_features['mw']) / max(min(mol1_features['mw'], mol2_features['mw']), 1.0)
+        psa_diff = abs(mol1_features['psa'] - mol2_features['psa'])
+        h_mismatch = abs(mol1_features['h_donors'] - mol2_features['h_acceptors']) + abs(mol1_features['h_acceptors'] - mol2_features['h_donors'])
         temp_stability = random.uniform(20.0, 80.0) 
         
         if rf_model is not None and len(rf_features) == 5:
@@ -259,17 +265,40 @@ def run_ml_prediction(request: PredictionRequest):
             if prediction == 1:
                 status = "Incompatible"
                 score = round(random.uniform(0.30, 0.65), 2)
-                reason = f"AI mendeteksi risiko tinggi karena {top_reason[0]} ({top_reason[1]}% pengaruh terhadap ketidakstabilan)."
+                prefix = f"AI mendeteksi risiko interaksi antar eksipien karena" if is_exc_exc else "AI mendeteksi risiko tinggi karena"
+                reason = f"{prefix} {top_reason[0]} ({top_reason[1]}% pengaruh terhadap ketidakstabilan)."
                 
-                # Dynamic solutions based on RDKit feature
+                # Dynamic solutions based on RDKit feature and Dosage Form
                 if top_reason[0] == 'Sensitivitas suhu/termodinamika':
-                    solution = "Hindari proses granulasi basah bersuhu tinggi. Pertimbangkan metode direct compression atau simpan sediaan secara ketat di bawah suhu 25°C."
+                    if "Injeksi" in dosage_form or "Suspensi" in dosage_form:
+                        solution = "Untuk sediaan cair/injeksi, perhatikan risiko pengendapan akibat perubahan suhu. Pertimbangkan penambahan buffer atau simpan di bawah suhu 25°C."
+                    elif "Krim" in dosage_form or "Suppositoria" in dosage_form:
+                        solution = "Titik leleh eutetik mungkin menguntungkan untuk sediaan semisolid, namun pastikan kestabilan fase emulsi tidak pecah. Hindari pemanasan ekstrem saat *mixing*."
+                    else:
+                        solution = "Hindari proses granulasi basah bersuhu tinggi. Pertimbangkan metode direct compression atau simpan sediaan secara ketat di bawah suhu 25°C."
+                
                 elif top_reason[0] == 'Perbedaan kelarutan lemak (LogP)':
-                    solution = "Gunakan surfaktan tambahan (misal: SLS atau Tween 80) atau bentuk sistem dispersi padat untuk meningkatkan profil disolusi dan ketersediaan hayati."
+                    if "Injeksi" in dosage_form:
+                        solution = "Gunakan pelarut campur (co-solvent) seperti Propilen Glikol, PEG 400, atau bentuk sistem misel/liposom untuk melarutkan senyawa lipofilik dalam pembawa air steril."
+                    elif "Suspensi" in dosage_form:
+                        solution = "Gunakan surfaktan/wetting agent (misal: Tween 80) agar partikel hidrofobik dapat terbasahi oleh medium air dan tidak mengapung."
+                    elif "Krim" in dosage_form:
+                        solution = "Sesuaikan rasio fase minyak/air atau gunakan emulgator yang lebih kuat dengan nilai HLB yang tepat agar sediaan tidak *cracking*."
+                    else:
+                        solution = "Gunakan surfaktan tambahan atau bentuk sistem dispersi padat untuk meningkatkan profil disolusi serbuk."
+                
                 elif top_reason[0] == 'Ketidakcocokan kepolaran permukaan (PSA)':
-                    solution = "Gunakan pelapis polimer hidrofilik (seperti HPMC) pada granul API untuk meminimalisasi kontak langsung akibat perbedaan tegangan permukaan ekstrim."
+                    if "Suspensi" in dosage_form or "Injeksi" in dosage_form:
+                        solution = "Gunakan suspending agent tambahan (seperti CMC-Na) untuk mencegah agregasi partikel akibat perbedaan muatan permukaan yang mencolok."
+                    else:
+                        solution = "Gunakan pelapis polimer hidrofilik (seperti HPMC) pada granul API untuk meminimalisasi kontak langsung akibat higroskopisitas tinggi."
+                
                 elif top_reason[0] == 'Ketidakstabilan ikatan hidrogen':
-                    solution = "Terdeteksi potensi pembentukan donor-akseptor ireversibel. Pisahkan komponen secara fisik menggunakan tablet lapis ganda (bilayer tablet) atau mikroenkapsulasi."
+                    if "Liquid" in dosage_form or "Suspensi" in dosage_form or "Injeksi" in dosage_form:
+                        solution = "Dalam medium air, reaksi donor-akseptor akan sangat cepat. Turunkan pH sediaan atau hindari pencampuran keduanya dalam satu vial."
+                    else:
+                        solution = "Terdeteksi potensi pembentukan kompleks donor-akseptor ireversibel. Pisahkan komponen secara fisik menggunakan tablet lapis ganda (bilayer tablet)."
+                
                 else:
                     solution = "Lakukan pengujian kompatibilitas fisikokimia lanjutan (DSC, FTIR). Pertimbangkan penggunaan metode separasi fisik untuk memisahkan kontak langsung antar komponen."
                     
@@ -277,7 +306,10 @@ def run_ml_prediction(request: PredictionRequest):
                 status = "Compatible"
                 score = round(random.uniform(0.85, 0.98), 2)
                 reason = f"Properti fisikokimia senyawa selaras. Faktor penentu utama keselamatan: {top_reason[0]} dengan pengaruh stabilisasi {top_reason[1]}%."
-                solution = "Lanjutkan ke formulasi standar dan uji stabilitas jangka pendek (accelerated stability testing). Properti fisikokimia diprediksi saling mendukung tanpa reaksi degradasi yang signifikan."
+                if "Injeksi" in dosage_form:
+                    solution = "Properti larutan diprediksi stabil. Pastikan pH dan isotonisitas disesuaikan sebelum sterilisasi akhir."
+                else:
+                    solution = "Lanjutkan ke formulasi standar dan uji stabilitas jangka pendek (accelerated stability). Properti fisikokimia diprediksi saling mendukung tanpa reaksi degradasi yang signifikan."
         else:
             status = "Compatible"
             score = round(random.uniform(0.85, 0.98), 2)
@@ -285,15 +317,25 @@ def run_ml_prediction(request: PredictionRequest):
             solution = "Lanjutkan ke pengujian standar laboratorium."
             feature_importance_dict = {"Simulasi Default": 100.0}
             
-        results.append({
-            "excipient": excipient,
+        return {
+            "excipient": display_name,
             "status": status,
             "compatibility_score": score,
             "reason": reason,
             "solution": solution,
             "source": "AI Prediction Engine (Random Forest)",
             "feature_importance": feature_importance_dict
-        })
+        }
+
+    # API vs Excipients
+    for excipient in request.excipients:
+        results.append(evaluate_interaction(api_name, excipient, is_exc_exc=False))
+        
+    # Excipient vs Excipient
+    import itertools
+    if len(request.excipients) > 1:
+        for exc1, exc2 in itertools.combinations(request.excipients, 2):
+            results.append(evaluate_interaction(exc1, exc2, is_exc_exc=True))
         
     return {
         "status": "success",
