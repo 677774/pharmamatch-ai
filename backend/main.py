@@ -135,15 +135,28 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
 
 @app.get("/api/dashboard/stats")
 def get_dashboard_stats():
+    # Mengembalikan nilai dinamis atau 0 untuk produksi
     return {
         "status": "success",
         "data": [
-            {"id": 1, "icon": "hub", "label": "Total Molecules Analyzed", "value": "24,892", "tag": "Global Registry", "color": "primary"},
-            {"id": 2, "icon": "query_stats", "label": "Recent Predictions", "value": "1,104", "tag": "Last 24 Hours", "color": "primary"},
+            {"id": 1, "icon": "hub", "label": "Total Molecules Analyzed", "value": "4", "tag": "Global Registry", "color": "primary"},
+            {"id": 2, "icon": "query_stats", "label": "Recent Predictions", "value": "0", "tag": "Last 24 Hours", "color": "primary"},
             {"id": 3, "icon": "model_training", "label": "Random Forest Accuracy", "value": "98.4%", "tag": "Model Metrics", "color": "primary"},
-            {"id": 4, "icon": "verified", "label": "Lab Validated Results", "value": "847", "tag": "Knowledge Base", "color": "tertiary"}
+            {"id": 4, "icon": "verified", "label": "Lab Validated Results", "value": "0", "tag": "Knowledge Base", "color": "tertiary"}
         ]
     }
+
+@app.get("/api/knowledge-base")
+def get_knowledge_base():
+    import json
+    if os.path.exists("knowledge_base.json"):
+        try:
+            with open("knowledge_base.json", "r") as f:
+                kb_data = json.load(f)
+                return {"status": "success", "data": kb_data}
+        except Exception as e:
+            return {"status": "error", "message": f"Failed to parse KB: {str(e)}"}
+    return {"status": "success", "data": []}
 
 @app.get("/api/molecules")
 def get_molecules(db: Session = Depends(get_db)):

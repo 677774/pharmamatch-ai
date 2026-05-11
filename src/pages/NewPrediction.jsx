@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { usePrediction } from '../context/PredictionContext';
 
@@ -8,10 +8,37 @@ export default function NewPrediction() {
   const navigate = useNavigate();
   const { setPredictionResult } = usePrediction();
 
-  // State untuk Input Dinamis
-  const [apiName, setApiName] = useState('');
+  const [apiName, setApiName] = useState('Paracetamol');
   const [excipientInput, setExcipientInput] = useState('');
-  const [excipientsList, setExcipientsList] = useState([]);
+  const [excipientsList, setExcipientsList] = useState(['Magnesium Stearate', 'Lactose']);
+  const [kbData, setKbData] = useState([]);
+
+  // Fetch KB Data for Smart Check
+  useEffect(() => {
+    fetch('https://dzamar-pharmamatch-backend.hf.space/api/knowledge-base')
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'success') {
+          setKbData(data.data);
+        }
+      })
+      .catch(err => console.error("Error fetching KB for smart check:", err));
+  }, []);
+
+  // Compute Smart Check
+  const smartCheck = {
+    kbHits: 0,
+    mlHits: 0
+  };
+  
+  excipientsList.forEach(exc => {
+    const isKb = kbData.some(item => 
+      item.api.toLowerCase().includes(apiName.toLowerCase()) && 
+      item.excipient.toLowerCase().includes(exc.toLowerCase())
+    );
+    if (isKb) smartCheck.kbHits++;
+    else smartCheck.mlHits++;
+  });
 
   const handleAddExcipient = () => {
     if (excipientInput.trim() !== '') {
@@ -120,11 +147,9 @@ export default function NewPrediction() {
                   onChange={(e) => setApiName(e.target.value)}
                   placeholder="Ketik nama API di sini..."
                 />
-                {apiName && (
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                   <span className="material-symbols-outlined text-[#003a7f] text-[18px]">check_circle</span>
                 </div>
-                )}
               </div>
             </div>
 
@@ -182,26 +207,24 @@ export default function NewPrediction() {
 
         {/* Right Column: Analysis & Visual (5 cols) */}
         <div className="lg:col-span-5 flex flex-col gap-6">
-          {/* Analysis Summary Card (Glassmorphism) */}
-          <section className="bg-white/85 backdrop-blur-[12px] border border-[#dde3ea] rounded-xl p-6 relative overflow-hidden shadow-sm">
-            {/* Decorative bg */}
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary-fixed opacity-20 rounded-full blur-2xl"></div>
-            
-            <h3 className="text-base font-bold font-headline text-on-surface mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-[20px]">bolt</span>
+          <section className="bg-surface-container-lowest/80 backdrop-blur-xl border border-outline-variant/50 rounded-xl p-6 shadow-sm sticky top-6">
+            <h2 className="text-lg font-bold font-headline text-on-surface flex items-center gap-2 mb-6">
+              <span className="material-symbols-outlined text-tertiary">bolt</span>
               Smart Check Summary
-            </h3>
+            </h2>
             
-            <div className="grid grid-cols-2 gap-4 mb-6 relative z-10">
-              <div className="bg-white/60 rounded border border-outline-variant/50 p-3 flex flex-col justify-center items-center text-center">
-                <span className="text-2xl font-black font-headline text-[#003a7f]">0</span>
-                <span className="text-xs font-semibold text-on-surface-variant uppercase tracking-wide mt-1">From KB</span>
-                <span className="text-[10px] text-on-surface-variant mt-0.5">Instant retrieval</span>
+            <div className="grid grid-cols-2 gap-4 mb-8">
+              <div className="bg-surface-container p-4 rounded-lg border border-outline-variant/30 text-center relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-container/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <p className="text-3xl font-extrabold font-headline text-primary mb-1 relative z-10">{smartCheck.kbHits}</p>
+                <p className="text-xs font-bold text-on-surface uppercase tracking-wide relative z-10">FROM KB</p>
+                <p className="text-[10px] text-on-surface-variant mt-1 relative z-10">Instant retrieval</p>
               </div>
-              <div className="bg-tertiary-fixed/40 rounded border border-tertiary-fixed-dim/50 p-3 flex flex-col justify-center items-center text-center">
-                <span className="text-2xl font-black font-headline text-tertiary-container">{excipientsList.length}</span>
-                <span className="text-xs font-semibold text-on-surface-variant uppercase tracking-wide mt-1">Need ML Analysis</span>
-                <span className="text-[10px] text-on-surface-variant mt-0.5">De novo prediction</span>
+              <div className="bg-[#fff8f2] border border-[#f5e6d3] p-4 rounded-lg text-center relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-warning-container/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <p className="text-3xl font-extrabold font-headline text-[#8b5a2b] mb-1 relative z-10">{smartCheck.mlHits}</p>
+                <p className="text-xs font-bold text-[#5c3c15] uppercase tracking-wide relative z-10">NEED ML ANALYSIS</p>
+                <p className="text-[10px] text-[#8b5a2b]/70 mt-1 relative z-10">De novo prediction</p>
               </div>
             </div>
             
