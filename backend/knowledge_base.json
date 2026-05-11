@@ -1,0 +1,32 @@
+[
+  {
+    "api": "Aspirin",
+    "excipient": "Magnesium Stearate",
+    "status": "Incompatible",
+    "reason": "Magnesium Stearate accelerates the hydrolysis of Aspirin into Salicylic Acid and Acetic Acid due to its alkaline nature."
+  },
+  {
+    "api": "Lisinopril",
+    "excipient": "Lactose",
+    "status": "Incompatible",
+    "reason": "Lisinopril undergoes a Maillard reaction with reducing sugars like Lactose, leading to brown discoloration and degradation."
+  },
+  {
+    "api": "Ibuprofen",
+    "excipient": "Stearic Acid",
+    "status": "Warning",
+    "reason": "Formation of a eutectic mixture, significantly depressing the melting point and causing physical instability."
+  },
+  {
+    "api": "Metformin HCL",
+    "excipient": "Sodium Lauryl Sulfate (SLS)",
+    "status": "Compatible",
+    "reason": "Commonly used in wet granulation. Exhibits good physical and chemical stability without significant interactions."
+  },
+  {
+    "api": "Ascorbic Acid",
+    "excipient": "Talc",
+    "status": "Warning",
+    "reason": "Trace heavy metals in Talc can catalyze the oxidative degradation of Ascorbic Acid."
+  }
+]

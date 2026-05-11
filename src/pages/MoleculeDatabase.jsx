@@ -83,8 +83,8 @@ export default function MoleculeDatabase() {
               {/* MolView iframe for robust 3D viewing */}
               <iframe 
                 src={`https://embed.molview.org/v1/?mode=balls&${
-                  selectedMolFor3D.smiles && selectedMolFor3D.smiles !== "Unknown" && !selectedMolFor3D.smiles.match(/^[\d-]+$/) 
-                  ? `smiles=${encodeURIComponent(selectedMolFor3D.smiles)}` 
+                  selectedMolFor3D.id && !isNaN(selectedMolFor3D.id) && selectedMolFor3D.id > 100
+                  ? `cid=${selectedMolFor3D.id}` 
                   : `q=${encodeURIComponent(selectedMolFor3D.name.replace(/\s*\(.*?\)\s*/g, '').replace(' HCL', ''))}`
                 }`}
                 className="w-full h-full border-0"
