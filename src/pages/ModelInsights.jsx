@@ -200,22 +200,27 @@ export default function ModelInsights() {
               
               <div className="space-y-4 text-sm text-on-surface-variant leading-relaxed font-body">
                 <p>
-                  Berdasarkan model <strong>AI Terbaru</strong>, interaksi pada <strong className="text-on-surface">{displayedTarget}</strong> dikategorikan sebagai <strong className={isWarning ? 'text-error' : 'text-[#2e7d32]'}>{predictionItem.status}</strong>.
+                  Berdasarkan analisis sistem, interaksi pada <strong className="text-on-surface">{displayedTarget}</strong> dikategorikan sebagai <strong className={isWarning ? 'text-error' : 'text-[#2e7d32]'}>{predictionItem.status}</strong>.
                 </p>
                 <p>
-                  Sistem AI mendeteksi bahwa faktor paling berpengaruh ({topFeature.importance.toFixed(1)}%) adalah <strong>{topFeature.feature.replace(/_/g, ' ')}</strong>. {insight.desc}
+                  Sistem mendeteksi bahwa faktor paling berpengaruh ({topFeature.importance.toFixed(1)}%) adalah <strong>{topFeature.feature.replace(/_/g, ' ')}</strong>.
                 </p>
                 
+                <div className="bg-surface-container-low border border-outline-variant/30 p-3 rounded-lg shadow-inner text-on-surface italic my-3">
+                  "{predictionItem.reason}"
+                </div>
+
                 {isWarning && (
-                  <>
-                    <p className="text-on-surface">{insight.risk}</p>
-                    <div className="bg-white/80 border border-error-container p-3 rounded-lg shadow-sm">
-                      <span className="font-bold text-[#93000a] flex items-center gap-1 mb-1.5">
-                        <span className="material-symbols-outlined text-[16px]">verified</span> Real AI Recommendation:
-                      </span>
-                      <span className="text-on-surface text-sm">{insight.solution}</span>
-                    </div>
-                  </>
+                  <div className="bg-white/80 border border-error-container p-3 rounded-lg shadow-sm">
+                    <span className="font-bold text-[#93000a] flex items-center gap-1 mb-1.5">
+                      <span className="material-symbols-outlined text-[16px]">verified</span> Rekomendasi:
+                    </span>
+                    <span className="text-on-surface text-sm">
+                      {topFeature.feature.includes("Literatur") 
+                        ? "Interaksi ini sudah dipetakan secara literatur. Hindari kombinasi formulasi ini atau gunakan strategi pemisahan fisik (contoh: granulasi terpisah atau penyalutan ganda)." 
+                        : insight.solution}
+                    </span>
+                  </div>
                 )}
                 
                 {!isWarning && (
