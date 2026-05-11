@@ -215,13 +215,57 @@ def run_ml_prediction(request: PredictionRequest):
         'Temp_Stability_Celsius': 'Sensitivitas suhu/termodinamika'
     }
 
+    # --- Dosage Form Suitability Rules ---
+    dosage_form_blacklist = {
+        "Injeksi / IV": {
+            "blocked": ["paraffin", "wax", "stearate", "talc", "vaseline", "cellulose", "crospovidone", "starch", "silicon", "shellac", "carnauba", "beeswax", "magnesium stearate", "croscarmellose", "pregelatinized"],
+            "reason": "Komponen ini tidak dapat digunakan dalam sediaan Injeksi/IV. Material padat, lilin, atau hidrofobik tidak larut air berisiko menyebabkan emboli vaskular, tromboflebitis, atau reaksi anafilaksis pada pemberian parenteral.",
+            "solution": "Ganti dengan eksipien kelas injeksi yang disetujui (seperti NaCl 0.9%, Dekstrosa 5%, Polisorbat 80 grade injeksi, Propilen Glikol, PEG 300/400, atau buffer fosfat/sitrat). Pastikan semua bahan memenuhi standar USP/EP untuk parenteral."
+        },
+        "Suspensi / Sirup": {
+            "blocked": ["paraffin", "wax", "vaseline", "shellac", "carnauba", "beeswax", "magnesium stearate"],
+            "reason": "Material lilin padat atau hidrofobik tidak dapat didispersikan secara homogen dalam medium air/sirup pada suhu ruang, menyebabkan separasi fase permanen.",
+            "solution": "Gunakan suspending agent yang sesuai (CMC-Na, Xanthan Gum, Tragacanth) atau co-solvent (Propilen Glikol, Gliserin) untuk meningkatkan dispersibilitas. Pertimbangkan penambahan wetting agent (Tween 80)."
+        },
+        "Tablet / Kapsul": {
+            "blocked": ["petrolatum", "aqua dest", "water for injection"],
+            "reason": "Sediaan solid (tablet/kapsul) tidak dapat dibentuk menggunakan basis cair murni atau basis salep hidrokarbon berlebih yang menghambat kompaktibilitas serbuk.",
+            "solution": "Gunakan binder kering (PVP K30, HPMC) atau filler standar (Laktosa, MCC, Dibasic Calcium Phosphate) yang memiliki kompaktibilitas baik untuk proses cetak tablet."
+        },
+        "Krim / Salep": {
+            "blocked": ["crospovidone", "croscarmellose", "sodium starch glycolate", "pregelatinized starch"],
+            "reason": "Superdisintegran (crospovidone, croscarmellose) dirancang khusus untuk menghancurkan tablet dalam air dan tidak memiliki fungsi dalam sediaan topikal. Penggunaannya akan merusak tekstur dan stabilitas emulsi krim/salep.",
+            "solution": "Gunakan emulgator yang sesuai (Cetearyl Alcohol, Span 60, Tween 60) dan basis krim (Vaseline album, Lanolin, Cetyl Alcohol) untuk membentuk sistem emulsi o/w atau w/o yang stabil."
+        },
+        "Suppositoria": {
+            "blocked": ["crospovidone", "croscarmellose", "sodium starch glycolate", "talc", "silicon dioxide"],
+            "reason": "Superdisintegran dan glidant (talc, silica) tidak relevan untuk sediaan suppositoria yang mekanisme pelepasannya bergantung pada pelelehan basis (bukan disintegrasi). Komponen ini justru bisa mengiritasi mukosa rektal.",
+            "solution": "Gunakan basis suppositoria yang tepat (Oleum Cacao/Cocoa Butter, Witepsol, PEG suppository base). Pertimbangkan surfaktan mukoadhesif untuk meningkatkan absorpsi rektal."
+        }
+    }
+
     def evaluate_interaction(mol1_name, mol2_name, is_exc_exc=False):
-        # 1. Check Knowledge Base First
+        display_name = f"{mol2_name}" if not is_exc_exc else f"[Exc-Exc] {mol1_name} + {mol2_name}"
+        
+        # 0. Dosage Form Suitability Pre-Screen
+        if dosage_form in dosage_form_blacklist:
+            rules = dosage_form_blacklist[dosage_form]
+            for blocked_term in rules["blocked"]:
+                if blocked_term.lower() in mol1_name.lower() or blocked_term.lower() in mol2_name.lower():
+                    return {
+                        "excipient": display_name,
+                        "status": "Incompatible",
+                        "compatibility_score": 0.10,
+                        "reason": f"⛔ TIDAK SESUAI BENTUK SEDIAAN ({dosage_form}): {rules['reason']}",
+                        "solution": rules["solution"],
+                        "source": "Dosage Form Suitability Rules",
+                        "feature_importance": {"Kesesuaian Bentuk Sediaan": 100.0}
+                    }
+
+        # 1. Check Knowledge Base
         kb_match = next((item for item in kb_data if 
             (item["api"].lower() in mol1_name.lower() and item["excipient"].lower() in mol2_name.lower()) or 
             (item["api"].lower() in mol2_name.lower() and item["excipient"].lower() in mol1_name.lower())), None)
-        
-        display_name = f"{mol2_name}" if not is_exc_exc else f"[Exc-Exc] {mol1_name} + {mol2_name}"
         
         if kb_match:
             return {

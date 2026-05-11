@@ -77,6 +77,11 @@ export default function CompatibilityReport() {
                               <span className="material-symbols-outlined text-[14px]">check_circle</span>
                               KB
                             </span>
+                          ) : item.source && item.source.includes('Suitability') ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-[#fce4ec] text-[#b71c1c] border border-[#ef9a9a]">
+                              <span className="material-symbols-outlined text-[14px]">block</span>
+                              FORM
+                            </span>
                           ) : (
                             <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold ${item.status === 'Warning' || item.status === 'Incompatible' ? 'bg-tertiary-fixed text-tertiary border border-tertiary-fixed-dim' : 'bg-[#e3f2fd] text-[#003a7f] border border-[#bbdefb]'}`}>
                               <span className="material-symbols-outlined text-[14px]">psychology</span>
