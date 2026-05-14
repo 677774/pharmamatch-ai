@@ -14,6 +14,10 @@ export default function NewPrediction() {
   const [excipientInput, setExcipientInput] = useState('');
   const [excipientsList, setExcipientsList] = useState([]);
   const [kbData, setKbData] = useState([]);
+  const [apiSuggestions, setApiSuggestions] = useState([]);
+  const [showApiSuggestions, setShowApiSuggestions] = useState(false);
+  const [excSuggestions, setExcSuggestions] = useState([]);
+  const [showExcSuggestions, setShowExcSuggestions] = useState(false);
 
   // Fetch KB Data for Smart Check
   useEffect(() => {
@@ -179,7 +183,7 @@ export default function NewPrediction() {
             </div>
 
             {/* API Input */}
-            <div className="mb-6">
+            <div className="mb-6 relative">
               <label className="block text-sm font-semibold text-on-surface mb-2 font-label">Active Pharmaceutical Ingredient (API)</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -189,27 +193,107 @@ export default function NewPrediction() {
                   className="block w-full pl-10 pr-3 py-2.5 border border-outline-variant rounded bg-white text-on-surface text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-shadow" 
                   type="text" 
                   value={apiName}
-                  onChange={(e) => setApiName(e.target.value)}
-                  placeholder="Ketik nama API di sini..."
+                  onChange={async (e) => {
+                    const val = e.target.value;
+                    setApiName(val);
+                    if (val.length >= 3) {
+                      try {
+                        const res = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound/${val}/json?limit=5`);
+                        const data = await res.json();
+                        setApiSuggestions(data.dictionary_terms?.compound || []);
+                        setShowApiSuggestions(true);
+                      } catch(e){}
+                    } else {
+                      setShowApiSuggestions(false);
+                    }
+                  }}
+                  onBlur={() => setTimeout(() => setShowApiSuggestions(false), 200)}
+                  onFocus={(e) => e.target.value.length >= 3 && setShowApiSuggestions(true)}
+                  placeholder="Ketik nama API di sini (min. 3 huruf)..."
                 />
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                   <span className="material-symbols-outlined text-[#003a7f] text-[18px]">check_circle</span>
                 </div>
               </div>
+              {showApiSuggestions && apiSuggestions.length > 0 && (
+                <ul className="absolute z-10 w-full mt-1 bg-white border border-outline-variant rounded-md shadow-lg max-h-60 overflow-auto">
+                  {apiSuggestions.map((item, idx) => (
+                    <li key={idx} 
+                        className="px-4 py-2 hover:bg-surface-container-low cursor-pointer text-sm text-on-surface flex items-center gap-2"
+                        onMouseDown={() => {
+                          setApiName(item);
+                          setShowApiSuggestions(false);
+                        }}>
+                      <span className="material-symbols-outlined text-[16px] text-outline">science</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
             {/* Excipients List with KB Hit Indicators */}
-            <div>
+            <div className="relative">
               <div className="flex items-center gap-2 mb-3">
-                <input 
-                  className="flex-1 px-3 py-2 border border-outline-variant rounded bg-white text-sm focus:ring-2 focus:ring-primary outline-none"
-                  placeholder="Ketik nama Eksipien..."
-                  value={excipientInput}
-                  onChange={(e) => setExcipientInput(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleAddExcipient()}
-                />
+                <div className="relative flex-1">
+                  <input 
+                    className="w-full px-3 py-2 border border-outline-variant rounded bg-white text-sm focus:ring-2 focus:ring-primary outline-none"
+                    placeholder="Ketik nama Eksipien..."
+                    value={excipientInput}
+                    onChange={async (e) => {
+                      const val = e.target.value;
+                      setExcipientInput(val);
+                      if (val.length >= 2) {
+                        const kbMatches = [...new Set(kbData.map(item => item.excipient))]
+                            .filter(exc => exc.toLowerCase().includes(val.toLowerCase()));
+                        let pubchemMatches = [];
+                        if (kbMatches.length < 5) {
+                            try {
+                              const res = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound/${val}/json?limit=5`);
+                              const data = await res.json();
+                              pubchemMatches = data.dictionary_terms?.compound || [];
+                            } catch(e){}
+                        }
+                        setExcSuggestions([...new Set([...kbMatches, ...pubchemMatches])].slice(0, 5));
+                        setShowExcSuggestions(true);
+                      } else {
+                        setShowExcSuggestions(false);
+                      }
+                    }}
+                    onBlur={() => setTimeout(() => setShowExcSuggestions(false), 200)}
+                    onFocus={(e) => e.target.value.length >= 2 && setShowExcSuggestions(true)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                         handleAddExcipient();
+                         setShowExcSuggestions(false);
+                      }
+                    }}
+                  />
+                  {showExcSuggestions && excSuggestions.length > 0 && (
+                    <ul className="absolute z-10 w-full mt-1 bg-white border border-outline-variant rounded-md shadow-lg max-h-60 overflow-auto">
+                      {excSuggestions.map((item, idx) => {
+                        const inKB = kbData.some(k => k.excipient.toLowerCase() === item.toLowerCase());
+                        return (
+                        <li key={idx} 
+                            className="px-4 py-2 hover:bg-surface-container-low cursor-pointer text-sm text-on-surface flex items-center justify-between"
+                            onMouseDown={() => {
+                              setExcipientInput(item);
+                              setShowExcSuggestions(false);
+                            }}>
+                          <div className="flex items-center gap-2">
+                            <span className="material-symbols-outlined text-[16px] text-outline">vaccines</span>
+                            {item}
+                          </div>
+                          {inKB && (
+                            <span className="text-[10px] font-bold bg-[#e6f4ea] text-[#137333] px-2 py-0.5 rounded uppercase">KB Ready</span>
+                          )}
+                        </li>
+                      )})}
+                    </ul>
+                  )}
+                </div>
                 <button 
-                  onClick={handleAddExcipient}
+                  onClick={() => { handleAddExcipient(); setShowExcSuggestions(false); }}
                   className="bg-primary-container text-on-primary-container px-3 py-2 rounded text-sm font-medium hover:bg-[#005b6f] transition-colors flex items-center gap-1">
                   <span className="material-symbols-outlined text-[16px]">add</span> Tambah
                 </button>
@@ -217,7 +301,9 @@ export default function NewPrediction() {
               
               <div className="border border-outline-variant rounded-lg bg-white overflow-hidden">
                 <ul className="divide-y divide-outline-variant/50">
-                  {excipientsList.map((exc, index) => (
+                  {excipientsList.map((exc, index) => {
+                     const inKB = kbData.some(k => k.excipient.toLowerCase() === exc.toLowerCase());
+                     return (
                     <li key={index} className="p-3 flex items-center justify-between hover:bg-surface-container-low transition-colors group">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded bg-surface-container-highest flex items-center justify-center text-secondary font-medium text-xs">
@@ -229,9 +315,15 @@ export default function NewPrediction() {
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-[#003a7f] bg-blue-50 px-2 py-1 rounded">
-                          <span className="material-symbols-outlined text-[14px]">science</span> Active
-                        </span>
+                        {inKB ? (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#137333] bg-[#e6f4ea] border border-[#a8dab5] px-2 py-1 rounded uppercase">
+                            <span className="material-symbols-outlined text-[12px]">library_books</span> KB Match
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#003a7f] bg-blue-50 border border-blue-200 px-2 py-1 rounded uppercase">
+                            <span className="material-symbols-outlined text-[12px]">psychology</span> ML Only
+                          </span>
+                        )}
                         <button 
                           onClick={() => handleRemoveExcipient(index)}
                           className="text-outline hover:text-error transition-colors"
@@ -240,7 +332,7 @@ export default function NewPrediction() {
                         </button>
                       </div>
                     </li>
-                  ))}
+                  )})}
                   {excipientsList.length === 0 && (
                     <li className="p-4 text-center text-sm text-outline">Belum ada eksipien. Silakan tambah di atas.</li>
                   )}
