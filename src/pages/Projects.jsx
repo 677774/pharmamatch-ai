@@ -95,6 +95,16 @@ export default function Projects() {
                   {project.status}
                 </span>
               )}
+              {project.labStatus === 'confirmed' && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-[#e6f4ea] text-[#137333] border border-[#a8dab5]">
+                  <span className="material-symbols-outlined text-[12px]">verified</span> Lab Confirmed
+                </span>
+              )}
+              {project.labStatus === 'contradicted' && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-[#fce8e6] text-[#c5221f] border border-[#f5b7b1]">
+                  <span className="material-symbols-outlined text-[12px]">warning</span> Lab Contradicted
+                </span>
+              )}
             </div>
             
             <div className="mt-2 space-y-4 flex-1">
