@@ -3,88 +3,1049 @@
     "api": "Aspirin",
     "excipient": "Magnesium Stearate",
     "status": "Incompatible",
-    "reason": "Sifat basa (alkalin) dan kandungan air yang terjebak dalam Magnesium Stearat mempercepat proses hidrolisis Aspirin menjadi Asam Salisilat dan Asam Asetat, terutama pada suhu dan kelembaban tinggi.",
-    "solution": "Ganti pelumas (lubricant) dengan Stearic Acid atau Sodium Stearyl Fumarate. Jika terpaksa menggunakan Magnesium Stearate, pertahankan konsentrasi di bawah 0.5% dan gunakan lingkungan produksi dengan kelembaban (RH) sangat rendah.",
-    "source": "Handbook of Pharmaceutical Excipients, 6th Edition (Rowe et al.)"
+    "severity": "Major",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Sifat basa dan kandungan air dalam Magnesium Stearat mempercepat hidrolisis Aspirin menjadi Asam Salisilat dan Asam Asetat.",
+    "solution": "Ganti lubricant dengan Stearic Acid atau Sodium Stearyl Fumarate. Jika terpaksa, pertahankan konsentrasi <0.5% dengan RH rendah.",
+    "source": "Handbook of Pharmaceutical Excipients, 6th Ed (Rowe et al.)"
+  },
+  {
+    "api": "Aspirin",
+    "excipient": "Lactose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Tidak ada interaksi kimia signifikan. Laktosa bersifat inert terhadap gugus ester Aspirin pada kondisi kering.",
+    "solution": "Lanjutkan formulasi. Pastikan kelembaban granul <2% untuk mencegah hidrolisis.",
+    "source": "Handbook of Pharmaceutical Excipients, 6th Ed"
+  },
+  {
+    "api": "Aspirin",
+    "excipient": "Microcrystalline Cellulose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "MCC adalah pengisi inert yang tidak memicu degradasi Aspirin. Kompatibilitas baik pada kondisi kering.",
+    "solution": "Gunakan metode direct compression. Hindari granulasi basah yang dapat memicu hidrolisis.",
+    "source": "Pharmaceutical Preformulation (Gibson)"
+  },
+  {
+    "api": "Aspirin",
+    "excipient": "Croscarmellose Sodium",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Gugus karboksilat CCS dapat sedikit menurunkan pH mikro, namun efeknya minimal dibanding superdisintegran lain.",
+    "solution": "Dapat digunakan dengan monitoring stabilitas. Pertimbangkan Sodium Starch Glycolate sebagai alternatif.",
+    "source": "Int. J. Pharmaceutics"
+  },
+  {
+    "api": "Aspirin",
+    "excipient": "Povidone",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "PVP sebagai binder tidak bereaksi dengan gugus karboksil Aspirin. Stabil pada pencampuran kering.",
+    "solution": "Gunakan PVP K30 pada konsentrasi 3-5% sebagai binder. Hindari pelarut air berlebih saat granulasi.",
+    "source": "Aulton's Pharmaceutics"
   },
   {
     "api": "Lisinopril",
     "excipient": "Lactose",
     "status": "Incompatible",
-    "reason": "Lisinopril mengandung gugus amina primer yang sangat reaktif. Ketika dicampur dengan gula pereduksi (reducing sugar) seperti Laktosa, akan terjadi Reaksi Maillard. Hal ini menyebabkan perubahan warna sediaan menjadi coklat dan degradasi API yang masif.",
-    "solution": "Hindari semua jenis eksipien gula pereduksi. Gunakan pengisi (diluent) alternatif seperti Mannitol, Microcrystalline Cellulose (Avicel), atau Dibasic Calcium Phosphate Anhydrous.",
+    "severity": "Major",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Amina primer Lisinopril bereaksi dengan gula pereduksi Laktosa melalui Reaksi Maillard, menyebabkan perubahan warna coklat dan degradasi API masif.",
+    "solution": "Gunakan Mannitol, MCC, atau Dibasic Calcium Phosphate Anhydrous sebagai pengganti.",
     "source": "Developing Solid Oral Dosage Forms (Qiu et al.)"
+  },
+  {
+    "api": "Lisinopril",
+    "excipient": "Microcrystalline Cellulose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "MCC tidak mengandung gugus pereduksi. Aman dikombinasikan dengan senyawa amina primer.",
+    "solution": "Formulasi standar dengan MCC sebagai pengisi utama.",
+    "source": "USP-NF Monograph"
   },
   {
     "api": "Amlodipine Besylate",
     "excipient": "Lactose",
     "status": "Incompatible",
-    "reason": "Serupa dengan Lisinopril, Amlodipine memiliki amina primer sekunder yang dapat mengalami Reaksi Maillard dengan Laktosa, menghasilkan kotoran (impurities) turunan dihidropiridin yang toksik.",
-    "solution": "Formulasikan tablet menggunakan Microcrystalline Cellulose atau Anhydrous Dibasic Calcium Phosphate sebagai pengisi utama. Pastikan juga aktivitas air (aw) granul sangat rendah.",
-    "source": "Journal of Pharmaceutical Sciences: Amlodipine Excipient Compatibility"
+    "severity": "Major",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Amina primer sekunder Amlodipine mengalami Reaksi Maillard dengan Laktosa, menghasilkan impurities dihidropiridin toksik.",
+    "solution": "Gunakan MCC atau Anhydrous Dibasic Calcium Phosphate. Pastikan aktivitas air (aw) granul rendah.",
+    "source": "J. Pharm. Sci.: Amlodipine Excipient Compatibility"
+  },
+  {
+    "api": "Amlodipine Besylate",
+    "excipient": "Microcrystalline Cellulose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "MCC bersifat inert dan tidak memicu degradasi Amlodipine. Kompatibilitas dikonfirmasi via DSC dan FTIR.",
+    "solution": "Lanjutkan formulasi standar.",
+    "source": "Int. J. Pharmaceutics"
   },
   {
     "api": "Ibuprofen",
     "excipient": "Stearic Acid",
     "status": "Warning",
-    "reason": "Pencampuran mekanis antara Ibuprofen dan Stearic Acid berisiko membentuk campuran eutektik. Ini menurunkan titik leleh campuran secara drastis, membuat granul menjadi lembek, lengket, dan rentan terhadap masalah saat pencetakan tablet (sticking & picking).",
-    "solution": "Gunakan eksipien dengan titik leleh tinggi seperti Talc. Jika menggunakan Stearic Acid, minimalisir gaya gesek (shear force) selama pencampuran dan jaga suhu ruangan di bawah 20°C.",
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Pembentukan campuran eutektik menurunkan titik leleh drastis, menyebabkan granul lembek dan masalah sticking/picking saat cetak tablet.",
+    "solution": "Gunakan Talc sebagai alternatif. Jika menggunakan Stearic Acid, minimalisir shear force dan jaga suhu <20°C.",
     "source": "Pharmaceutical Preformulation and Formulation (Gibson)"
+  },
+  {
+    "api": "Ibuprofen",
+    "excipient": "Magnesium Stearate",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Potensi pembentukan eutektik minor dan efek hidrofobik berlebih yang menurunkan laju disolusi tablet Ibuprofen.",
+    "solution": "Batasi konsentrasi Mg Stearate <1% dan waktu pencampuran <5 menit. Monitor profil disolusi.",
+    "source": "Drug Dev. Ind. Pharmacy"
+  },
+  {
+    "api": "Ibuprofen",
+    "excipient": "Crospovidone",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Crospovidone adalah superdisintegran inert yang tidak bereaksi dengan Ibuprofen. Meningkatkan waktu hancur tablet secara efektif.",
+    "solution": "Gunakan pada konsentrasi 2-5% sebagai disintegran intragranular dan/atau extragranular.",
+    "source": "Handbook of Pharmaceutical Excipients"
   },
   {
     "api": "Ascorbic Acid",
     "excipient": "Talc",
     "status": "Warning",
-    "reason": "Talc alami sering kali mengandung pengotor logam berat dalam jumlah sekelumit (trace heavy metals seperti Besi dan Tembaga). Logam berat ini bertindak sebagai katalis yang mempercepat degradasi oksidatif dari Vitamin C.",
-    "solution": "Gunakan Talc grade murni yang sudah di-acid-washed. Sangat disarankan untuk menambahkan agen kelasi (chelating agent) seperti EDTA atau Disodium Edetate ke dalam formula untuk mengikat ion logam.",
-    "source": "Aulton's Pharmaceutics: The Design and Manufacture of Medicines"
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Pengotor logam berat (Fe, Cu) dalam Talc alami mengkatalisis degradasi oksidatif Vitamin C.",
+    "solution": "Gunakan Talc grade acid-washed. Tambahkan chelating agent (EDTA/Disodium Edetate) ke formula.",
+    "source": "Aulton's Pharmaceutics"
+  },
+  {
+    "api": "Ascorbic Acid",
+    "excipient": "Magnesium Stearate",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Sifat basa Mg Stearate mempercepat oksidasi Ascorbic Acid, terutama pada kelembaban tinggi.",
+    "solution": "Gunakan Sodium Stearyl Fumarate atau Stearic Acid sebagai lubricant alternatif.",
+    "source": "J. Pharm. Sci."
+  },
+  {
+    "api": "Ascorbic Acid",
+    "excipient": "Sodium Bicarbonate",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Reaksi asam-basa langsung: Ascorbic Acid + NaHCO3 menghasilkan CO2, air, dan Sodium Ascorbate. Formula akan berbusa dan API terdegradasi.",
+    "solution": "Hindari pencampuran langsung. Jika diperlukan efek effervescent, gunakan tablet lapis ganda dengan pemisahan fisik.",
+    "source": "Remington: The Science and Practice of Pharmacy"
   },
   {
     "api": "Omeprazole",
     "excipient": "Croscarmellose Sodium",
     "status": "Incompatible",
-    "reason": "Omeprazole sangat labil terhadap lingkungan asam. Croscarmellose Sodium memiliki gugus karboksilat yang menciptakan lingkungan mikro yang sedikit asam (microenvironmental pH turun), menyebabkan degradasi cepat pada cincin benzimidazole Omeprazole.",
-    "solution": "Gunakan agen penstabil basa kuat (alkalizing agents) seperti Sodium Bicarbonate atau Magnesium Oxide di inti tablet. Selalu gunakan sistem penyalutan enterik (enteric coating) untuk produk akhir.",
+    "severity": "Major",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Gugus karboksilat CCS menciptakan pH mikro asam yang mendegradasi cincin benzimidazole Omeprazole secara cepat.",
+    "solution": "Gunakan alkalizing agents (NaHCO3, MgO) di inti tablet. Wajib enteric coating.",
     "source": "Handbook of Pharmaceutical Excipients & FDA ANDA Reviews"
+  },
+  {
+    "api": "Omeprazole",
+    "excipient": "Lactose",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Laktosa bersifat netral namun mengandung moisture yang dapat memicu degradasi Omeprazole pada penyimpanan jangka panjang.",
+    "solution": "Gunakan Laktosa anhidrat (spray-dried) dan pastikan kemasan kedap udara.",
+    "source": "European J. Pharmaceutics and Biopharmaceutics"
+  },
+  {
+    "api": "Omeprazole",
+    "excipient": "Magnesium Oxide",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "MgO bersifat basa yang justru melindungi Omeprazole dari degradasi asam. Sering digunakan sebagai stabilizer.",
+    "solution": "Gunakan MgO 5-10% sebagai alkalizing agent di inti tablet sebelum enteric coating.",
+    "source": "USP-NF Monograph: Omeprazole"
   },
   {
     "api": "Simvastatin",
     "excipient": "Microcrystalline Cellulose",
     "status": "Warning",
-    "reason": "Microcrystalline Cellulose (MCC) sering kali mengandung residu hidroperoksida dalam jumlah kecil dari proses fabrikasinya. Peroksida ini dapat mengoksidasi rantai ikatan rangkap pada Simvastatin secara lambat (oksidasi sekunder).",
-    "solution": "Gunakan grade MCC dengan kandungan peroksida rendah (Low Peroxide Grade). Tambahkan antioksidan kuat seperti BHA (Butylated Hydroxyanisole) atau BHT, serta Ascorbic Acid sebagai sinergis.",
-    "source": "International Journal of Pharmaceutics: Statin Compatibility Studies"
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Residu hidroperoksida dalam MCC dari proses fabrikasi dapat mengoksidasi ikatan rangkap Simvastatin secara lambat.",
+    "solution": "Gunakan MCC grade Low Peroxide. Tambahkan antioksidan BHA/BHT + Ascorbic Acid.",
+    "source": "Int. J. Pharmaceutics: Statin Compatibility Studies"
+  },
+  {
+    "api": "Simvastatin",
+    "excipient": "Lactose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Laktosa tidak memiliki potensi oksidatif. Kompatibilitas baik dikonfirmasi via DSC.",
+    "solution": "Lanjutkan formulasi standar.",
+    "source": "Drug Dev. Ind. Pharmacy"
   },
   {
     "api": "Erythromycin",
     "excipient": "Citric Acid",
     "status": "Incompatible",
-    "reason": "Eritromisin sangat tidak stabil dalam suasana asam. Eksipien asam organik seperti Citric Acid memicu degradasi intramolekuler yang dikatalisis asam, menghasilkan pembentukan turunan ketal yang tidak aktif secara antimikroba.",
-    "solution": "Hindari sama sekali penggunaan eksipien atau pengawet yang bersifat asam. Gunakan sistem dapar (buffer) netral hingga sedikit basa untuk mempertahankan stabilitas makrolida.",
+    "severity": "Major",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Eritromisin sangat tidak stabil dalam suasana asam. Citric Acid memicu degradasi intramolekuler menghasilkan turunan ketal inaktif.",
+    "solution": "Hindari eksipien asam. Gunakan buffer netral hingga basa untuk stabilitas makrolida.",
     "source": "Pharmaceutical Preformulation: Physicochemical Properties of Drugs"
+  },
+  {
+    "api": "Erythromycin",
+    "excipient": "Magnesium Stearate",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Mg Stearate kompatibel dengan Erythromycin. Sifat basanya justru membantu mempertahankan pH mikro yang mendukung stabilitas makrolida.",
+    "solution": "Gunakan pada konsentrasi standar 0.5-1%.",
+    "source": "Handbook of Pharmaceutical Excipients"
   },
   {
     "api": "Levothyroxine",
     "excipient": "Calcium Carbonate",
     "status": "Incompatible",
-    "reason": "Kalsium dari eksipien akan membentuk kompleks kelat yang sangat tidak larut dengan Levothyroxine di lingkungan pencernaan. Hal ini menyebabkan penurunan ketersediaan hayati (bioavailabilitas) obat secara dramatis.",
-    "solution": "Dilarang menggunakan Calcium Carbonate sebagai pengisi (diluent). Gunakan pengisi netral dan non-reaktif. Ingatkan pasien untuk tidak mengonsumsi antasida berdekatan dengan jadwal minum obat ini.",
+    "severity": "Major",
+    "evidence_level": "Clinical study",
+    "reason": "Kalsium membentuk kompleks kelat tidak larut dengan Levothyroxine di saluran cerna, menurunkan bioavailabilitas drastis.",
+    "solution": "Dilarang sebagai pengisi. Gunakan pengisi netral non-reaktif. Pasien hindari antasida berdekatan.",
     "source": "FDA Prescribing Information & Pharmacopeial Forum"
+  },
+  {
+    "api": "Levothyroxine",
+    "excipient": "Ferrous Sulfate",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "Clinical study",
+    "reason": "Ion besi membentuk kompleks kelat dengan Levothyroxine, mengurangi absorpsi hingga 50%.",
+    "solution": "Pisahkan waktu pemberian minimal 4 jam. Jangan campurkan dalam satu formulasi.",
+    "source": "Thyroid Journal: Drug-Excipient Interactions"
+  },
+  {
+    "api": "Levothyroxine",
+    "excipient": "Microcrystalline Cellulose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "MCC bersifat inert dan tidak mengganggu absorpsi Levothyroxine.",
+    "solution": "MCC direkomendasikan sebagai pengisi utama untuk tablet Levothyroxine.",
+    "source": "USP-NF Monograph"
   },
   {
     "api": "Metformin HCL",
     "excipient": "Sodium Lauryl Sulfate (SLS)",
     "status": "Compatible",
-    "reason": "Tidak ada interaksi kimia yang merugikan. Secara fisikokimia, SLS sering ditambahkan pada formulasi Metformin untuk meningkatkan keterbasahan (wetting) matriks granul, tanpa memicu degradasi basa/asam.",
-    "solution": "Formula aman untuk dilanjutkan. Pertimbangkan pengujian Disolusi Komparatif ( dissolution profiling) untuk memastikan penambahan surfaktan (SLS) tidak mempercepat pelepasan obat melebihi spesifikasi.",
-    "source": "Pharmaceutical Formulation and Design (Aulton)"
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "SLS meningkatkan wettability matriks granul tanpa memicu degradasi. Tidak ada interaksi kimia merugikan.",
+    "solution": "Gunakan SLS 1-2% untuk meningkatkan disolusi. Lakukan dissolution profiling.",
+    "source": "Aulton's Pharmaceutics"
+  },
+  {
+    "api": "Metformin HCL",
+    "excipient": "Povidone",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "PVP sebagai binder polimerik kompatibel dengan Metformin HCL. Stabil selama proses granulasi.",
+    "solution": "Gunakan PVP K30 3-5% sebagai binder dalam granulasi basah.",
+    "source": "Handbook of Pharmaceutical Excipients"
+  },
+  {
+    "api": "Metformin HCL",
+    "excipient": "HPMC",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "HPMC digunakan sebagai matriks pelepasan terkontrol untuk Metformin tanpa interaksi kimia.",
+    "solution": "Gunakan HPMC K4M/K15M untuk formulasi sustained-release.",
+    "source": "Controlled Release Drug Delivery Systems (Wise)"
   },
   {
     "api": "Paracetamol",
     "excipient": "Povidone",
     "status": "Compatible",
-    "reason": "Povidone (PVP) adalah pengikat (binder) polimerik yang sangat cocok untuk Paracetamol. Tidak ada gugus fungsi reaktif antara polimer PVP dan cincin fenolik dari Paracetamol, dan mencegah terbentuknya kapiler rapuh saat pencetakan tablet.",
-    "solution": "Formula optimal. Sangat disarankan digunakan dalam proses Granulasi Basah (Wet Granulation) menggunakan air murni sebagai pelarut pengikat.",
-    "source": "Handbook of Pharmaceutical Excipients, 6th Edition"
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "PVP adalah binder polimerik yang sangat cocok untuk Paracetamol. Tidak ada gugus fungsi reaktif antara PVP dan cincin fenolik PCT.",
+    "solution": "Formula optimal untuk granulasi basah menggunakan air murni sebagai pelarut pengikat.",
+    "source": "Handbook of Pharmaceutical Excipients, 6th Ed"
+  },
+  {
+    "api": "Paracetamol",
+    "excipient": "Stearic Acid",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Stearic Acid kompatibel sebagai lubricant untuk Paracetamol. Tidak membentuk eutektik pada suhu formulasi normal.",
+    "solution": "Gunakan 1-3% sebagai lubricant.",
+    "source": "Aulton's Pharmaceutics"
+  },
+  {
+    "api": "Paracetamol",
+    "excipient": "Sodium Starch Glycolate",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "SSG sebagai superdisintegran kompatibel penuh dengan Paracetamol. Meningkatkan waktu hancur tablet secara signifikan.",
+    "solution": "Gunakan SSG 4-6% intragranular untuk waktu hancur optimal.",
+    "source": "Pharmaceutical Dosage Forms: Tablets (Augsburger)"
+  },
+  {
+    "api": "Paracetamol",
+    "excipient": "Magnesium Stearate",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Mg Stearate kompatibel dengan Paracetamol pada konsentrasi standar. Tidak ada degradasi yang terdeteksi via DSC/FTIR.",
+    "solution": "Gunakan 0.5-1% sebagai lubricant dengan waktu blending <3 menit.",
+    "source": "Int. J. Pharmaceutics"
+  },
+  {
+    "api": "Atenolol",
+    "excipient": "Lactose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Atenolol tidak memiliki amina primer yang cukup reaktif untuk Reaksi Maillard signifikan dengan Laktosa.",
+    "solution": "Lanjutkan formulasi standar. Monitor stabilitas jangka panjang.",
+    "source": "Drug Dev. Ind. Pharmacy"
+  },
+  {
+    "api": "Atenolol",
+    "excipient": "Microcrystalline Cellulose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "MCC adalah pengisi yang sangat kompatibel dengan Atenolol. Dikonfirmasi via studi DSC.",
+    "solution": "Gunakan MCC sebagai pengisi utama untuk direct compression.",
+    "source": "Handbook of Pharmaceutical Excipients"
+  },
+  {
+    "api": "Captopril",
+    "excipient": "Lactose",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Gugus sulfhidril (thiol) Captopril bereaksi dengan Laktosa melalui reaksi kondensasi, menghasilkan degradan dan perubahan warna kekuningan.",
+    "solution": "Gunakan MCC atau Mannitol sebagai pengisi. Kemasan harus kedap udara dan cahaya.",
+    "source": "J. Pharm. Sci.: Captopril Stability Studies"
+  },
+  {
+    "api": "Captopril",
+    "excipient": "Magnesium Stearate",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Sifat basa Mg Stearate dapat memicu oksidasi gugus thiol Captopril pada kelembaban tinggi.",
+    "solution": "Gunakan Sodium Stearyl Fumarate. Simpan pada RH <40%.",
+    "source": "European J. Pharmaceutics and Biopharmaceutics"
+  },
+  {
+    "api": "Diclofenac Sodium",
+    "excipient": "HPMC",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "HPMC adalah matriks polimer hidrofilik yang kompatibel dengan Diclofenac. Cocok untuk formulasi sustained-release.",
+    "solution": "Gunakan HPMC K100M untuk extended-release. Tidak diperlukan perlakuan khusus.",
+    "source": "Controlled Release Drug Delivery Systems"
+  },
+  {
+    "api": "Diclofenac Sodium",
+    "excipient": "Polyethylene Glycol",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "PEG kompatibel dengan Diclofenac untuk formulasi gel, kapsul lunak, dan suppositoria.",
+    "solution": "Gunakan PEG 400/4000 sesuai jenis sediaan.",
+    "source": "Remington: Science and Practice of Pharmacy"
+  },
+  {
+    "api": "Ciprofloxacin",
+    "excipient": "Calcium Carbonate",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "Clinical study",
+    "reason": "Ion kalsium membentuk kelat dengan gugus karboksil dan keton Ciprofloxacin, mengurangi absorpsi oral hingga 40%.",
+    "solution": "Hindari antasida mengandung kalsium. Pisahkan waktu pemberian minimal 2 jam.",
+    "source": "Clinical Pharmacology & Therapeutics"
+  },
+  {
+    "api": "Ciprofloxacin",
+    "excipient": "Magnesium Hydroxide",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "Clinical study",
+    "reason": "Ion magnesium membentuk kelat dengan fluoroquinolone, menurunkan bioavailabilitas secara signifikan.",
+    "solution": "Hindari antasida mengandung Mg. Gunakan pengisi non-ionik.",
+    "source": "J. Clinical Pharmacology"
+  },
+  {
+    "api": "Ciprofloxacin",
+    "excipient": "Microcrystalline Cellulose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "MCC bersifat inert dan tidak mengandung ion multivalen yang dapat mengganggu Ciprofloxacin.",
+    "solution": "MCC direkomendasikan sebagai pengisi utama.",
+    "source": "USP-NF"
+  },
+  {
+    "api": "Amoxicillin",
+    "excipient": "Lactose",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Amoxicillin memiliki amina primer yang berpotensi Reaksi Maillard dengan Laktosa, meskipun lebih lambat dibanding Lisinopril.",
+    "solution": "Gunakan Laktosa anhidrat spray-dried dan simpan pada suhu <25°C, RH <60%.",
+    "source": "Int. J. Pharmaceutics"
+  },
+  {
+    "api": "Amoxicillin",
+    "excipient": "Clavulanic Acid",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Clavulanic Acid sangat labil terhadap kelembaban. Dalam campuran, degradasi Clavulanate dapat mempengaruhi stabilitas Amoxicillin.",
+    "solution": "Gunakan formulasi kering (powder for suspension). Simpan di tempat sejuk dan kering.",
+    "source": "European Pharmacopoeia"
+  },
+  {
+    "api": "Ranitidine",
+    "excipient": "Croscarmellose Sodium",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "CCS mengandung natrium yang pada kondisi lembab dapat memfasilitasi pembentukan NDMA (N-Nitrosodimethylamine) dari Ranitidine.",
+    "solution": "Gunakan Crospovidone sebagai superdisintegran alternatif. Minimalisir paparan panas dan kelembaban.",
+    "source": "FDA Safety Communication 2019"
+  },
+  {
+    "api": "Ranitidine",
+    "excipient": "Microcrystalline Cellulose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "MCC tidak berkontribusi pada pembentukan nitrosamin. Pengisi yang aman untuk Ranitidine.",
+    "solution": "Gunakan MCC dengan grade peroksida rendah.",
+    "source": "Drug Dev. Ind. Pharmacy"
+  },
+  {
+    "api": "Warfarin Sodium",
+    "excipient": "Lactose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Warfarin kompatibel dengan Laktosa. Tidak ada interaksi kimia yang terdeteksi.",
+    "solution": "Handbook of Pharmaceutical Excipients"
+  },
+  {
+    "api": "Warfarin Sodium",
+    "excipient": "Calcium Phosphate",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Ion kalsium berpotensi mengganggu absorpsi Warfarin meskipun efeknya lebih ringan dibanding pada Levothyroxine.",
+    "solution": "Pertimbangkan pengisi alternatif. Jika digunakan, lakukan studi bioekivalensi.",
+    "source": "Pharmacopeial Forum"
+  },
+  {
+    "api": "Phenytoin",
+    "excipient": "Calcium Sulfate",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "Clinical study",
+    "reason": "Perubahan eksipien dari Calcium Sulfate ke Laktosa pada tablet Phenytoin pernah menyebabkan epidemi toksisitas di Australia (1968) karena perubahan bioavailabilitas drastis.",
+    "solution": "Jangan mengubah eksipien Phenytoin tanpa studi bioekivalensi penuh. Gunakan formulasi yang sudah tervalidasi.",
+    "source": "Lancet: Phenytoin Bioavailability Crisis (1968)"
+  },
+  {
+    "api": "Phenytoin",
+    "excipient": "Lactose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "Clinical study",
+    "reason": "Laktosa meningkatkan disolusi Phenytoin dibanding Calcium Sulfate, sehingga meningkatkan bioavailabilitas.",
+    "solution": "Gunakan Laktosa sebagai pengisi standar dengan kontrol kualitas ketat pada disolusi.",
+    "source": "Lancet & USP Monograph"
+  },
+  {
+    "api": "Tetracycline",
+    "excipient": "Calcium Carbonate",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "Clinical study",
+    "reason": "Ion kalsium membentuk kelat dengan Tetracycline, mengurangi absorpsi oral hingga 65%.",
+    "solution": "Hindari antasida kalsium. Gunakan pengisi non-ionik dan ingatkan pasien untuk tidak mengonsumsi susu bersamaan.",
+    "source": "Clinical Pharmacology & Therapeutics"
+  },
+  {
+    "api": "Tetracycline",
+    "excipient": "Magnesium Hydroxide",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "Clinical study",
+    "reason": "Ion Mg membentuk kelat dengan Tetracycline mengurangi absorpsi oral.",
+    "solution": "Hindari antasida Mg.",
+    "source": "Clinical Pharmacology"
+  },
+  {
+    "api": "Metformin HCL",
+    "excipient": "Microcrystalline Cellulose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "MCC kompatibel penuh dengan Metformin.",
+    "solution": "Gunakan MCC PH102.",
+    "source": "USP-NF"
+  },
+  {
+    "api": "Metformin HCL",
+    "excipient": "Magnesium Stearate",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Mg Stearate kompatibel pada konsentrasi rendah.",
+    "solution": "Gunakan 0.5-1%.",
+    "source": "Handbook of Pharmaceutical Excipients"
+  },
+  {
+    "api": "Losartan Potassium",
+    "excipient": "Lactose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Losartan stabil dengan Laktosa.",
+    "solution": "Formulasi standar.",
+    "source": "Drug Dev. Ind. Pharmacy"
+  },
+  {
+    "api": "Losartan Potassium",
+    "excipient": "Croscarmellose Sodium",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "CCS kompatibel dengan Losartan.",
+    "solution": "Gunakan 2-4%.",
+    "source": "Handbook of Pharmaceutical Excipients"
+  },
+  {
+    "api": "Atorvastatin Calcium",
+    "excipient": "Calcium Carbonate",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Ion kalsium berlebih mempengaruhi disolusi Atorvastatin.",
+    "solution": "Batasi CaCO3. Monitor disolusi.",
+    "source": "J. Pharm. Sci."
+  },
+  {
+    "api": "Atorvastatin Calcium",
+    "excipient": "Microcrystalline Cellulose",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Residu peroksida MCC berpotensi mengoksidasi Atorvastatin.",
+    "solution": "Gunakan MCC Low Peroxide Grade + BHT.",
+    "source": "Int. J. Pharmaceutics"
+  },
+  {
+    "api": "Clopidogrel Bisulfate",
+    "excipient": "Lactose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Clopidogrel kompatibel dengan Laktosa anhidrat.",
+    "solution": "Gunakan Laktosa spray-dried.",
+    "source": "USP Monograph"
+  },
+  {
+    "api": "Gabapentin",
+    "excipient": "Lactose",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Amina primer Gabapentin bereaksi Maillard dengan Laktosa menghasilkan laktam siklik.",
+    "solution": "Gunakan MCC atau Mannitol.",
+    "source": "J. Pharm. Sci."
+  },
+  {
+    "api": "Gabapentin",
+    "excipient": "Microcrystalline Cellulose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "MCC tidak bereaksi dengan amina primer Gabapentin.",
+    "solution": "MCC sebagai pengisi utama.",
+    "source": "Handbook of Pharmaceutical Excipients"
+  },
+  {
+    "api": "Cetirizine HCL",
+    "excipient": "Lactose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Amina tersier Cetirizine tidak memicu Maillard.",
+    "solution": "Formulasi standar.",
+    "source": "Drug Dev. Ind. Pharmacy"
+  },
+  {
+    "api": "Captopril",
+    "excipient": "Lactose",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Gugus sulfhidril Captopril bereaksi dengan Laktosa melalui kondensasi.",
+    "solution": "Gunakan MCC atau Mannitol.",
+    "source": "J. Pharm. Sci."
+  },
+  {
+    "api": "Captopril",
+    "excipient": "Magnesium Stearate",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Sifat basa Mg Stearate memicu oksidasi gugus thiol Captopril.",
+    "solution": "Gunakan Sodium Stearyl Fumarate.",
+    "source": "European J. Pharmaceutics"
+  },
+  {
+    "api": "Diclofenac Sodium",
+    "excipient": "HPMC",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "HPMC kompatibel untuk sustained-release Diclofenac.",
+    "solution": "Gunakan HPMC K100M.",
+    "source": "Controlled Release Drug Delivery"
+  },
+  {
+    "api": "Ciprofloxacin",
+    "excipient": "Calcium Carbonate",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "Clinical study",
+    "reason": "Ion kalsium membentuk kelat dengan Ciprofloxacin mengurangi absorpsi 40%.",
+    "solution": "Hindari antasida kalsium.",
+    "source": "Clinical Pharmacology"
+  },
+  {
+    "api": "Ciprofloxacin",
+    "excipient": "Magnesium Hydroxide",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "Clinical study",
+    "reason": "Ion Mg membentuk kelat dengan fluoroquinolone.",
+    "solution": "Hindari antasida Mg.",
+    "source": "J. Clinical Pharmacology"
+  },
+  {
+    "api": "Amoxicillin",
+    "excipient": "Lactose",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Amina primer Amoxicillin berpotensi Maillard dengan Laktosa meskipun lambat.",
+    "solution": "Gunakan Laktosa anhidrat, simpan <25C RH <60%.",
+    "source": "Int. J. Pharmaceutics"
+  },
+  {
+    "api": "Fluoxetine HCL",
+    "excipient": "Lactose",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Amina sekunder Fluoxetine berpotensi minor bereaksi dengan Laktosa jangka panjang.",
+    "solution": "Gunakan MCC sebagai alternatif.",
+    "source": "Pharmaceutical Research"
+  },
+  {
+    "api": "Phenytoin",
+    "excipient": "Calcium Sulfate",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "Clinical study",
+    "reason": "Perubahan eksipien Phenytoin pernah menyebabkan epidemi toksisitas di Australia 1968.",
+    "solution": "Jangan ubah eksipien tanpa studi bioekivalensi penuh.",
+    "source": "Lancet 1968"
+  },
+  {
+    "api": "Rifampicin",
+    "excipient": "Isoniazid",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Isoniazid bereaksi dengan Rifampicin membentuk isonicotinyl hydrazone.",
+    "solution": "Gunakan bilayer tablet atau kapsul terpisah.",
+    "source": "J. Pharm. Sci."
+  },
+  {
+    "api": "Doxycycline",
+    "excipient": "Calcium Carbonate",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "Clinical study",
+    "reason": "Ion kalsium membentuk kelat dengan Doxycycline.",
+    "solution": "Hindari antasida kalsium.",
+    "source": "Clinical Pharmacology"
+  },
+  {
+    "api": "Pantoprazole Sodium",
+    "excipient": "Croscarmellose Sodium",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Pantoprazole labil terhadap pH asam mikro dari CCS.",
+    "solution": "Gunakan alkalizing agents + enteric coating.",
+    "source": "European J. Pharmaceutics"
+  },
+  {
+    "api": "Clarithromycin",
+    "excipient": "Citric Acid",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Makrolida labil terhadap asam. Citric Acid mendegradasi Clarithromycin cepat.",
+    "solution": "Hindari eksipien asam. Gunakan enteric coating.",
+    "source": "J. Pharm. Sci."
+  },
+  {
+    "api": "Ranitidine",
+    "excipient": "Croscarmellose Sodium",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "CCS dapat memfasilitasi pembentukan NDMA dari Ranitidine pada kondisi lembab.",
+    "solution": "Gunakan Crospovidone sebagai alternatif.",
+    "source": "FDA Safety Communication 2019"
+  },
+  {
+    "api": "Carbamazepine",
+    "excipient": "Magnesium Stearate",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Mg Stearate berlebih mengurangi disolusi Carbamazepine poorly soluble.",
+    "solution": "Batasi <0.5% dan blending <2 menit.",
+    "source": "J. Pharm. Sci."
+  },
+  {
+    "api": "Nifedipine",
+    "excipient": "PEG 6000",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "PEG 6000 meningkatkan disolusi Nifedipine via dispersi padat.",
+    "solution": "Gunakan rasio 1:3 API:PEG.",
+    "source": "Int. J. Pharmaceutics"
+  },
+  {
+    "api": "Furosemide",
+    "excipient": "Lactose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Furosemide kompatibel dengan Laktosa.",
+    "solution": "Formulasi standar.",
+    "source": "Handbook of Pharmaceutical Excipients"
+  },
+  {
+    "api": "Glimepiride",
+    "excipient": "Lactose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Glimepiride stabil dengan Laktosa. Dikonfirmasi via DSC.",
+    "solution": "Formulasi standar.",
+    "source": "Int. J. Pharmaceutics"
+  },
+  {
+    "api": "Tramadol HCL",
+    "excipient": "HPMC",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "HPMC kompatibel untuk extended-release Tramadol.",
+    "solution": "Gunakan HPMC K100M.",
+    "source": "Controlled Release Drug Delivery"
+  },
+  {
+    "api": "Valsartan",
+    "excipient": "Crospovidone",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Crospovidone kompatibel sebagai superdisintegran.",
+    "solution": "Gunakan 3-5%.",
+    "source": "Drug Dev. Ind. Pharmacy"
+  },
+  {
+    "api": "Metronidazole",
+    "excipient": "Lactose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Metronidazole kompatibel dengan Laktosa.",
+    "solution": "Formulasi standar.",
+    "source": "USP-NF"
+  },
+  {
+    "api": "Allopurinol",
+    "excipient": "Lactose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Allopurinol stabil dengan Laktosa.",
+    "solution": "Formulasi standar.",
+    "source": "Drug Dev. Ind. Pharmacy"
+  },
+  {
+    "api": "Domperidone",
+    "excipient": "Lactose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Domperidone stabil dengan Laktosa.",
+    "solution": "Formulasi standar.",
+    "source": "Int. J. Pharmaceutics"
+  },
+  {
+    "api": "Ketoconazole",
+    "excipient": "Sodium Lauryl Sulfate",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "SLS meningkatkan wettability Ketoconazole poorly soluble.",
+    "solution": "Gunakan SLS 1-2%.",
+    "source": "Int. J. Pharmaceutics"
+  },
+  {
+    "api": "Prednisone",
+    "excipient": "Lactose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Prednisone kompatibel dengan Laktosa.",
+    "solution": "Perhatikan uniformitas dosis (low-dose).",
+    "source": "USP-NF"
+  },
+  {
+    "api": "Naproxen",
+    "excipient": "Croscarmellose Sodium",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "CCS kompatibel dengan Naproxen.",
+    "solution": "Gunakan 2-4%.",
+    "source": "Drug Dev. Ind. Pharmacy"
+  },
+  {
+    "api": "Warfarin Sodium",
+    "excipient": "Lactose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Warfarin kompatibel dengan Laktosa.",
+    "solution": "Perhatikan uniformitas dosis (low-dose).",
+    "source": "Handbook of Pharmaceutical Excipients"
+  },
+  {
+    "api": "Metoprolol Tartrate",
+    "excipient": "Lactose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Metoprolol stabil dengan Laktosa.",
+    "solution": "Formulasi standar.",
+    "source": "USP-NF"
+  },
+  {
+    "api": "Spironolactone",
+    "excipient": "Microcrystalline Cellulose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "MCC kompatibel dengan Spironolactone.",
+    "solution": "Formulasi standar.",
+    "source": "Handbook of Pharmaceutical Excipients"
+  },
+  {
+    "api": "Acyclovir",
+    "excipient": "Microcrystalline Cellulose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "MCC kompatibel penuh dengan Acyclovir.",
+    "solution": "Formulasi standar.",
+    "source": "USP-NF"
+  },
+  {
+    "api": "Sertraline HCL",
+    "excipient": "Lactose",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Amina sekunder Sertraline berpotensi minor bereaksi Maillard dengan Laktosa pada penyimpanan jangka panjang.",
+    "solution": "Pertimbangkan MCC. Jika Laktosa digunakan, monitor impurities tiap 3 bulan.",
+    "source": "Pharmaceutical Research"
+  },
+  {
+    "api": "Sertraline HCL",
+    "excipient": "Microcrystalline Cellulose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "MCC sebagai pengisi inert kompatibel penuh dengan Sertraline.",
+    "solution": "Formulasi standar.",
+    "source": "USP-NF"
+  },
+  {
+    "api": "Lansoprazole",
+    "excipient": "Croscarmellose Sodium",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "PPI labil terhadap pH asam mikro CCS. Degradasi sulfoxide terjadi cepat.",
+    "solution": "Wajib enteric coating + alkalizing agent.",
+    "source": "European J. Pharmaceutics"
+  },
+  {
+    "api": "Lansoprazole",
+    "excipient": "Magnesium Carbonate",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "MgCO3 bersifat basa yang melindungi Lansoprazole dari degradasi asam.",
+    "solution": "Gunakan sebagai alkalizing agent 5-10%.",
+    "source": "USP-NF"
+  },
+  {
+    "api": "Esomeprazole",
+    "excipient": "Citric Acid",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Semua PPI sangat labil terhadap asam. Citric Acid mendegradasi Esomeprazole secara cepat.",
+    "solution": "Hindari eksipien asam. Enteric coating wajib.",
+    "source": "J. Pharm. Sci."
+  },
+  {
+    "api": "Cefixime",
+    "excipient": "Microcrystalline Cellulose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "MCC kompatibel dengan Cefixime. Tidak ada interaksi terdeteksi.",
+    "solution": "Formulasi standar.",
+    "source": "Drug Dev. Ind. Pharmacy"
+  },
+  {
+    "api": "Cefixime",
+    "excipient": "Sodium Starch Glycolate",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "SSG kompatibel sebagai superdisintegran untuk tablet Cefixime.",
+    "solution": "Gunakan 4-6%.",
+    "source": "Handbook of Pharmaceutical Excipients"
+  },
+  {
+    "api": "Sildenafil Citrate",
+    "excipient": "Lactose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Sildenafil stabil dengan Laktosa monohidrat.",
+    "solution": "Formulasi standar.",
+    "source": "USP-NF"
+  },
+  {
+    "api": "Sildenafil Citrate",
+    "excipient": "Microcrystalline Cellulose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "MCC kompatibel penuh dengan Sildenafil.",
+    "solution": "Gunakan MCC PH102 untuk direct compression.",
+    "source": "Int. J. Pharmaceutics"
+  },
+  {
+    "api": "Lisinopril",
+    "excipient": "Mannitol",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Mannitol bukan gula pereduksi. Aman untuk senyawa amina primer seperti Lisinopril.",
+    "solution": "Mannitol direkomendasikan sebagai pengganti Laktosa.",
+    "source": "Developing Solid Oral Dosage Forms"
+  },
+  {
+    "api": "Amlodipine Besylate",
+    "excipient": "Mannitol",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Mannitol aman karena tidak memicu Reaksi Maillard dengan Amlodipine.",
+    "solution": "Gunakan sebagai pengisi utama.",
+    "source": "J. Pharm. Sci."
+  },
+  {
+    "api": "Gabapentin",
+    "excipient": "Mannitol",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Mannitol kompatibel dengan Gabapentin karena bukan reducing sugar.",
+    "solution": "Direkomendasikan sebagai pengganti Laktosa.",
+    "source": "J. Pharm. Sci."
+  },
+  {
+    "api": "Captopril",
+    "excipient": "Microcrystalline Cellulose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "MCC inert dan tidak bereaksi dengan gugus thiol Captopril.",
+    "solution": "MCC direkomendasikan sebagai pengisi utama untuk tablet Captopril.",
+    "source": "J. Pharm. Sci."
+  },
+  {
+    "api": "Levothyroxine",
+    "excipient": "Mannitol",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Mannitol tidak mengandung ion multivalen. Aman untuk Levothyroxine.",
+    "solution": "Direkomendasikan sebagai pengisi.",
+    "source": "FDA Prescribing Information"
+  },
+  {
+    "api": "Ascorbic Acid",
+    "excipient": "Microcrystalline Cellulose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "MCC Low Peroxide Grade kompatibel dengan Ascorbic Acid.",
+    "solution": "Gunakan MCC grade rendah peroksida + tambahkan antioksidan.",
+    "source": "Int. J. Pharmaceutics"
   }
 ]
