@@ -1,5 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { usePrediction } from '../context/PredictionContext';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 export default function CompatibilityReport() {
   const navigate = useNavigate();
@@ -8,6 +10,165 @@ export default function CompatibilityReport() {
   
   const projectName = location.state?.projectName || "Custom Analysis";
   const dosageForm = location.state?.dosageForm || "Tablet / Kapsul";
+
+  const exportPDF = () => {
+    if (!predictionResult?.predictions) return;
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageW = doc.internal.pageSize.getWidth();
+    const margin = 15;
+    let y = 15;
+
+    // --- HEADER ---
+    doc.setFillColor(0, 66, 81);
+    doc.rect(0, 0, pageW, 38, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('PharmaMatch AI', margin, 16);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Compatibility Screening Report — ICH Q8 Pharmaceutical Development', margin, 23);
+    doc.setFontSize(8);
+    doc.text(`Document ID: RPT-${Date.now().toString().slice(-8)}  |  Generated: ${new Date().toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' })}`, margin, 30);
+    doc.text(`CONFIDENTIAL — For Internal R&D Use Only`, pageW - margin, 30, { align: 'right' });
+    y = 45;
+
+    // --- PROJECT INFO ---
+    doc.setTextColor(0, 66, 81);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('1. Project Information', margin, y);
+    y += 7;
+    doc.autoTable({
+      startY: y,
+      margin: { left: margin, right: margin },
+      theme: 'grid',
+      headStyles: { fillColor: [0, 66, 81], fontSize: 8 },
+      bodyStyles: { fontSize: 8 },
+      head: [['Parameter', 'Value']],
+      body: [
+        ['Project Name', projectName],
+        ['Active Pharmaceutical Ingredient (API)', predictionResult.api_name || '-'],
+        ['Dosage Form', dosageForm],
+        ['Number of Excipients Tested', String(predictionResult.predictions.length)],
+        ['Analysis Date', new Date().toLocaleDateString('id-ID')],
+        ['Analysis Engine', 'Random Forest + RDKit Descriptors + Knowledge Base'],
+      ],
+    });
+    y = doc.lastAutoTable.finalY + 10;
+
+    // --- COMPATIBILITY MATRIX ---
+    doc.setTextColor(0, 66, 81);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('2. Excipient Compatibility Matrix', margin, y);
+    y += 7;
+    const tableBody = predictionResult.predictions.map(p => [
+      p.excipient,
+      p.status,
+      String(p.compatibility_score),
+      p.source?.includes('Knowledge Base') ? 'KB' : p.source?.includes('Suitability') ? 'FORM' : 'ML',
+    ]);
+    doc.autoTable({
+      startY: y,
+      margin: { left: margin, right: margin },
+      theme: 'grid',
+      headStyles: { fillColor: [0, 66, 81], fontSize: 8 },
+      bodyStyles: { fontSize: 7.5 },
+      head: [['Excipient', 'Status', 'Score', 'Source']],
+      body: tableBody,
+      didParseCell: (data) => {
+        if (data.column.index === 1 && data.section === 'body') {
+          if (data.cell.raw === 'Incompatible' || data.cell.raw === 'Warning') {
+            data.cell.styles.textColor = [186, 26, 26];
+            data.cell.styles.fontStyle = 'bold';
+          } else {
+            data.cell.styles.textColor = [19, 115, 51];
+          }
+        }
+      },
+    });
+    y = doc.lastAutoTable.finalY + 10;
+
+    // --- DETAILED ANALYSIS ---
+    if (y > 240) { doc.addPage(); y = 20; }
+    doc.setTextColor(0, 66, 81);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('3. Detailed Analysis & Formulation Recommendations', margin, y);
+    y += 7;
+
+    predictionResult.predictions.forEach((p, i) => {
+      if (y > 245) { doc.addPage(); y = 20; }
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(0, 66, 81);
+      doc.text(`3.${i + 1}  ${p.excipient}`, margin, y);
+      y += 5;
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(60, 60, 60);
+      const reasonLines = doc.splitTextToSize(`Analisis: ${p.reason}`, pageW - margin * 2);
+      doc.text(reasonLines, margin, y);
+      y += reasonLines.length * 3.5 + 2;
+      if (p.solution) {
+        const solLines = doc.splitTextToSize(`Rekomendasi: ${p.solution}`, pageW - margin * 2);
+        doc.text(solLines, margin, y);
+        y += solLines.length * 3.5 + 2;
+      }
+      if (p.feature_importance) {
+        const fiText = Object.entries(p.feature_importance).map(([k,v]) => `${k}: ${v}%`).join(', ');
+        const fiLines = doc.splitTextToSize(`Feature Importance: ${fiText}`, pageW - margin * 2);
+        doc.setTextColor(100, 100, 100);
+        doc.text(fiLines, margin, y);
+        y += fiLines.length * 3.5;
+      }
+      y += 5;
+    });
+
+    // --- SIGNATURE BLOCK ---
+    if (y > 220) { doc.addPage(); y = 20; }
+    y += 5;
+    doc.setTextColor(0, 66, 81);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('4. Approval & Signature', margin, y);
+    y += 7;
+    doc.autoTable({
+      startY: y,
+      margin: { left: margin, right: margin },
+      theme: 'grid',
+      headStyles: { fillColor: [0, 66, 81], fontSize: 8 },
+      bodyStyles: { fontSize: 8, minCellHeight: 18 },
+      head: [['Role', 'Name', 'Signature', 'Date']],
+      body: [
+        ['Formulator', '', '', ''],
+        ['QA Reviewer', '', '', ''],
+        ['Project Lead', '', '', ''],
+      ],
+    });
+    y = doc.lastAutoTable.finalY + 8;
+
+    // --- FOOTER DISCLAIMER ---
+    doc.setFontSize(6.5);
+    doc.setTextColor(130, 130, 130);
+    doc.setFont('helvetica', 'italic');
+    const disclaimer = 'Disclaimer: This report is generated by PharmaMatch AI as a pre-screening tool. Results are based on computational predictions (Random Forest + RDKit) and curated literature (Knowledge Base). This report does NOT replace formal laboratory compatibility testing (DSC, FTIR, XRD, TGA). All predictions must be confirmed experimentally before proceeding to clinical-scale manufacturing. Refer to ICH Q8(R2) for pharmaceutical development guidelines.';
+    const discLines = doc.splitTextToSize(disclaimer, pageW - margin * 2);
+    doc.text(discLines, margin, y);
+
+    // --- PAGE NUMBERS ---
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      doc.setFontSize(7);
+      doc.setTextColor(150, 150, 150);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Page ${i} of ${totalPages}`, pageW - margin, doc.internal.pageSize.getHeight() - 8, { align: 'right' });
+      doc.text('PharmaMatch AI — Confidential', margin, doc.internal.pageSize.getHeight() - 8);
+    }
+
+    doc.save(`PharmaMatch_Report_${projectName.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.pdf`);
+  };
 
   return (
     <div className="flex-1 max-w-7xl mx-auto w-full space-y-8 animate-fade-in">
@@ -25,7 +186,7 @@ export default function CompatibilityReport() {
           <p className="text-on-surface-variant text-sm mt-1">Comprehensive analysis of Active Pharmaceutical Ingredient interactions.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 border border-primary-container text-primary-container bg-transparent rounded-lg font-label text-sm font-semibold hover:bg-primary-container/5 transition-colors duration-150">
+          <button onClick={exportPDF} className="flex items-center gap-2 px-4 py-2 border border-primary-container text-primary-container bg-transparent rounded-lg font-label text-sm font-semibold hover:bg-primary-container/5 transition-colors duration-150">
             <span className="material-symbols-outlined text-lg">download</span>
             Export
           </button>
