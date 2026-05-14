@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { usePrediction } from '../context/PredictionContext';
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 
 export default function CompatibilityReport() {
@@ -12,8 +12,13 @@ export default function CompatibilityReport() {
   const dosageForm = location.state?.dosageForm || "Tablet / Kapsul";
 
   const exportPDF = () => {
-    if (!predictionResult?.predictions) return;
-    const doc = new jsPDF('p', 'mm', 'a4');
+    if (!predictionResult || !predictionResult.predictions) {
+      alert("Tidak ada data prediksi untuk di-export. Silakan jalankan analisis prediksi terlebih dahulu.");
+      return;
+    }
+    
+    try {
+      const doc = new jsPDF('p', 'mm', 'a4');
     const pageW = doc.internal.pageSize.getWidth();
     const margin = 15;
     let y = 15;
@@ -162,12 +167,14 @@ export default function CompatibilityReport() {
       doc.setPage(i);
       doc.setFontSize(7);
       doc.setTextColor(150, 150, 150);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`Page ${i} of ${totalPages}`, pageW - margin, doc.internal.pageSize.getHeight() - 8, { align: 'right' });
       doc.text('PharmaMatch AI — Confidential', margin, doc.internal.pageSize.getHeight() - 8);
     }
-
+    
     doc.save(`PharmaMatch_Report_${projectName.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.pdf`);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      alert("Terjadi kesalahan saat membuat PDF: " + error.message);
+    }
   };
 
   return (
@@ -372,7 +379,7 @@ export default function CompatibilityReport() {
           <div className="bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-5 shadow-sm">
             <h3 className="font-headline font-bold text-on-surface text-base mb-4">Report Actions</h3>
             <div className="space-y-3">
-              <button className="w-full px-4 py-2.5 border border-outline-variant text-on-surface bg-white rounded font-label text-sm font-medium hover:bg-surface-container-low transition-colors duration-150 flex items-center justify-between group">
+              <button onClick={exportPDF} className="w-full px-4 py-2.5 border border-outline-variant text-on-surface bg-white rounded font-label text-sm font-medium hover:bg-surface-container-low transition-colors duration-150 flex items-center justify-between group">
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-[18px] text-on-surface-variant">picture_as_pdf</span>
                   Export PDF
