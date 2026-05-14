@@ -1047,5 +1047,405 @@
     "reason": "MCC Low Peroxide Grade kompatibel dengan Ascorbic Acid.",
     "solution": "Gunakan MCC grade rendah peroksida + tambahkan antioksidan.",
     "source": "Int. J. Pharmaceutics"
+  },
+  {
+    "api": "Paracetamol",
+    "excipient": "Sorbitol",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Sorbitol sebagai pemanis dan vehicle sirup kompatibel dengan Paracetamol. Stabil pada pH 4-6.",
+    "solution": "Gunakan Sorbitol 70% sebagai basis sirup. Tambahkan buffer sitrat untuk menjaga pH.",
+    "source": "Handbook of Pharmaceutical Excipients"
+  },
+  {
+    "api": "Paracetamol",
+    "excipient": "Propylene Glycol",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Propylene Glycol sebagai co-solvent meningkatkan kelarutan Paracetamol tanpa degradasi.",
+    "solution": "Gunakan 10-15% sebagai co-solvent dalam formulasi sirup/eliksir.",
+    "source": "Remington: Science and Practice of Pharmacy"
+  },
+  {
+    "api": "Paracetamol",
+    "excipient": "Methylparaben",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Methylparaben sebagai preservatif kompatibel dengan Paracetamol dalam larutan.",
+    "solution": "Gunakan 0.1-0.2% sebagai pengawet sirup.",
+    "source": "USP-NF"
+  },
+  {
+    "api": "Amoxicillin",
+    "excipient": "Xanthan Gum",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Xanthan Gum sebagai suspending agent kompatibel dengan Amoxicillin trihydrate.",
+    "solution": "Gunakan 0.5-1% untuk suspensi kering reconstitusi.",
+    "source": "Handbook of Pharmaceutical Excipients"
+  },
+  {
+    "api": "Amoxicillin",
+    "excipient": "Sucrose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Sukrosa sebagai pemanis dan vehicle sirup kompatibel. Tidak memicu degradasi beta-laktam.",
+    "solution": "Gunakan sebagai basis sirup kering. Simpan reconstituted suspension di 2-8C.",
+    "source": "European Pharmacopoeia"
+  },
+  {
+    "api": "Ibuprofen",
+    "excipient": "Polysorbate 80",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Tween 80 sebagai surfaktan meningkatkan wettability dan dispersibilitas Ibuprofen dalam suspensi.",
+    "solution": "Gunakan 0.1-0.5% sebagai wetting agent dalam suspensi oral.",
+    "source": "Int. J. Pharmaceutics"
+  },
+  {
+    "api": "Ibuprofen",
+    "excipient": "CMC Sodium",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "CMC-Na sebagai suspending agent memberikan viskositas optimal untuk suspensi Ibuprofen.",
+    "solution": "Gunakan 0.5-1% sebagai suspending agent. Homogenisasi dengan kecepatan tinggi.",
+    "source": "Aultons Pharmaceutics"
+  },
+  {
+    "api": "Ciprofloxacin",
+    "excipient": "Polysorbate 80",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Tween 80 kompatibel sebagai solubilizer untuk Ciprofloxacin dalam sediaan tetes mata/telinga.",
+    "solution": "Gunakan 0.1-0.5% dalam formulasi ophthalmic/otic.",
+    "source": "Remington"
+  },
+  {
+    "api": "Metronidazole",
+    "excipient": "Propylene Glycol",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Propylene Glycol meningkatkan kelarutan Metronidazole untuk formulasi infus/suspensi.",
+    "solution": "Gunakan sebagai co-solvent 15-20%.",
+    "source": "Handbook of Pharmaceutical Excipients"
+  },
+  {
+    "api": "Ranitidine",
+    "excipient": "Sorbitol",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Sorbitol sebagai vehicle sirup kompatibel dengan Ranitidine HCL.",
+    "solution": "Gunakan Sorbitol 70% sebagai basis sirup pediatrik.",
+    "source": "USP-NF"
+  },
+  {
+    "api": "Omeprazole",
+    "excipient": "Sodium Bicarbonate",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "NaHCO3 melindungi Omeprazole dari asam lambung dalam suspensi oral.",
+    "solution": "Gunakan suspensi NaHCO3 8.4% sebagai vehicle untuk suspensi oral Omeprazole.",
+    "source": "Am. J. Health-Syst. Pharmacy"
+  },
+  {
+    "api": "Cetirizine HCL",
+    "excipient": "Glycerin",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Gliserin sebagai humektan dan co-solvent kompatibel dalam sirup Cetirizine.",
+    "solution": "Gunakan 5-10% untuk mouthfeel dan stabilitas.",
+    "source": "Handbook of Pharmaceutical Excipients"
+  },
+  {
+    "api": "Cetirizine HCL",
+    "excipient": "Sucralose",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Sucralose sebagai pemanis non-kalori kompatibel dan stabil dalam larutan Cetirizine.",
+    "solution": "Gunakan 0.05-0.1% sebagai pemanis sirup.",
+    "source": "Int. J. Pharmaceutics"
+  },
+  {
+    "api": "Dexamethasone",
+    "excipient": "Polysorbate 80",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Tween 80 membantu solubilisasi Dexamethasone dalam formulasi injeksi.",
+    "solution": "Gunakan 0.1-0.2% dalam formulasi parenteral.",
+    "source": "Remington"
+  },
+  {
+    "api": "Dexamethasone",
+    "excipient": "Benzyl Alcohol",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "Clinical study",
+    "reason": "Benzyl Alcohol sebagai preservatif injeksi dikontraindikasikan untuk neonatus (Gasping Syndrome).",
+    "solution": "Hindari pada formulasi pediatrik/neonatal. Gunakan preservative-free atau Phenol sebagai alternatif.",
+    "source": "FDA Safety Alert"
+  },
+  {
+    "api": "Insulin",
+    "excipient": "Metacresol",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "Clinical study",
+    "reason": "Metacresol sebagai preservatif standar untuk injeksi Insulin multidose. Telah terbukti stabil.",
+    "solution": "Gunakan 0.3% m-Cresol sebagai preservatif standar.",
+    "source": "European Pharmacopoeia"
+  },
+  {
+    "api": "Insulin",
+    "excipient": "Zinc Chloride",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "Clinical study",
+    "reason": "Ion Zn2+ menstabilkan heksamer Insulin dan memperlambat absorpsi (long-acting effect).",
+    "solution": "Gunakan ZnCl2 untuk formulasi Insulin intermediate/long-acting.",
+    "source": "Diabetes Care Journal"
+  },
+  {
+    "api": "Insulin",
+    "excipient": "Protamine Sulfate",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "Clinical study",
+    "reason": "Protamine membentuk kompleks dengan Insulin untuk formulasi NPH (intermediate-acting).",
+    "solution": "Gunakan rasio Protamine:Insulin sesuai standar NPH.",
+    "source": "USP-NF"
+  },
+  {
+    "api": "Lidocaine HCL",
+    "excipient": "Epinephrine",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "Clinical study",
+    "reason": "Epinefrin sebagai vasokonstriktor memperpanjang durasi anestesi lokal Lidocaine.",
+    "solution": "Gunakan Epinefrin 1:100000 atau 1:200000. Tambahkan antioksidan Na Metabisulfit.",
+    "source": "Clinical Pharmacology"
+  },
+  {
+    "api": "Lidocaine HCL",
+    "excipient": "Sodium Metabisulfite",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "Clinical study",
+    "reason": "Na Metabisulfit sebagai antioksidan untuk Epinefrin dapat menyebabkan reaksi alergi pada pasien sensitif sulfit.",
+    "solution": "Wajib cantumkan peringatan sulfit pada label. Pertimbangkan formulasi tanpa Epinefrin untuk pasien alergi.",
+    "source": "FDA Prescribing Information"
+  },
+  {
+    "api": "Betamethasone Valerate",
+    "excipient": "Cetostearyl Alcohol",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Cetostearyl Alcohol sebagai emulsifying agent dan stiffening agent kompatibel. Membentuk basis krim o/w yang stabil.",
+    "solution": "Gunakan 5-15% untuk basis krim. Kombinasikan dengan emulgator anionik (SLS) untuk krim tipe o/w.",
+    "source": "Handbook of Pharmaceutical Excipients"
+  },
+  {
+    "api": "Betamethasone Valerate",
+    "excipient": "White Soft Paraffin",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Vaseline album sebagai basis salep kompatibel dan melindungi Betamethasone dari degradasi oksidatif.",
+    "solution": "Gunakan sebagai basis salep oklusal. Hindari pemanasan >60C saat pencampuran.",
+    "source": "British Pharmacopoeia"
+  },
+  {
+    "api": "Betamethasone Valerate",
+    "excipient": "Chlorocresol",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Chlorocresol sebagai preservatif krim kompatibel dengan Betamethasone.",
+    "solution": "Gunakan 0.1% sebagai pengawet krim.",
+    "source": "European Pharmacopoeia"
+  },
+  {
+    "api": "Hydrocortisone",
+    "excipient": "Lanolin",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "Clinical study",
+    "reason": "Lanolin meningkatkan penetrasi Hydrocortisone ke kulit (menguntungkan), namun sering menyebabkan dermatitis kontak alergi pada 1-5% populasi.",
+    "solution": "Gunakan Lanolin yang telah dimurnikan (Lanolin Anhydrous Purified). Cantumkan peringatan alergi pada label.",
+    "source": "Contact Dermatitis Journal"
+  },
+  {
+    "api": "Hydrocortisone",
+    "excipient": "Cetyl Alcohol",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Cetyl Alcohol sebagai emolien dan stiffening agent kompatibel dengan Hydrocortisone.",
+    "solution": "Gunakan 2-5% untuk konsistensi krim.",
+    "source": "Handbook of Pharmaceutical Excipients"
+  },
+  {
+    "api": "Hydrocortisone",
+    "excipient": "Glyceryl Monostearate",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "GMS sebagai self-emulsifying base kompatibel. Membentuk krim o/w stabil.",
+    "solution": "Gunakan 5-10% sebagai emulsifying agent.",
+    "source": "Remington"
+  },
+  {
+    "api": "Clotrimazole",
+    "excipient": "Cetomacrogol 1000",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Cetomacrogol sebagai nonionic emulsifier kompatibel untuk krim antijamur Clotrimazole.",
+    "solution": "Gunakan sebagai emulgator utama krim tipe o/w.",
+    "source": "British Pharmacopoeia"
+  },
+  {
+    "api": "Clotrimazole",
+    "excipient": "Benzyl Alcohol",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Benzyl Alcohol sebagai preservatif dan co-solvent kompatibel dalam krim Clotrimazole.",
+    "solution": "Gunakan 1% sebagai preservatif krim.",
+    "source": "European Pharmacopoeia"
+  },
+  {
+    "api": "Clotrimazole",
+    "excipient": "Sorbitan Monostearate",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Span 60 sebagai lipophilic emulsifier kompatibel untuk krim tipe w/o.",
+    "solution": "Kombinasikan dengan Tween 60 untuk sistem emulsi HLB yang seimbang.",
+    "source": "Handbook of Pharmaceutical Excipients"
+  },
+  {
+    "api": "Ketoconazole",
+    "excipient": "Cetostearyl Alcohol",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Cetostearyl Alcohol kompatibel sebagai basis krim antijamur Ketoconazole 2%.",
+    "solution": "Gunakan 7-10% dalam basis krim o/w.",
+    "source": "USP-NF"
+  },
+  {
+    "api": "Mupirocin",
+    "excipient": "Polyethylene Glycol 400",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "PEG mendegradasi Mupirocin melalui transesterifikasi. Salep Mupirocin dalam basis PEG kehilangan potensi secara cepat.",
+    "solution": "DILARANG menggunakan basis PEG untuk Mupirocin. Gunakan White Soft Paraffin sebagai basis salep.",
+    "source": "J. Pharm. Sci.: Mupirocin Stability"
+  },
+  {
+    "api": "Mupirocin",
+    "excipient": "White Soft Paraffin",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Vaseline album sebagai basis salep anhydrous ideal untuk Mupirocin karena menghindari hidrolisis.",
+    "solution": "Gunakan White Soft Paraffin sebagai basis tunggal.",
+    "source": "British Pharmacopoeia"
+  },
+  {
+    "api": "Diclofenac Sodium",
+    "excipient": "Carbomer 940",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Carbomer 940 sebagai gelling agent kompatibel untuk gel Diclofenac topikal.",
+    "solution": "Gunakan Carbomer 1-2% dinetralisasi dengan TEA atau NaOH. pH akhir 7-7.5.",
+    "source": "Int. J. Pharmaceutics"
+  },
+  {
+    "api": "Diclofenac Sodium",
+    "excipient": "Isopropyl Alcohol",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Isopropyl Alcohol sebagai penetration enhancer dan co-solvent kompatibel dalam gel Diclofenac.",
+    "solution": "Gunakan 10-20% untuk meningkatkan penetrasi transdermal.",
+    "source": "Aultons Pharmaceutics"
+  },
+  {
+    "api": "Acyclovir",
+    "excipient": "Propylene Glycol",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Propylene Glycol sebagai humektan dan penetration enhancer kompatibel dalam krim Acyclovir 5%.",
+    "solution": "Gunakan 10-15% dalam basis krim o/w.",
+    "source": "European Pharmacopoeia"
+  },
+  {
+    "api": "Acyclovir",
+    "excipient": "White Soft Paraffin",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Vaseline album kompatibel sebagai komponen basis krim Acyclovir.",
+    "solution": "Gunakan dalam kombinasi basis krim emulsi.",
+    "source": "British Pharmacopoeia"
+  },
+  {
+    "api": "Salicylic Acid",
+    "excipient": "White Soft Paraffin",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Vaseline album sebagai basis salep keratolytic stabil dengan Salicylic Acid.",
+    "solution": "Gunakan untuk salep Whitfields (Sal Acid 3% + Benzoic Acid 6%).",
+    "source": "British Pharmacopoeia"
+  },
+  {
+    "api": "Salicylic Acid",
+    "excipient": "Aqueous Cream",
+    "status": "Warning",
+    "severity": "Moderate",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "pH rendah Salicylic Acid (2-3) dapat mengganggu stabilitas emulsi aqueous cream, menyebabkan cracking.",
+    "solution": "Tambahkan buffer atau sesuaikan pH 3.5-4. Gunakan emulgator dengan toleransi pH rendah.",
+    "source": "Pharmaceutical Compounding Journal"
+  },
+  {
+    "api": "Tretinoin",
+    "excipient": "Benzoyl Peroxide",
+    "status": "Incompatible",
+    "severity": "Major",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "Benzoyl Peroxide sebagai oksidator kuat mendegradasi Tretinoin (retinoid) secara cepat melalui oksidasi ikatan rangkap konjugasi.",
+    "solution": "DILARANG mencampur dalam satu formulasi. Gunakan secara terpisah (pagi-malam) atau gunakan formulasi mikrokapsul.",
+    "source": "J. Am. Acad. Dermatology"
+  },
+  {
+    "api": "Tretinoin",
+    "excipient": "Isopropyl Myristate",
+    "status": "Compatible",
+    "severity": "Minor",
+    "evidence_level": "In-vitro confirmed",
+    "reason": "IPM sebagai emolien dan penetration enhancer kompatibel dengan Tretinoin dalam gel/krim.",
+    "solution": "Gunakan 3-5% sebagai emolien. Lindungi dari cahaya dan udara.",
+    "source": "Int. J. Pharmaceutics"
   }
 ]
