@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { usePrediction } from '../context/PredictionContext';
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 export default function CompatibilityReport() {
   const navigate = useNavigate();
@@ -52,7 +52,7 @@ export default function CompatibilityReport() {
     doc.setFont('helvetica', 'bold');
     doc.text('1. Project Information', margin, y);
     y += 7;
-    doc.autoTable({
+    autoTable(doc, {
       startY: y,
       margin: { left: margin, right: margin },
       theme: 'grid',
@@ -82,7 +82,7 @@ export default function CompatibilityReport() {
       String(p.compatibility_score),
       p.source?.includes('Knowledge Base') ? 'KB' : p.source?.includes('Suitability') ? 'FORM' : 'ML',
     ]);
-    doc.autoTable({
+    autoTable(doc, {
       startY: y,
       margin: { left: margin, right: margin },
       theme: 'grid',
@@ -146,7 +146,7 @@ export default function CompatibilityReport() {
     doc.setFont('helvetica', 'bold');
     doc.text('4. Approval & Signature', margin, y);
     y += 7;
-    doc.autoTable({
+    autoTable(doc, {
       startY: y,
       margin: { left: margin, right: margin },
       theme: 'grid',
