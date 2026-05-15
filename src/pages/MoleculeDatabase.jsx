@@ -86,7 +86,7 @@ export default function MoleculeDatabase() {
                 src={`https://embed.molview.org/v1/?mode=balls&${
                   selectedMolFor3D.id && !isNaN(selectedMolFor3D.id) && selectedMolFor3D.id > 100
                   ? `cid=${selectedMolFor3D.id}` 
-                  : `q=${encodeURIComponent(selectedMolFor3D.name.replace(/\s*\(.*?\)\s*/g, '').replace(' HCL', ''))}`
+                  : `q=${encodeURIComponent(selectedMolFor3D.name.split(' (')[0].replace(' HCL', ''))}`
                 }`}
                 className="w-full h-full border-0"
                 title="3D MolView"
