@@ -268,12 +268,23 @@ def run_ml_prediction(request: PredictionRequest):
             (item["api"].lower() in mol2_name.lower() and item["excipient"].lower() in mol1_name.lower())), None)
         
         if kb_match:
+            kb_solution = kb_match.get("solution", "")
+            
+            # Enrich solution based on dosage form if it's an incompatibility
+            if kb_match["status"] != "Compatible":
+                if "Injeksi" in dosage_form or "IV" in dosage_form:
+                    kb_solution += " Untuk sediaan parenteral, pastikan pengganti memiliki standar grade injeksi (API/Excipient grade parenteral) dan uji sterilitas ulang."
+                elif "Krim" in dosage_form or "Salep" in dosage_form:
+                    kb_solution += " Untuk sediaan semisolid, perhatikan stabilitas emulsi/basis saat penggantian komponen agar viskositas tetap terjaga."
+                elif "Suspensi" in dosage_form or "Sirup" in dosage_form:
+                    kb_solution += " Untuk sediaan liquid, pastikan kelarutan/dispersibilitas komponen pengganti tidak mengganggu homogenitas sediaan."
+
             return {
                 "excipient": display_name,
                 "status": kb_match["status"],
                 "compatibility_score": 0.99 if kb_match["status"] == "Compatible" else 0.20,
                 "reason": f"{kb_match['reason']}",
-                "solution": kb_match.get("solution", ""),
+                "solution": kb_solution or "Lakukan pengujian pre-formulasi lanjutan untuk mencari eksipien pengganti yang lebih stabil.",
                 "source": kb_match.get("source", "Knowledge Base Internal"),
                 "feature_importance": {"Berdasarkan Literatur Farmasi": 100.0}
             }

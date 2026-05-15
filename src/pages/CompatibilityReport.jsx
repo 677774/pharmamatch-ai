@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { usePrediction } from '../context/PredictionContext';
 import { jsPDF } from 'jspdf';
@@ -6,7 +7,10 @@ import 'jspdf-autotable';
 export default function CompatibilityReport() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { predictionResult } = usePrediction();
+  const { predictionResult: contextPrediction, setPredictionResult } = usePrediction();
+  const [isExporting, setIsExporting] = useState(false);
+  
+  const predictionResult = location.state?.predictionData || contextPrediction;
   
   const projectName = location.state?.projectName || "Custom Analysis";
   const dosageForm = location.state?.dosageForm || "Tablet / Kapsul";
@@ -17,8 +21,12 @@ export default function CompatibilityReport() {
       return;
     }
     
-    try {
-      const doc = new jsPDF('p', 'mm', 'a4');
+    setIsExporting(true);
+
+    // Use setTimeout to allow the UI to update (show loading) before heavy PDF generation
+    setTimeout(() => {
+      try {
+        const doc = new jsPDF('p', 'mm', 'a4');
     const pageW = doc.internal.pageSize.getWidth();
     const margin = 15;
     let y = 15;
@@ -171,10 +179,13 @@ export default function CompatibilityReport() {
     }
     
     doc.save(`PharmaMatch_Report_${projectName.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.pdf`);
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      alert("Terjadi kesalahan saat membuat PDF: " + error.message);
-    }
+      } catch (error) {
+        console.error("Error generating PDF:", error);
+        alert("Terjadi kesalahan saat membuat PDF: " + error.message);
+      } finally {
+        setIsExporting(false);
+      }
+    }, 100);
   };
 
   return (
@@ -193,9 +204,15 @@ export default function CompatibilityReport() {
           <p className="text-on-surface-variant text-sm mt-1">Comprehensive analysis of Active Pharmaceutical Ingredient interactions.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={exportPDF} className="flex items-center gap-2 px-4 py-2 border border-primary-container text-primary-container bg-transparent rounded-lg font-label text-sm font-semibold hover:bg-primary-container/5 transition-colors duration-150">
-            <span className="material-symbols-outlined text-lg">download</span>
-            Export
+          <button 
+            onClick={exportPDF} 
+            disabled={isExporting}
+            className={`flex items-center gap-2 px-4 py-2 border border-primary-container rounded-lg font-label text-sm font-semibold transition-colors duration-150 ${isExporting ? 'bg-surface-container-high text-outline cursor-not-allowed' : 'text-primary-container bg-transparent hover:bg-primary-container/5'}`}
+          >
+            <span className={`material-symbols-outlined text-lg ${isExporting ? 'animate-spin' : ''}`}>
+              {isExporting ? 'progress_activity' : 'download'}
+            </span>
+            {isExporting ? 'Exporting...' : 'Export'}
           </button>
         </div>
       </div>
@@ -379,12 +396,18 @@ export default function CompatibilityReport() {
           <div className="bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-5 shadow-sm">
             <h3 className="font-headline font-bold text-on-surface text-base mb-4">Report Actions</h3>
             <div className="space-y-3">
-              <button onClick={exportPDF} className="w-full px-4 py-2.5 border border-outline-variant text-on-surface bg-white rounded font-label text-sm font-medium hover:bg-surface-container-low transition-colors duration-150 flex items-center justify-between group">
+              <button 
+                onClick={exportPDF} 
+                disabled={isExporting}
+                className={`w-full px-4 py-2.5 border border-outline-variant rounded font-label text-sm font-medium transition-colors duration-150 flex items-center justify-between group ${isExporting ? 'bg-surface-container text-outline cursor-not-allowed' : 'bg-white text-on-surface hover:bg-surface-container-low'}`}
+              >
                 <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[18px] text-on-surface-variant">picture_as_pdf</span>
-                  Export PDF
+                  <span className={`material-symbols-outlined text-[18px] ${isExporting ? 'animate-spin' : 'text-on-surface-variant'}`}>
+                    {isExporting ? 'progress_activity' : 'picture_as_pdf'}
+                  </span>
+                  {isExporting ? 'Exporting PDF...' : 'Export PDF'}
                 </div>
-                <span className="material-symbols-outlined text-[16px] text-outline-variant group-hover:text-primary transition-colors">arrow_forward</span>
+                {!isExporting && <span className="material-symbols-outlined text-[16px] text-outline-variant group-hover:text-primary transition-colors">arrow_forward</span>}
               </button>
               <button className="w-full px-4 py-2.5 border border-outline-variant text-on-surface bg-white rounded font-label text-sm font-medium hover:bg-surface-container-low transition-colors duration-150 flex items-center justify-between group">
                 <div className="flex items-center gap-2">

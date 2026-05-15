@@ -93,6 +93,20 @@ export default function LabValidation() {
     setExpandedId(null);
   };
 
+  const handleDeleteValidation = (id, type) => {
+    if (!window.confirm('Apakah Anda yakin ingin menghapus data validasi ini?')) return;
+
+    if (type === 'pending') {
+      const updated = pendingValidations.filter(v => v.id !== id);
+      setPendingValidations(updated);
+      localStorage.setItem('pharmamatch_pending_validations', JSON.stringify(updated));
+    } else {
+      const updated = recentValidations.filter(v => v.id !== id);
+      setRecentValidations(updated);
+      localStorage.setItem('pharmamatch_recent_validations', JSON.stringify(updated));
+    }
+  };
+
   const accuracy = recentValidations.length === 0 ? 0 :
     Math.round((recentValidations.filter(v => v.confirmed).length / recentValidations.length) * 100);
 
@@ -153,9 +167,18 @@ export default function LabValidation() {
                     <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">psychology</span> AI Confidence: {item.confidence}%</span>
                   </div>
                 </div>
-                <button className="text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors">
-                  <span className="material-symbols-outlined transition-transform duration-200" style={{ transform: expandedId === item.id ? 'rotate(180deg)' : 'rotate(0deg)' }}>expand_more</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); handleDeleteValidation(item.id, 'pending'); }}
+                    className="p-2 text-outline hover:text-error hover:bg-error-container/20 rounded-full transition-colors"
+                    title="Hapus Validation"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
+                  <button className="text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors">
+                    <span className="material-symbols-outlined transition-transform duration-200" style={{ transform: expandedId === item.id ? 'rotate(180deg)' : 'rotate(0deg)' }}>expand_more</span>
+                  </button>
+                </div>
               </div>
 
               {expandedId === item.id && (
@@ -269,7 +292,16 @@ export default function LabValidation() {
                       )}
                       <span className="text-[10px] text-secondary font-body px-1.5 py-0.5 rounded bg-surface-container-low">{item.methodKey?.toUpperCase()}</span>
                     </div>
-                    <span className="text-xs text-outline font-body">{new Date(item.dateValidated).toLocaleDateString('id-ID')}</span>
+                    <div className="flex items-center justify-between w-full">
+                      <span className="text-xs text-outline font-body">{new Date(item.dateValidated).toLocaleDateString('id-ID')}</span>
+                      <button 
+                        onClick={() => handleDeleteValidation(item.id, 'recent')}
+                        className="text-outline hover:text-error transition-colors p-1"
+                        title="Hapus Riwayat"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">delete</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

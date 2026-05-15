@@ -87,7 +87,8 @@ export default function NewPrediction() {
           stability: parseInt(data.global_confidence?.replace('%', '') || 85),
           combinations: excipientsList.length,
           date: new Date().toISOString(),
-          icon: 'science'
+          icon: 'science',
+          predictionData: data
         };
         const existingProjects = JSON.parse(localStorage.getItem('pharmamatch_projects') || '[]');
         localStorage.setItem('pharmamatch_projects', JSON.stringify([newProject, ...existingProjects]));
@@ -104,7 +105,7 @@ export default function NewPrediction() {
         const existingPending = JSON.parse(localStorage.getItem('pharmamatch_pending_validations') || '[]');
         localStorage.setItem('pharmamatch_pending_validations', JSON.stringify([...newPending, ...existingPending]));
         
-        navigate('/report', { state: { projectName: projectName.trim(), dosageForm: dosageForm } });
+        navigate('/report', { state: { projectName: projectName.trim(), dosageForm: dosageForm, predictionData: data } });
       }
     } catch (err) {
       console.error(err);
