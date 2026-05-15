@@ -1,64 +1,63 @@
 import { useState, useEffect } from 'react';
+import { moleculeDatabase } from '../data/dummyData';
 
 export default function MoleculeDatabase() {
   const [searchTerm, setSearchTerm] = useState('');
   const [molecules, setMolecules] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   
   // 3D Modal State
   const [selectedMolFor3D, setSelectedMolFor3D] = useState(null);
 
   useEffect(() => {
-    fetchMolecules();
+    // Filter out molecules that don't have images or 3D models as per user request
+    const filtered = moleculeDatabase.filter(m => m.image !== null && m.has3D);
+    setMolecules(filtered);
   }, []);
-
-  const fetchMolecules = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('https://dzamar-pharmamatch-backend.hf.space/api/molecules');
-      const data = await response.json();
-      if (data.status === 'success') {
-        const formatted = data.data.map(m => ({
-          id: m.id,
-          name: m.name,
-          formula: m.formula,
-          weight: `${m.mw} g/mol`,
-          logp: m.logp || "Unknown",
-          smiles: m.cas || "Unknown", // Assuming cas has SMILES or we fetch it
-          status: "Local DB",
-          statusColor: "teal",
-          img: `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${m.name}/PNG`
-        }));
-        setMolecules(formatted);
-      }
-    } catch (err) {
-      setError("Failed to connect to backend");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) {
-      fetchMolecules();
+      setMolecules(moleculeDatabase.filter(m => m.image !== null && m.has3D));
       return;
     }
     
     setLoading(true);
     try {
+      // 1. Cek local data dulu untuk kecepatan
+      const localResults = moleculeDatabase.filter(m => 
+        m.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+
+      // 2. Selalu fetch dari Global PubChem API via Backend untuk data terbaru/luas
       const response = await fetch('https://dzamar-pharmamatch-backend.hf.space/api/molecules/search?name=' + encodeURIComponent(searchTerm));
       const data = await response.json();
+      
       if (data.status === 'success') {
-        setMolecules([{
-          ...data.data,
-          id: data.data.cid
-        }]);
+        const pubchemMol = {
+          id: data.data.cid,
+          name: data.data.name,
+          formula: data.data.formula,
+          mw: data.data.mw,
+          logP: data.data.logp || "N/A",
+          smiles: data.data.smiles || data.data.cas || "N/A",
+          type: "Global Registry",
+          has3D: true,
+          image: `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${data.data.cid}/PNG`
+        };
+        
+        // Gabungkan hasil local (jika ada) dengan hasil global
+        setMolecules([pubchemMol, ...localResults.filter(l => l.name !== pubchemMol.name)]);
+      } else if (localResults.length > 0) {
+        setMolecules(localResults);
       } else {
-        setMolecules([]); // Not found
+        setMolecules([]); 
       }
     } catch (err) {
-      setError("Search failed");
+      console.error("PubChem search failed, falling back to local search");
+      const localResults = moleculeDatabase.filter(m => 
+        m.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setMolecules(localResults);
     } finally {
       setLoading(false);
     }
@@ -141,37 +140,35 @@ export default function MoleculeDatabase() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {molecules.map((molecule) => (
               <div key={molecule.id || molecule.name} className="bg-surface-container-lowest border border-outline-variant/50 rounded-xl overflow-hidden hover:border-primary-fixed-dim hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-300 group flex flex-col">
-                <div className="h-48 bg-surface-container-low/50 flex items-center justify-center p-4 border-b border-outline-variant/30 relative shrink-0">
+                <div className="h-48 bg-white flex items-center justify-center p-4 border-b border-outline-variant/30 relative shrink-0">
                   <img 
                     alt={`${molecule.name} 2D Structure`} 
-                    className="max-h-full opacity-80 group-hover:opacity-100 transition-opacity mix-blend-multiply" 
-                    src={molecule.img}
-                    onError={(e) => { e.target.src = 'https://via.placeholder.com/200?text=No+Image' }}
+                    className="max-h-full opacity-90 group-hover:opacity-100 transition-opacity" 
+                    src={molecule.image}
                   />
-                  <div className={`absolute top-3 right-3 bg-white px-2 py-1 rounded text-xs font-semibold text-${molecule.statusColor}-800 border border-${molecule.statusColor}-100 flex items-center gap-1 shadow-sm`}>
-                    <span className={`w-1.5 h-1.5 rounded-full bg-${molecule.statusColor}-500`}></span> {molecule.status}
+                  <div className="absolute top-3 right-3 bg-primary-container/10 text-primary-container px-2 py-1 rounded text-xs font-semibold border border-primary-container/20 flex items-center gap-1 shadow-sm">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary-container"></span> {molecule.type}
                   </div>
                 </div>
                 <div className="p-5 flex flex-col flex-1">
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="font-headline font-bold text-lg text-primary truncate max-w-[200px]">{molecule.name}</h3>
+                      <h3 className="font-headline font-bold text-lg text-on-surface group-hover:text-primary transition-colors truncate max-w-[200px]">{molecule.name}</h3>
                       <p className="text-sm text-on-surface-variant font-mono mt-1">{molecule.formula}</p>
                     </div>
-                    <button className="text-outline hover:text-primary"><span className="material-symbols-outlined">bookmark_border</span></button>
                   </div>
                   <div className="grid grid-cols-2 gap-y-3 gap-x-4 mb-6 flex-1">
                     <div>
-                      <p className="text-xs text-outline mb-0.5">Mol Weight</p>
-                      <p className="text-sm font-medium text-on-surface">{molecule.weight}</p>
+                      <p className="text-xs text-outline mb-0.5">Mol Weight (BM)</p>
+                      <p className="text-sm font-medium text-on-surface">{molecule.mw} g/mol</p>
                     </div>
                     <div>
                       <p className="text-xs text-outline mb-0.5">LogP</p>
-                      <p className="text-sm font-medium text-on-surface">{molecule.logp}</p>
+                      <p className="text-sm font-medium text-on-surface">{molecule.logP}</p>
                     </div>
                     <div className="col-span-2">
                       <p className="text-xs text-outline mb-0.5">SMILES</p>
-                      <p className="text-xs font-mono bg-surface-container-low p-2 rounded text-on-surface break-all border border-outline-variant/30 line-clamp-2" title={molecule.smiles}>{molecule.smiles}</p>
+                      <p className="text-[10px] font-mono bg-surface-container-low p-2 rounded text-on-surface break-all border border-outline-variant/30 line-clamp-2" title={molecule.smiles}>{molecule.smiles}</p>
                     </div>
                   </div>
                   <div className="flex gap-3 mt-auto">
@@ -180,9 +177,6 @@ export default function MoleculeDatabase() {
                       className="flex-1 bg-primary hover:bg-[#005b6f] text-white py-2 rounded text-sm font-medium transition-colors duration-150 flex items-center justify-center gap-2"
                     >
                       <span className="material-symbols-outlined text-sm">3d_rotation</span> View 3D Model
-                    </button>
-                    <button className="px-3 py-2 border border-primary text-primary rounded hover:bg-surface-container-low transition-colors duration-150">
-                      <span className="material-symbols-outlined text-sm">download</span>
                     </button>
                   </div>
                 </div>

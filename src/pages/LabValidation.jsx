@@ -116,6 +116,15 @@ export default function LabValidation() {
     toast.success('Validation record deleted');
   };
 
+  const handleResetStats = () => {
+    if (!window.confirm('Apakah Anda yakin ingin me-reset semua statistik kesesuaian AI? Semua riwayat validasi akan dihapus secara permanen.')) {
+      return;
+    }
+    setRecentValidations([]);
+    localStorage.setItem('pharmamatch_recent_validations', '[]');
+    toast.success('AI compatibility metrics reset');
+  };
+
   const accuracy = recentValidations.length === 0 ? 0 :
     Math.round((recentValidations.filter(v => v.confirmed).length / recentValidations.length) * 100);
 
@@ -127,11 +136,18 @@ export default function LabValidation() {
       {/* Stats Header */}
       <div className="bg-surface-container-lowest/85 backdrop-blur-[12px] border border-outline-variant/40 rounded-xl p-6 mb-8 shadow-sm">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-          <div>
-            <h2 className="font-headline text-2xl font-extrabold text-primary mb-1">Lab Validation</h2>
-            <p className="font-body text-sm text-secondary">Input hasil uji laboratorium untuk mengkonfirmasi prediksi AI</p>
+            <div>
+              <h1 className="font-headline text-2xl font-bold text-on-surface">AI Accuracy & Lab Validation</h1>
+              <p className="text-on-surface-variant text-sm mt-1">Sistem validasi silang antara prediksi Machine Learning dan hasil riwayat laboratorium.</p>
+            </div>
+            <button 
+              onClick={handleResetStats}
+              className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-error hover:bg-error-container/30 border border-error/30 rounded-lg transition-colors"
+            >
+              <span className="material-symbols-outlined text-sm">restart_alt</span>
+              Reset Statistics
+            </button>
           </div>
-        </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="bg-surface-container-low rounded-lg p-3 border border-outline-variant/30 text-center">
             <p className="text-2xl font-bold text-on-surface font-headline">{pendingValidations.length}</p>

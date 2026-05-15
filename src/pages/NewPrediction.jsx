@@ -388,15 +388,50 @@ export default function NewPrediction() {
               <span className="material-symbols-outlined text-outline text-[18px]">hub</span>
               Molecular Structure Context
             </h3>
-            <div className="flex-1 bg-white border border-outline-variant/50 rounded flex items-center justify-center p-4 relative overflow-hidden group">
-              <img 
-                alt="Molecular Structure" 
-                className="absolute inset-0 w-full h-full object-cover opacity-20 filter grayscale mix-blend-multiply" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmNDUOPkaj5LZL0PZJkwMEBzepYbpyfXl5X0H_wVbM63TzlM_TAfLOM6syRfImE8i_B_cUzH5QP-AmwlImZ5ieDAk1EGjcei-QZKAtDuriAMSY4AUV5gghO2eRlBn71D9F29GMeyNhKEJWhUxEcV0BEm2cpiCKLlvHW5UoHBdaWHmHaLsJWQADC8BDz2rbRAAsb5wJE1Z3shLT_2g2f_jE2pu0ZtfFEINirC49r4n4XlaXZFvuZRw0B_YQNxQym-mMTXd_BtwwogAb"
-              />
-              <div className="z-10 text-center">
-                <span className="material-symbols-outlined text-outline-variant text-4xl mb-2">blur_on</span>
-                <p className="text-xs text-on-surface-variant font-medium">Metformin HCL spatial preview available after analysis.</p>
+            <div className="flex-1 bg-white border border-outline-variant/50 rounded flex flex-col items-center justify-center p-4 relative overflow-hidden group">
+              {apiName && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10">
+                  <img 
+                    alt="Background API structure" 
+                    src={`https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid=${
+                      apiName.includes('Metformin') ? '14219' : 
+                      apiName.includes('Paracetamol') ? '1983' : 
+                      apiName.includes('Ibuprofen') ? '3672' : 
+                      apiName.includes('Amoxicillin') ? '33613' : '1983'
+                    }&t=l`}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              )}
+              
+              <div className="z-10 text-center px-4">
+                {apiName ? (
+                  <div className="animate-fade-in flex flex-col items-center">
+                    <div className="w-24 h-24 bg-surface-container-low rounded-lg p-2 mb-3 border border-outline-variant/30 shadow-sm flex items-center justify-center">
+                      <img 
+                        src={`https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid=${
+                          apiName.includes('Metformin') ? '14219' : 
+                          apiName.includes('Paracetamol') ? '1983' : 
+                          apiName.includes('Ibuprofen') ? '3672' : 
+                          apiName.includes('Amoxicillin') ? '33613' : '1983'
+                        }&t=l`}
+                        className="max-w-full max-h-full"
+                        alt={apiName}
+                      />
+                    </div>
+                    <p className="text-[11px] font-bold text-primary uppercase tracking-wider mb-1">{apiName} Context</p>
+                    <p className="text-[10px] text-on-surface-variant max-w-[200px]">
+                      {excipientsList.length > 0 
+                        ? `Structural affinity analysis ready for ${excipientsList.length} combinations.` 
+                        : "Select excipients to begin interaction modeling."}
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined text-outline-variant text-4xl mb-2">blur_on</span>
+                    <p className="text-xs text-on-surface-variant font-medium">Select an API to view structural context.</p>
+                  </>
+                )}
               </div>
             </div>
           </section>
