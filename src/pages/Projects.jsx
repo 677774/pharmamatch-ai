@@ -1,13 +1,20 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { ProjectSkeleton } from '../components/ui/Skeleton';
 
 export default function Projects() {
   const [projects, setProjects] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Load dynamic projects from localStorage
-    const savedProjects = JSON.parse(localStorage.getItem('pharmamatch_projects') || '[]');
-    setProjects(savedProjects);
+    // Simulate brief loading for premium feel
+    const timer = setTimeout(() => {
+      const savedProjects = JSON.parse(localStorage.getItem('pharmamatch_projects') || '[]');
+      setProjects(savedProjects);
+      setIsLoading(false);
+    }, 600);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleDeleteProject = (e, id, projectName) => {
@@ -32,6 +39,8 @@ export default function Projects() {
     const recent = JSON.parse(localStorage.getItem('pharmamatch_recent_validations') || '[]');
     const updatedRecent = recent.filter(v => v.projectName !== projectName);
     localStorage.setItem('pharmamatch_recent_validations', JSON.stringify(updatedRecent));
+
+    toast.success('Project deleted successfully');
   };
 
   return (
@@ -57,7 +66,13 @@ export default function Projects() {
 
       {/* Projects Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
-        {projects.length > 0 ? projects.map((project) => (
+        {isLoading ? (
+          <>
+            <ProjectSkeleton />
+            <ProjectSkeleton />
+            <ProjectSkeleton />
+          </>
+        ) : projects.length > 0 ? projects.map((project) => (
           <Link 
             key={project.id}
             to="/report"
@@ -77,6 +92,7 @@ export default function Projects() {
                           const updated = projects.map(p => p.id === project.id ? { ...p, name: newName.trim() } : p);
                           setProjects(updated);
                           localStorage.setItem('pharmamatch_projects', JSON.stringify(updated));
+                          toast.success('Project renamed');
                         }
                       }}
                       className="p-1 rounded text-outline hover:text-primary hover:bg-surface-container-high transition-colors"

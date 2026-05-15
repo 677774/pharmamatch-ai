@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
+import { LabValidationSkeleton } from '../components/ui/Skeleton';
 
 const METHOD_FIELDS = {
   dsc: { label: 'DSC (Differential Scanning Calorimetry)', fields: [
@@ -32,13 +34,18 @@ export default function LabValidation() {
   const [recentValidations, setRecentValidations] = useState([]);
   const [expandedId, setExpandedId] = useState(null);
   const [selectedMethod, setSelectedMethod] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const savedPending = JSON.parse(localStorage.getItem('pharmamatch_pending_validations') || '[]');
-    const savedRecent = JSON.parse(localStorage.getItem('pharmamatch_recent_validations') || '[]');
-    setPendingValidations(savedPending);
-    setRecentValidations(savedRecent);
-    if (savedPending.length > 0) setExpandedId(savedPending[0].id);
+    const timer = setTimeout(() => {
+      const savedPending = JSON.parse(localStorage.getItem('pharmamatch_pending_validations') || '[]');
+      const savedRecent = JSON.parse(localStorage.getItem('pharmamatch_recent_validations') || '[]');
+      setPendingValidations(savedPending);
+      setRecentValidations(savedRecent);
+      if (savedPending.length > 0) setExpandedId(savedPending[0].id);
+      setIsLoading(false);
+    }, 600);
+    return () => clearTimeout(timer);
   }, []);
 
   const toggleExpand = (id) => setExpandedId(expandedId === id ? null : id);
@@ -91,6 +98,7 @@ export default function LabValidation() {
     localStorage.setItem('pharmamatch_projects', JSON.stringify(updatedProjects));
 
     setExpandedId(null);
+    toast.success(`Lab validation for ${item.excipient} saved!`);
   };
 
   const handleDeleteValidation = (id, type) => {
@@ -105,6 +113,7 @@ export default function LabValidation() {
       setRecentValidations(updated);
       localStorage.setItem('pharmamatch_recent_validations', JSON.stringify(updated));
     }
+    toast.success('Validation record deleted');
   };
 
   const accuracy = recentValidations.length === 0 ? 0 :
@@ -151,7 +160,12 @@ export default function LabValidation() {
             Pending Validations
           </h3>
 
-          {pendingValidations.map((item) => (
+          {isLoading ? (
+            <>
+              <LabValidationSkeleton />
+              <LabValidationSkeleton />
+            </>
+          ) : pendingValidations.map((item) => (
             <article key={item.id} className="bg-white border border-outline-variant/50 rounded-xl overflow-hidden shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
               <div className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer hover:bg-surface-container-lowest transition-colors" onClick={() => toggleExpand(item.id)}>
                 <div className="flex-1">

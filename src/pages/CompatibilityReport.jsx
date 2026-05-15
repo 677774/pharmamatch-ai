@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { usePrediction } from '../context/PredictionContext';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -179,9 +180,10 @@ export default function CompatibilityReport() {
     }
     
     doc.save(`PharmaMatch_Report_${projectName.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.pdf`);
+    toast.success('PDF report generated successfully!');
       } catch (error) {
         console.error("Error generating PDF:", error);
-        alert("Terjadi kesalahan saat membuat PDF: " + error.message);
+        toast.error("Failed to generate PDF: " + error.message);
       } finally {
         setIsExporting(false);
       }
@@ -230,7 +232,7 @@ export default function CompatibilityReport() {
               </h2>
               <span className="text-xs font-medium text-on-surface-variant bg-surface-container px-2 py-1 rounded-full border border-outline-variant/50">API: {predictionResult?.api_name || "Unknown"}</span>
             </div>
-            <div className="p-5 overflow-x-auto">
+            <div className="p-5 table-responsive">
               <table className="w-full text-left border-collapse min-w-[500px]">
                 <thead>
                   <tr>
@@ -408,13 +410,6 @@ export default function CompatibilityReport() {
                   {isExporting ? 'Exporting PDF...' : 'Export PDF'}
                 </div>
                 {!isExporting && <span className="material-symbols-outlined text-[16px] text-outline-variant group-hover:text-primary transition-colors">arrow_forward</span>}
-              </button>
-              <button className="w-full px-4 py-2.5 border border-outline-variant text-on-surface bg-white rounded font-label text-sm font-medium hover:bg-surface-container-low transition-colors duration-150 flex items-center justify-between group">
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[18px] text-on-surface-variant">csv</span>
-                  Export CSV
-                </div>
-                <span className="material-symbols-outlined text-[16px] text-outline-variant group-hover:text-primary transition-colors">arrow_forward</span>
               </button>
               <div className="pt-3 mt-3 border-t border-outline-variant/30">
                 <button 

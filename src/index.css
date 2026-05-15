@@ -102,6 +102,42 @@
   --font-body: 'Inter', sans-serif;
 }
 
+/* --- Dark Theme Tokens --- */
+.dark {
+  --primary: #8dd0e7;
+  --primary-container: #004e5f;
+  --on-primary: #003541;
+  --on-primary-container: #b4ebff;
+  
+  --secondary: #b4cad5;
+  --secondary-container: #354a53;
+  --on-secondary: #1f333c;
+  --on-secondary-container: #cfe6f2;
+  
+  --surface: #101418;
+  --surface-dim: #101418;
+  --surface-bright: #363a3f;
+  --surface-container-lowest: #0b0f12;
+  --surface-container-low: #181c20;
+  --surface-container: #1c2024;
+  --surface-container-high: #272a2f;
+  --surface-container-highest: #31353a;
+  --surface-variant: #3f484c;
+  
+  --on-surface: #e1e2e8;
+  --on-surface-variant: #bfc8cc;
+  --outline: #899296;
+  --outline-variant: #3f484c;
+  
+  --background: #101418;
+  --on-background: #e1e2e8;
+}
+
+/* --- Global Transition --- */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
 /* --- Reset & Base --- */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -414,6 +450,15 @@ img {
   background: var(--surface-container-low);
 }
 
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--outline-variant);
+}
+
 /* --- Grid Utilities --- */
 .grid-stats {
   display: grid;
@@ -458,6 +503,18 @@ img {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
+
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-container) 25%, var(--surface-container-high) 50%, var(--surface-container) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-text { height: 1rem; margin-bottom: 0.5rem; }
+.skeleton-title { height: 1.5rem; margin-bottom: 0.75rem; width: 60%; }
+.skeleton-avatar { width: 3rem; height: 3rem; border-radius: 50%; }
+.skeleton-card { height: 120px; border-radius: var(--radius-xl); }
 
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out forwards;
