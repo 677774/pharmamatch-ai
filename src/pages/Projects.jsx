@@ -9,6 +9,31 @@ export default function Projects() {
     const savedProjects = JSON.parse(localStorage.getItem('pharmamatch_projects') || '[]');
     setProjects(savedProjects);
   }, []);
+
+  const handleDeleteProject = (e, id, projectName) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!window.confirm(`Apakah Anda yakin ingin menghapus proyek "${projectName}"? Semua data validasi terkait juga akan dihapus.`)) {
+      return;
+    }
+
+    // 1. Delete the project
+    const updatedProjects = projects.filter(p => p.id !== id);
+    setProjects(updatedProjects);
+    localStorage.setItem('pharmamatch_projects', JSON.stringify(updatedProjects));
+
+    // 2. Cascade delete pending validations
+    const pending = JSON.parse(localStorage.getItem('pharmamatch_pending_validations') || '[]');
+    const updatedPending = pending.filter(v => v.projectName !== projectName);
+    localStorage.setItem('pharmamatch_pending_validations', JSON.stringify(updatedPending));
+
+    // 3. Cascade delete recent validations
+    const recent = JSON.parse(localStorage.getItem('pharmamatch_recent_validations') || '[]');
+    const updatedRecent = recent.filter(v => v.projectName !== projectName);
+    localStorage.setItem('pharmamatch_recent_validations', JSON.stringify(updatedRecent));
+  };
+
   return (
     <div className="max-w-5xl mx-auto space-y-6 animate-fade-in">
       {/* Action Bar: Search & New Project */}
@@ -62,10 +87,22 @@ export default function Projects() {
                     <button 
                       onClick={(e) => {
                         e.preventDefault();
-                        if (window.confirm(`Are you sure you want to delete ${project.name}?`)) {
+                        e.stopPropagation();
+                        if (window.confirm(`Apakah Anda yakin ingin menghapus proyek "${project.name}"? Semua data validasi terkait juga akan dihapus.`)) {
+                          // 1. Delete the project
                           const updated = projects.filter(p => p.id !== project.id);
                           setProjects(updated);
                           localStorage.setItem('pharmamatch_projects', JSON.stringify(updated));
+
+                          // 2. Cascade delete pending validations
+                          const pending = JSON.parse(localStorage.getItem('pharmamatch_pending_validations') || '[]');
+                          const updatedPending = pending.filter(v => v.projectName !== project.name);
+                          localStorage.setItem('pharmamatch_pending_validations', JSON.stringify(updatedPending));
+
+                          // 3. Cascade delete recent validations
+                          const recent = JSON.parse(localStorage.getItem('pharmamatch_recent_validations') || '[]');
+                          const updatedRecent = recent.filter(v => v.projectName !== project.name);
+                          localStorage.setItem('pharmamatch_recent_validations', JSON.stringify(updatedRecent));
                         }
                       }}
                       className="p-1 rounded text-outline hover:text-error hover:bg-error-container/30 transition-colors"

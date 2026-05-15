@@ -96,6 +96,7 @@ export default function NewPrediction() {
         // Add pending validations
         const newPending = data.predictions.map((p, idx) => ({
           id: Date.now() + idx,
+          projectName: projectName.trim(),
           api: apiName,
           excipient: p.excipient,
           predictedStatus: p.status,
