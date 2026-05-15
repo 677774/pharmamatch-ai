@@ -5,6 +5,7 @@ export default function MoleculeDatabase() {
   const [searchTerm, setSearchTerm] = useState('');
   const [molecules, setMolecules] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   
   // 3D Modal State
   const [selectedMolFor3D, setSelectedMolFor3D] = useState(null);
@@ -22,6 +23,7 @@ export default function MoleculeDatabase() {
     }
     
     setLoading(true);
+    setError(null);
     try {
       // 1. Cek local data dulu untuk kecepatan
       const localResults = moleculeDatabase.filter(m => 
