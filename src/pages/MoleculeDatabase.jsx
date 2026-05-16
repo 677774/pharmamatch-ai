@@ -43,7 +43,8 @@ export default function MoleculeDatabase() {
           // Handle weight/mw robustly
           mw: d.weight ? d.weight.toString().replace(' g/mol', '') : (d.mw || "N/A"),
           logP: d.logp || d.logP || "N/A",
-          smiles: d.smiles || d.IsomericSMILES || "N/A",
+          // Ambil SMILES dari berbagai kemungkinan field
+          smiles: d.smiles || d.IsomericSMILES || d.CanonicalSMILES || "N/A",
           type: "Global Registry",
           has3D: true,
           image: d.img || d.image || `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${d.cid}/PNG`
@@ -86,9 +87,9 @@ export default function MoleculeDatabase() {
               {/* MolView iframe for robust 3D viewing */}
               <iframe 
                 src={`https://embed.molview.org/v1/?mode=balls&${
-                  selectedMolFor3D.id && !isNaN(selectedMolFor3D.id) && selectedMolFor3D.id > 100
+                  selectedMolFor3D.id && !isNaN(selectedMolFor3D.id) && selectedMolFor3D.id > 10
                   ? `cid=${selectedMolFor3D.id}` 
-                  : `q=${encodeURIComponent(selectedMolFor3D.name.split(' (')[0].replace(' HCL', ''))}`
+                  : `q=${encodeURIComponent(selectedMolFor3D.name.replace(/\s*\(.*?\)\s*/g, '').replace(' HCL', ''))}`
                 }`}
                 className="w-full h-full border-0"
                 title="3D MolView"
