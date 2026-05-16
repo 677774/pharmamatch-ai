@@ -34,21 +34,23 @@ export default function MoleculeDatabase() {
       const response = await fetch('https://dzamar-pharmamatch-backend.hf.space/api/molecules/search?name=' + encodeURIComponent(searchTerm));
       const data = await response.json();
       
-      if (data.status === 'success') {
+      if (data.status === 'success' && data.data) {
+        const d = data.data;
         const pubchemMol = {
-          id: data.data.cid,
-          name: data.data.name,
-          formula: data.data.formula,
-          mw: data.data.mw,
-          logP: data.data.logp || "N/A",
-          smiles: data.data.smiles || data.data.cas || "N/A",
+          id: d.cid || d.id,
+          name: d.name,
+          formula: d.formula,
+          // Handle weight/mw robustly
+          mw: d.weight ? d.weight.toString().replace(' g/mol', '') : (d.mw || "N/A"),
+          logP: d.logp || d.logP || "N/A",
+          smiles: d.smiles || d.IsomericSMILES || "N/A",
           type: "Global Registry",
           has3D: true,
-          image: `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${data.data.cid}/PNG`
+          image: d.img || d.image || `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${d.cid}/PNG`
         };
         
         // Gabungkan hasil local (jika ada) dengan hasil global
-        setMolecules([pubchemMol, ...localResults.filter(l => l.name !== pubchemMol.name)]);
+        setMolecules([pubchemMol, ...localResults.filter(l => l.name.toLowerCase() !== pubchemMol.name.toLowerCase())]);
       } else if (localResults.length > 0) {
         setMolecules(localResults);
       } else {
