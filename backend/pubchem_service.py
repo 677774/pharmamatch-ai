@@ -5,7 +5,7 @@ def search_molecule_pubchem(name: str):
     """
     Searches PubChem for a molecule by name and returns its properties.
     """
-    base_url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{name}/property/MolecularWeight,XLogP,IsomericSMILES,MolecularFormula,TPSA,HBondDonorCount,HBondAcceptorCount/JSON"
+    base_url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{name}/property/MolecularWeight,XLogP,IsomericSMILES,CanonicalSMILES,MolecularFormula,TPSA,HBondDonorCount,HBondAcceptorCount/JSON"
     
     try:
         response = requests.get(base_url, timeout=10)
@@ -20,7 +20,7 @@ def search_molecule_pubchem(name: str):
                     "formula": props.get('MolecularFormula', 'Unknown'),
                     "weight": f"{props.get('MolecularWeight', 0.0)} g/mol",
                     "logp": str(props.get('XLogP', 0.0)),
-                    "smiles": props.get('IsomericSMILES', ''),
+                    "smiles": props.get('IsomericSMILES') or props.get('CanonicalSMILES') or '',
                     "tpsa": props.get('TPSA', 50.0),
                     "h_donors": props.get('HBondDonorCount', 1),
                     "h_acceptors": props.get('HBondAcceptorCount', 2),
