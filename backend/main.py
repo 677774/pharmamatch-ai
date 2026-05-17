@@ -215,32 +215,74 @@ def run_ml_prediction(request: PredictionRequest):
         'Temp_Stability_Celsius': 'Thermal Sensitivity'
     }
 
-    # --- Dosage Form Suitability Rules ---
+    # --- Dosage Form Suitability Rules (Comprehensive) ---
     dosage_form_blacklist = {
         "Injection / IV": {
-            "blocked": ["paraffin", "wax", "stearate", "talc", "vaseline", "cellulose", "mcc", "hpmc", "crospovidone", "starch", "silicon", "shellac", "carnauba", "beeswax", "magnesium stearate", "croscarmellose", "pregelatinized", "lactose", "avicel", "kollidon", "povidone", "pvp", "tablet", "capsule", "mannitol", "sorbitol powder", "dicalcium phosphate", "calcium phosphate"],
-            "reason": "This component cannot be used in Injection/IV dosage forms. Solid, waxy, or hydrophobic materials are insoluble in water and risk causing vascular embolism, thrombophlebitis, or anaphylactic reactions in parenteral administration.",
-            "solution": "Replace with injection-grade excipients (e.g. NaCl 0.9%, Dextrose 5%, Polysorbate 80 injection grade, Propylene Glycol, PEG 300/400, or phosphate/citrate buffers). Ensure all materials meet USP/EP parenteral standards."
+            "blocked": [
+                "mcc", "microcrystalline cellulose", "avicel", "cellulose",
+                "lactose", "starch", "pregelatinized", "mannitol",
+                "dicalcium phosphate", "calcium phosphate",
+                "crospovidone", "croscarmellose", "sodium starch glycolate", "kollidon cl",
+                "talc", "magnesium stearate", "stearate", "silicon dioxide", "aerosil", "stearic acid",
+                "paraffin", "wax", "vaseline", "petrolatum", "shellac", "carnauba", "beeswax",
+                "cetyl alcohol", "cetearyl alcohol", "lanolin",
+                "hpmc", "eudragit", "opadry", "coating",
+                "gelatin capsule", "capsule shell", "hard gelatin",
+                "povidone", "pvp", "kollidon"
+            ],
+            "reason": "This component is designed for solid/oral dosage forms and CANNOT be used in Injection/IV preparations. Insoluble particulate matter in parenteral routes risks vascular embolism, phlebitis, or anaphylaxis.",
+            "solution": "Use only parenteral-grade excipients: NaCl 0.9%, Dextrose 5%, Water for Injection (WFI), Polysorbate 80 (injection grade), Propylene Glycol, PEG 300/400, phosphate/citrate buffers. All must meet USP <788> particulate matter standards."
         },
         "Suspension / Syrup": {
-            "blocked": ["paraffin", "wax", "vaseline", "shellac", "carnauba", "beeswax", "magnesium stearate"],
-            "reason": "Solid waxy or hydrophobic materials cannot be homogeneously dispersed in aqueous/syrup media at room temperature, causing permanent phase separation.",
-            "solution": "Use appropriate suspending agents (CMC-Na, Xanthan Gum, Tragacanth) or co-solvents (Propylene Glycol, Glycerin) to improve dispersibility. Consider adding wetting agents (Tween 80)."
+            "blocked": [
+                "paraffin", "wax", "vaseline", "petrolatum", "shellac", "carnauba", "beeswax",
+                "magnesium stearate", "stearic acid", "stearate",
+                "crospovidone", "croscarmellose", "sodium starch glycolate", "pregelatinized starch",
+                "eudragit", "opadry", "hpmc phthalate", "enteric",
+                "talc", "silicon dioxide", "aerosil",
+                "gelatin capsule", "capsule shell", "hard gelatin",
+                "dicalcium phosphate", "calcium phosphate"
+            ],
+            "reason": "This component is designed for solid dosage forms and cannot be properly dispersed or dissolved in liquid oral preparations. It would cause sedimentation, phase separation, or unacceptable taste/texture.",
+            "solution": "Use liquid-appropriate excipients: Sucrose/Sorbitol Solution as sweetener, CMC-Na/Xanthan Gum as suspending agent, Tween 80 as wetting agent, Propylene Glycol/Glycerin as co-solvent, Methylparaben/Sodium Benzoate as preservative."
         },
         "Tablet / Capsule": {
-            "blocked": ["petrolatum", "aqua dest", "water for injection"],
-            "reason": "Solid dosage forms (tablets/capsules) cannot be formed using pure liquid bases or excessive hydrocarbon ointment bases that inhibit powder compactibility.",
-            "solution": "Use dry binders (PVP K30, HPMC) or standard fillers (Lactose, MCC, Dibasic Calcium Phosphate) with good compactibility for tablet compression."
+            "blocked": [
+                "water for injection", "wfi", "aqua dest", "sterile water",
+                "petrolatum", "vaseline", "white petrolatum",
+                "mineral oil", "liquid paraffin", "castor oil", "sesame oil",
+                "sodium bisulfite injection", "benzyl alcohol injection"
+            ],
+            "reason": "Liquid or semi-solid bases cannot be compressed into solid dosage forms. They inhibit powder flow, compactibility, and would cause tablet capping, lamination, or capsule leakage.",
+            "solution": "Use solid-form excipients: MCC/Avicel as filler-binder, Lactose Monohydrate as diluent, Croscarmellose Sodium as disintegrant, Magnesium Stearate as lubricant, HPMC/PVP K30 as binder, Colloidal Silicon Dioxide as glidant."
         },
         "Cream / Ointment": {
-            "blocked": ["crospovidone", "croscarmellose", "sodium starch glycolate", "pregelatinized starch"],
-            "reason": "Superdisintegrants (crospovidone, croscarmellose) are designed to disintegrate tablets in water and serve no function in topical preparations. Their use would damage the texture and emulsion stability of creams/ointments.",
-            "solution": "Use appropriate emulsifiers (Cetearyl Alcohol, Span 60, Tween 60) and cream bases (White Vaseline, Lanolin, Cetyl Alcohol) to form stable o/w or w/o emulsion systems."
+            "blocked": [
+                "crospovidone", "croscarmellose", "sodium starch glycolate", "kollidon cl",
+                "pregelatinized starch",
+                "talc", "silicon dioxide", "aerosil", "magnesium stearate",
+                "mcc", "microcrystalline cellulose", "avicel", "lactose",
+                "dicalcium phosphate", "calcium phosphate", "mannitol",
+                "water for injection", "wfi",
+                "gelatin capsule", "capsule shell", "hard gelatin",
+                "shellac", "eudragit", "opadry", "enteric"
+            ],
+            "reason": "This component is designed for solid oral dosage forms and has no function in topical semisolid preparations. It would disrupt emulsion stability, create gritty texture, or compromise the cream/ointment matrix.",
+            "solution": "Use topical-appropriate excipients: Cetearyl Alcohol/Cetyl Alcohol as stiffening agent, Span 60/Tween 60 as emulsifier, White Vaseline/Lanolin as ointment base, Carbomer/Carbopol as gel base, Methylparaben as preservative, Propylene Glycol as humectant."
         },
         "Suppository": {
-            "blocked": ["crospovidone", "croscarmellose", "sodium starch glycolate", "talc", "silicon dioxide"],
-            "reason": "Superdisintegrants and glidants (talc, silica) are irrelevant for suppository preparations whose release mechanism depends on base melting (not disintegration). These components may irritate rectal mucosa.",
-            "solution": "Use appropriate suppository bases (Cocoa Butter, Witepsol, PEG suppository base). Consider mucoadhesive surfactants to enhance rectal absorption."
+            "blocked": [
+                "crospovidone", "croscarmellose", "sodium starch glycolate", "kollidon cl",
+                "pregelatinized starch",
+                "talc", "silicon dioxide", "aerosil", "magnesium stearate",
+                "mcc", "microcrystalline cellulose", "avicel", "lactose",
+                "dicalcium phosphate", "mannitol",
+                "shellac", "eudragit", "opadry", "hpmc phthalate", "enteric",
+                "gelatin capsule", "capsule shell",
+                "water for injection", "wfi"
+            ],
+            "reason": "This component is designed for solid oral dosage forms and is incompatible with suppository preparations. It may irritate mucosal tissue, create uncomfortable texture, or interfere with the base melting mechanism required for drug release.",
+            "solution": "Use suppository-appropriate excipients: Cocoa Butter/Theobroma Oil as fatty base, Witepsol as synthetic base, PEG 1000/4000 as water-soluble base, Polysorbate 80 as surfactant for drug dispersion, Silicone as mold lubricant."
         }
     }
 
