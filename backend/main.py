@@ -217,30 +217,30 @@ def run_ml_prediction(request: PredictionRequest):
 
     # --- Dosage Form Suitability Rules ---
     dosage_form_blacklist = {
-        "Injeksi / IV": {
+        "Injection / IV": {
             "blocked": ["paraffin", "wax", "stearate", "talc", "vaseline", "cellulose", "crospovidone", "starch", "silicon", "shellac", "carnauba", "beeswax", "magnesium stearate", "croscarmellose", "pregelatinized"],
-            "reason": "Komponen ini tidak dapat digunakan dalam sediaan Injeksi/IV. Material padat, lilin, atau hidrofobik tidak larut air berisiko menyebabkan emboli vaskular, tromboflebitis, atau reaksi anafilaksis pada pemberian parenteral.",
-            "solution": "Ganti dengan eksipien kelas injeksi yang disetujui (seperti NaCl 0.9%, Dekstrosa 5%, Polisorbat 80 grade injeksi, Propilen Glikol, PEG 300/400, atau buffer fosfat/sitrat). Pastikan semua bahan memenuhi standar USP/EP untuk parenteral."
+            "reason": "This component cannot be used in Injection/IV dosage forms. Solid, waxy, or hydrophobic materials are insoluble in water and risk causing vascular embolism, thrombophlebitis, or anaphylactic reactions in parenteral administration.",
+            "solution": "Replace with injection-grade excipients (e.g. NaCl 0.9%, Dextrose 5%, Polysorbate 80 injection grade, Propylene Glycol, PEG 300/400, or phosphate/citrate buffers). Ensure all materials meet USP/EP parenteral standards."
         },
-        "Suspensi / Sirup": {
+        "Suspension / Syrup": {
             "blocked": ["paraffin", "wax", "vaseline", "shellac", "carnauba", "beeswax", "magnesium stearate"],
-            "reason": "Material lilin padat atau hidrofobik tidak dapat didispersikan secara homogen dalam medium air/sirup pada suhu ruang, menyebabkan separasi fase permanen.",
-            "solution": "Gunakan suspending agent yang sesuai (CMC-Na, Xanthan Gum, Tragacanth) atau co-solvent (Propilen Glikol, Gliserin) untuk meningkatkan dispersibilitas. Pertimbangkan penambahan wetting agent (Tween 80)."
+            "reason": "Solid waxy or hydrophobic materials cannot be homogeneously dispersed in aqueous/syrup media at room temperature, causing permanent phase separation.",
+            "solution": "Use appropriate suspending agents (CMC-Na, Xanthan Gum, Tragacanth) or co-solvents (Propylene Glycol, Glycerin) to improve dispersibility. Consider adding wetting agents (Tween 80)."
         },
-        "Tablet / Kapsul": {
+        "Tablet / Capsule": {
             "blocked": ["petrolatum", "aqua dest", "water for injection"],
-            "reason": "Sediaan solid (tablet/kapsul) tidak dapat dibentuk menggunakan basis cair murni atau basis salep hidrokarbon berlebih yang menghambat kompaktibilitas serbuk.",
-            "solution": "Gunakan binder kering (PVP K30, HPMC) atau filler standar (Laktosa, MCC, Dibasic Calcium Phosphate) yang memiliki kompaktibilitas baik untuk proses cetak tablet."
+            "reason": "Solid dosage forms (tablets/capsules) cannot be formed using pure liquid bases or excessive hydrocarbon ointment bases that inhibit powder compactibility.",
+            "solution": "Use dry binders (PVP K30, HPMC) or standard fillers (Lactose, MCC, Dibasic Calcium Phosphate) with good compactibility for tablet compression."
         },
-        "Krim / Salep": {
+        "Cream / Ointment": {
             "blocked": ["crospovidone", "croscarmellose", "sodium starch glycolate", "pregelatinized starch"],
-            "reason": "Superdisintegran (crospovidone, croscarmellose) dirancang khusus untuk menghancurkan tablet dalam air dan tidak memiliki fungsi dalam sediaan topikal. Penggunaannya akan merusak tekstur dan stabilitas emulsi krim/salep.",
-            "solution": "Gunakan emulgator yang sesuai (Cetearyl Alcohol, Span 60, Tween 60) dan basis krim (Vaseline album, Lanolin, Cetyl Alcohol) untuk membentuk sistem emulsi o/w atau w/o yang stabil."
+            "reason": "Superdisintegrants (crospovidone, croscarmellose) are designed to disintegrate tablets in water and serve no function in topical preparations. Their use would damage the texture and emulsion stability of creams/ointments.",
+            "solution": "Use appropriate emulsifiers (Cetearyl Alcohol, Span 60, Tween 60) and cream bases (White Vaseline, Lanolin, Cetyl Alcohol) to form stable o/w or w/o emulsion systems."
         },
-        "Suppositoria": {
+        "Suppository": {
             "blocked": ["crospovidone", "croscarmellose", "sodium starch glycolate", "talc", "silicon dioxide"],
-            "reason": "Superdisintegran dan glidant (talc, silica) tidak relevan untuk sediaan suppositoria yang mekanisme pelepasannya bergantung pada pelelehan basis (bukan disintegrasi). Komponen ini justru bisa mengiritasi mukosa rektal.",
-            "solution": "Gunakan basis suppositoria yang tepat (Oleum Cacao/Cocoa Butter, Witepsol, PEG suppository base). Pertimbangkan surfaktan mukoadhesif untuk meningkatkan absorpsi rektal."
+            "reason": "Superdisintegrants and glidants (talc, silica) are irrelevant for suppository preparations whose release mechanism depends on base melting (not disintegration). These components may irritate rectal mucosa.",
+            "solution": "Use appropriate suppository bases (Cocoa Butter, Witepsol, PEG suppository base). Consider mucoadhesive surfactants to enhance rectal absorption."
         }
     }
 
@@ -256,10 +256,10 @@ def run_ml_prediction(request: PredictionRequest):
                         "excipient": display_name,
                         "status": "Incompatible",
                         "compatibility_score": 0.10,
-                        "reason": f"⛔ TIDAK SESUAI BENTUK SEDIAAN ({dosage_form}): {rules['reason']}",
+                        "reason": f"⛔ INCOMPATIBLE DOSAGE FORM ({dosage_form}): {rules['reason']}",
                         "solution": rules["solution"],
                         "source": "Dosage Form Suitability Rules",
-                        "feature_importance": {"Kesesuaian Bentuk Sediaan": 100.0}
+                        "feature_importance": {"Dosage Form Suitability": 100.0}
                     }
 
         # 1. Check Knowledge Base
@@ -272,21 +272,21 @@ def run_ml_prediction(request: PredictionRequest):
             
             # Enrich solution based on dosage form if it's an incompatibility
             if kb_match["status"] != "Compatible":
-                if "Injeksi" in dosage_form or "IV" in dosage_form:
-                    kb_solution += " Untuk sediaan parenteral, pastikan pengganti memiliki standar grade injeksi (API/Excipient grade parenteral) dan uji sterilitas ulang."
-                elif "Krim" in dosage_form or "Salep" in dosage_form:
-                    kb_solution += " Untuk sediaan semisolid, perhatikan stabilitas emulsi/basis saat penggantian komponen agar viskositas tetap terjaga."
-                elif "Suspensi" in dosage_form or "Sirup" in dosage_form:
-                    kb_solution += " Untuk sediaan liquid, pastikan kelarutan/dispersibilitas komponen pengganti tidak mengganggu homogenitas sediaan."
+                if "Injection" in dosage_form or "IV" in dosage_form:
+                    kb_solution += " For parenteral preparations, ensure replacements meet injection-grade standards (parenteral-grade API/Excipient) and repeat sterility testing."
+                elif "Cream" in dosage_form or "Ointment" in dosage_form:
+                    kb_solution += " For semisolid preparations, monitor emulsion/base stability during component replacement to maintain viscosity."
+                elif "Suspension" in dosage_form or "Syrup" in dosage_form:
+                    kb_solution += " For liquid preparations, ensure solubility/dispersibility of replacement components does not compromise formulation homogeneity."
 
             return {
                 "excipient": display_name,
                 "status": kb_match["status"],
                 "compatibility_score": 0.99 if kb_match["status"] == "Compatible" else 0.20,
                 "reason": f"{kb_match['reason']}",
-                "solution": kb_solution or "Lakukan pengujian pre-formulasi lanjutan untuk mencari eksipien pengganti yang lebih stabil.",
+                "solution": kb_solution or "Conduct advanced pre-formulation testing to identify a more stable excipient alternative.",
                 "source": kb_match.get("source", "Knowledge Base Internal"),
-                "feature_importance": {"Berdasarkan Literatur Farmasi": 100.0}
+                "feature_importance": {"Based on Pharmaceutical Literature": 100.0}
             }
             
         # 2. If not in KB, use Machine Learning

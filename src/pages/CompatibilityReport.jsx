@@ -18,7 +18,7 @@ export default function CompatibilityReport() {
 
   const exportPDF = () => {
     if (!predictionResult || !predictionResult.predictions) {
-      alert("Tidak ada data prediksi untuk di-export. Silakan jalankan analisis prediksi terlebih dahulu.");
+      alert("No prediction data to export. Please run an analysis first.");
       return;
     }
     
@@ -391,14 +391,14 @@ export default function CompatibilityReport() {
                   className="w-full px-4 py-2 bg-primary-container text-white rounded font-label text-sm font-semibold hover:bg-[#005b6f] transition-colors duration-150 flex justify-center items-center gap-2 shadow-sm"
                 >
                   <span className="material-symbols-outlined text-[18px]">science</span>
-                  Tandai Validasi Lab
+                  Submit for Lab Validation
                 </button>
                 <button 
                   onClick={() => navigate('/model-insights', { state: { predictionItem: warningItem, apiName: predictionResult.api_name } })}
                   className="w-full px-4 py-2 border border-outline text-on-surface bg-transparent rounded font-label text-sm font-semibold hover:bg-surface transition-colors duration-150 flex justify-center items-center gap-2"
                 >
                   <span className="material-symbols-outlined text-[18px]">visibility</span>
-                  Lihat Detail ML
+                  View ML Details
                 </button>
               </div>
             </div>
@@ -408,7 +408,7 @@ export default function CompatibilityReport() {
           ) : (
           <div className="bg-[#e8f5e9] border border-[#a5d6a7] p-5 rounded-xl shadow-sm">
              <h3 className="text-[#2e7d32] font-bold flex items-center gap-2 mb-2"><span className="material-symbols-outlined">check_circle</span> All Clear!</h3>
-             <p className="text-sm text-[#1b5e20]">Tidak ada peringatan interaksi untuk formulasi ini. Semua eksipien tergolong aman.</p>
+             <p className="text-sm text-[#1b5e20]">No interaction warnings detected for this formulation. All excipients are predicted safe.</p>
           </div>
           )}
 
@@ -435,7 +435,7 @@ export default function CompatibilityReport() {
                   className="w-full px-4 py-2.5 bg-[#004251] text-white rounded font-label text-sm font-semibold hover:bg-[#005b6f] transition-colors duration-150 flex justify-center items-center gap-2 shadow-sm"
                 >
                   <span className="material-symbols-outlined text-[18px]">verified</span>
-                  Validasi Report
+                  Save to Projects
                 </button>
               </div>
             </div>

@@ -440,7 +440,7 @@ export default function NewPrediction() {
                 to="/knowledge-base"
                 className="px-4 py-2 text-sm font-semibold text-[#004251] border border-[#004251] rounded hover:bg-surface-container transition-colors"
               >
-                Lihat Detail KB
+                View KB Details
               </Link>
               <button 
                 onClick={handlePredict}

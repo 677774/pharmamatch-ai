@@ -172,7 +172,7 @@ export default function ModelInsights() {
                 })
               ) : (
                 <div className="py-10 text-center text-on-surface-variant">
-                  <p>Tidak ada data feature importance dari AI (kemungkinan menggunakan fallback rule).</p>
+                  <p>No AI feature importance data available (possibly using fallback rules).</p>
                 </div>
               )}
             </div>

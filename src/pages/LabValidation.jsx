@@ -295,7 +295,7 @@ export default function LabValidation() {
           {pendingValidations.length === 0 && (
             <div className="bg-white border border-outline-variant/50 rounded-xl p-8 text-center text-on-surface-variant shadow-sm">
               <span className="material-symbols-outlined text-4xl mb-2 text-outline">done_all</span>
-              <p className="font-body">Tidak ada validasi pending. Jalankan prediksi baru terlebih dahulu.</p>
+              <p className="font-body">No pending validations. Run a new prediction first.</p>
             </div>
           )}
         </section>
