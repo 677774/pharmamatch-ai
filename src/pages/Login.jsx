@@ -54,10 +54,7 @@ export default function Login() {
           <p className="text-primary-fixed text-lg font-medium leading-relaxed mb-8">
             PharmaMatch AI leverages Random Forest algorithms and deep learning to predict formulation compatibility with 98.4% accuracy.
           </p>
-          <div className="flex items-center gap-4 text-sm font-label font-semibold text-white/80 bg-white/5 backdrop-blur-sm border border-white/10 w-fit px-4 py-2 rounded-full">
-            <span className="w-2 h-2 rounded-full bg-primary-fixed animate-pulse"></span>
-            Phase II Clinical Trial Active
-          </div>
+
         </div>
       </div>
 
