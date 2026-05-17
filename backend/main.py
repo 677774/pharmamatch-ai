@@ -302,7 +302,9 @@ def run_ml_prediction(request: PredictionRequest):
         if rf_model is not None and len(rf_features) == 5:
             import numpy as np
             feature_array = np.array([[logP_diff, mw_ratio, psa_diff, h_mismatch, temp_stability]])
-            prediction = rf_model.predict(feature_array)[0] # 0 = Aman, 1 = Bahaya
+            
+            # Use predict_proba for nuanced risk assessment instead of binary predict
+            risk_probability = rf_model.predict_proba(feature_array)[0][1]  # Probability of class 1 (risk)
             
             importances = rf_model.feature_importances_
             feature_importance_dict = {}
@@ -317,54 +319,67 @@ def run_ml_prediction(request: PredictionRequest):
             
             top_reason = sorted(feature_importance_dict.items(), key=lambda item: item[1], reverse=True)[0]
             
-            if prediction == 1:
+            # 3-tier classification based on actual model probability
+            if risk_probability > 0.65:
+                # HIGH RISK → Incompatible
                 status = "Incompatible"
-                score = round(random.uniform(0.30, 0.65), 2)
-                prefix = f"AI mendeteksi risiko interaksi antar eksipien karena" if is_exc_exc else "AI mendeteksi risiko tinggi karena"
-                reason = f"{prefix} {top_reason[0]} ({top_reason[1]}% pengaruh terhadap ketidakstabilan)."
+                score = round(1.0 - risk_probability, 2)  # e.g. 0.80 risk → 0.20 score
+                prefix = f"AI detects high-risk excipient-excipient interaction due to" if is_exc_exc else "AI detects high incompatibility risk due to"
+                reason = f"{prefix} {top_reason[0]} ({top_reason[1]}% contribution to instability). Risk probability: {round(risk_probability * 100)}%."
                 
-                # Dynamic solutions based on RDKit feature and Dosage Form
+            elif risk_probability > 0.40:
+                # MODERATE RISK → Warning
+                status = "Warning"
+                score = round(1.0 - risk_probability, 2)  # e.g. 0.50 risk → 0.50 score
+                prefix = f"AI detects moderate excipient-excipient interaction risk due to" if is_exc_exc else "AI detects moderate risk due to"
+                reason = f"{prefix} {top_reason[0]} ({top_reason[1]}% contribution). Risk probability: {round(risk_probability * 100)}%. Further testing recommended."
+                
+            else:
+                # LOW RISK → Compatible
+                status = "Compatible"
+                score = round(1.0 - risk_probability, 2)  # e.g. 0.20 risk → 0.80 score
+                reason = f"Physicochemical properties are well-aligned. Key stabilizing factor: {top_reason[0]} with {top_reason[1]}% positive influence. Risk probability: {round(risk_probability * 100)}%."
+
+            # Generate solution based on status
+            if status == "Incompatible" or status == "Warning":
+                # Dynamic solutions based on primary driver and Dosage Form
                 if top_reason[0] == 'Sensitivitas suhu/termodinamika':
                     if "Injeksi" in dosage_form or "Suspensi" in dosage_form:
-                        solution = "Untuk sediaan cair/injeksi, perhatikan risiko pengendapan akibat perubahan suhu. Pertimbangkan penambahan buffer atau simpan di bawah suhu 25°C."
+                        solution = "For liquid/injection dosage forms, monitor precipitation risk from temperature changes. Consider adding buffer agents or store below 25°C."
                     elif "Krim" in dosage_form or "Suppositoria" in dosage_form:
-                        solution = "Titik leleh eutetik mungkin menguntungkan untuk sediaan semisolid, namun pastikan kestabilan fase emulsi tidak pecah. Hindari pemanasan ekstrem saat *mixing*."
+                        solution = "Eutectic melting point may benefit semisolid formulations, but ensure emulsion phase stability. Avoid extreme heating during mixing."
                     else:
-                        solution = "Hindari proses granulasi basah bersuhu tinggi. Pertimbangkan metode direct compression atau simpan sediaan secara ketat di bawah suhu 25°C."
+                        solution = "Avoid high-temperature wet granulation. Consider direct compression method or strictly store below 25°C."
                 
                 elif top_reason[0] == 'Perbedaan kelarutan lemak (LogP)':
                     if "Injeksi" in dosage_form:
-                        solution = "Gunakan pelarut campur (co-solvent) seperti Propilen Glikol, PEG 400, atau bentuk sistem misel/liposom untuk melarutkan senyawa lipofilik dalam pembawa air steril."
+                        solution = "Use co-solvents (Propylene Glycol, PEG 400) or micellar/liposomal systems to dissolve lipophilic compounds in sterile aqueous vehicles."
                     elif "Suspensi" in dosage_form:
-                        solution = "Gunakan surfaktan/wetting agent (misal: Tween 80) agar partikel hidrofobik dapat terbasahi oleh medium air dan tidak mengapung."
+                        solution = "Use surfactant/wetting agents (e.g. Tween 80) to ensure hydrophobic particles are properly wetted by aqueous medium."
                     elif "Krim" in dosage_form:
-                        solution = "Sesuaikan rasio fase minyak/air atau gunakan emulgator yang lebih kuat dengan nilai HLB yang tepat agar sediaan tidak *cracking*."
+                        solution = "Adjust oil/water phase ratio or use stronger emulsifiers with appropriate HLB values to prevent cracking."
                     else:
-                        solution = "Gunakan surfaktan tambahan atau bentuk sistem dispersi padat untuk meningkatkan profil disolusi serbuk."
+                        solution = "Use additional surfactants or solid dispersion systems to improve powder dissolution profile."
                 
                 elif top_reason[0] == 'Ketidakcocokan kepolaran permukaan (PSA)':
                     if "Suspensi" in dosage_form or "Injeksi" in dosage_form:
-                        solution = "Gunakan suspending agent tambahan (seperti CMC-Na) untuk mencegah agregasi partikel akibat perbedaan muatan permukaan yang mencolok."
+                        solution = "Use additional suspending agents (e.g. CMC-Na) to prevent particle aggregation from significant surface charge differences."
                     else:
-                        solution = "Gunakan pelapis polimer hidrofilik (seperti HPMC) pada granul API untuk meminimalisasi kontak langsung akibat higroskopisitas tinggi."
+                        solution = "Apply hydrophilic polymer coating (e.g. HPMC) on API granules to minimize direct contact due to high hygroscopicity."
                 
                 elif top_reason[0] == 'Ketidakstabilan ikatan hidrogen':
                     if "Liquid" in dosage_form or "Suspensi" in dosage_form or "Injeksi" in dosage_form:
-                        solution = "Dalam medium air, reaksi donor-akseptor akan sangat cepat. Turunkan pH sediaan atau hindari pencampuran keduanya dalam satu vial."
+                        solution = "In aqueous media, donor-acceptor reactions accelerate rapidly. Lower formulation pH or avoid mixing both in a single vial."
                     else:
-                        solution = "Terdeteksi potensi pembentukan kompleks donor-akseptor ireversibel. Pisahkan komponen secara fisik menggunakan tablet lapis ganda (bilayer tablet)."
+                        solution = "Potential irreversible donor-acceptor complex formation detected. Physically separate components using bilayer tablet technology."
                 
                 else:
-                    solution = "Lakukan pengujian kompatibilitas fisikokimia lanjutan (DSC, FTIR). Pertimbangkan penggunaan metode separasi fisik untuk memisahkan kontak langsung antar komponen."
-                    
+                    solution = "Conduct advanced physicochemical compatibility testing (DSC, FTIR). Consider physical separation methods to prevent direct component contact."
             else:
-                status = "Compatible"
-                score = round(random.uniform(0.85, 0.98), 2)
-                reason = f"Properti fisikokimia senyawa selaras. Faktor penentu utama keselamatan: {top_reason[0]} dengan pengaruh stabilisasi {top_reason[1]}%."
                 if "Injeksi" in dosage_form:
-                    solution = "Properti larutan diprediksi stabil. Pastikan pH dan isotonisitas disesuaikan sebelum sterilisasi akhir."
+                    solution = "Solution properties predicted stable. Ensure pH and isotonicity are adjusted before final sterilization."
                 else:
-                    solution = "Lanjutkan ke formulasi standar dan uji stabilitas jangka pendek (accelerated stability). Properti fisikokimia diprediksi saling mendukung tanpa reaksi degradasi yang signifikan."
+                    solution = "Proceed to standard formulation and accelerated stability testing. Physicochemical properties predicted to be mutually supportive without significant degradation."
         else:
             status = "Compatible"
             score = round(random.uniform(0.85, 0.98), 2)
