@@ -208,11 +208,11 @@ def run_ml_prediction(request: PredictionRequest):
             pass
 
     feature_explanation_map = {
-        'LogP_Difference': 'Perbedaan kelarutan lemak (LogP)',
-        'Molecular_Weight_Ratio': 'Perbedaan bobot molekul ekstrim',
-        'PSA_Difference': 'Ketidakcocokan kepolaran permukaan (PSA)',
-        'HBond_Mismatch': 'Ketidakstabilan ikatan hidrogen',
-        'Temp_Stability_Celsius': 'Sensitivitas suhu/termodinamika'
+        'LogP_Difference': 'LogP Solubility Difference',
+        'Molecular_Weight_Ratio': 'Molecular Weight Imbalance',
+        'PSA_Difference': 'Polar Surface Area Mismatch',
+        'HBond_Mismatch': 'Hydrogen Bond Instability',
+        'Temp_Stability_Celsius': 'Thermal Sensitivity'
     }
 
     # --- Dosage Form Suitability Rules ---
@@ -297,7 +297,8 @@ def run_ml_prediction(request: PredictionRequest):
         mw_ratio = max(mol1_features['mw'], mol2_features['mw']) / max(min(mol1_features['mw'], mol2_features['mw']), 1.0)
         psa_diff = abs(mol1_features['psa'] - mol2_features['psa'])
         h_mismatch = abs(mol1_features['h_donors'] - mol2_features['h_acceptors']) + abs(mol1_features['h_acceptors'] - mol2_features['h_donors'])
-        temp_stability = random.uniform(20.0, 80.0) 
+        # Estimate thermal sensitivity from MW difference (heavier molecules = lower thermal tolerance)
+        temp_stability = max(20.0, min(80.0, 100.0 - (mw_ratio * 10.0) - (logP_diff * 3.0)))
         
         if rf_model is not None and len(rf_features) == 5:
             import numpy as np
@@ -340,46 +341,84 @@ def run_ml_prediction(request: PredictionRequest):
                 score = round(1.0 - risk_probability, 2)  # e.g. 0.20 risk → 0.80 score
                 reason = f"Physicochemical properties are well-aligned. Key stabilizing factor: {top_reason[0]} with {top_reason[1]}% positive influence. Risk probability: {round(risk_probability * 100)}%."
 
-            # Generate solution based on status
-            if status == "Incompatible" or status == "Warning":
-                # Dynamic solutions based on primary driver and Dosage Form
-                if top_reason[0] == 'Sensitivitas suhu/termodinamika':
-                    if "Injeksi" in dosage_form or "Suspensi" in dosage_form:
-                        solution = "For liquid/injection dosage forms, monitor precipitation risk from temperature changes. Consider adding buffer agents or store below 25°C."
-                    elif "Krim" in dosage_form or "Suppositoria" in dosage_form:
-                        solution = "Eutectic melting point may benefit semisolid formulations, but ensure emulsion phase stability. Avoid extreme heating during mixing."
-                    else:
-                        solution = "Avoid high-temperature wet granulation. Consider direct compression method or strictly store below 25°C."
+            # Generate solution based on status, severity, and multiple features
+            top2_features = [f[0] for f in sorted(feature_importance_dict.items(), key=lambda x: x[1], reverse=True)[:2]]
+            mol1_short = mol1_name.split('(')[0].strip()
+            mol2_short = mol2_name.split('(')[0].strip()
+            
+            if status == "Incompatible":
+                # HIGH severity — urgent, actionable solutions with specific names
+                solution_parts = [f"⚠️ Critical: {mol1_short} and {mol2_short} show high interaction risk ({round(risk_probability*100)}%)."]
                 
-                elif top_reason[0] == 'Perbedaan kelarutan lemak (LogP)':
+                if 'LogP Solubility Difference' in top2_features:
                     if "Injeksi" in dosage_form:
-                        solution = "Use co-solvents (Propylene Glycol, PEG 400) or micellar/liposomal systems to dissolve lipophilic compounds in sterile aqueous vehicles."
-                    elif "Suspensi" in dosage_form:
-                        solution = "Use surfactant/wetting agents (e.g. Tween 80) to ensure hydrophobic particles are properly wetted by aqueous medium."
-                    elif "Krim" in dosage_form:
-                        solution = "Adjust oil/water phase ratio or use stronger emulsifiers with appropriate HLB values to prevent cracking."
+                        solution_parts.append(f"The lipophilicity gap between {mol1_short} and {mol2_short} is too large for aqueous parenteral vehicles. Use co-solvents (PEG 400, Propylene Glycol) or lipid-based nano-emulsions.")
                     else:
-                        solution = "Use additional surfactants or solid dispersion systems to improve powder dissolution profile."
+                        solution_parts.append(f"Consider solid dispersion or hot-melt extrusion to overcome the solubility mismatch. Alternatively, replace {mol2_short} with a more hydrophilic equivalent.")
                 
-                elif top_reason[0] == 'Ketidakcocokan kepolaran permukaan (PSA)':
-                    if "Suspensi" in dosage_form or "Injeksi" in dosage_form:
-                        solution = "Use additional suspending agents (e.g. CMC-Na) to prevent particle aggregation from significant surface charge differences."
+                if 'Molecular Weight Imbalance' in top2_features:
+                    solution_parts.append(f"The MW ratio indicates potential segregation during blending. Use high-shear granulation or micronization of the heavier component to ensure uniform distribution.")
+                
+                if 'Polar Surface Area Mismatch' in top2_features:
+                    solution_parts.append(f"Surface polarity difference may cause interfacial instability. Apply HPMC or PVP coating on {mol1_short} granules to mediate surface interaction.")
+                
+                if 'Hydrogen Bond Instability' in top2_features:
+                    if "Injeksi" in dosage_form or "Suspensi" in dosage_form:
+                        solution_parts.append(f"H-bond competition in aqueous media accelerates degradation. Adjust pH to 4.5-6.5 or separate components into dual-chamber packaging.")
                     else:
-                        solution = "Apply hydrophilic polymer coating (e.g. HPMC) on API granules to minimize direct contact due to high hygroscopicity."
+                        solution_parts.append(f"Risk of irreversible complexation via H-bonding. Use bilayer tablet design or physical barrier coating to prevent direct contact.")
                 
-                elif top_reason[0] == 'Ketidakstabilan ikatan hidrogen':
-                    if "Liquid" in dosage_form or "Suspensi" in dosage_form or "Injeksi" in dosage_form:
-                        solution = "In aqueous media, donor-acceptor reactions accelerate rapidly. Lower formulation pH or avoid mixing both in a single vial."
-                    else:
-                        solution = "Potential irreversible donor-acceptor complex formation detected. Physically separate components using bilayer tablet technology."
+                if 'Thermal Sensitivity' in top2_features:
+                    solution_parts.append(f"Thermal analysis suggests degradation risk above 40°C. Avoid wet granulation; use direct compression and store at 2-8°C (cold chain).")
                 
-                else:
-                    solution = "Conduct advanced physicochemical compatibility testing (DSC, FTIR). Consider physical separation methods to prevent direct component contact."
+                if len(solution_parts) == 1:
+                    solution_parts.append("Conduct DSC and FTIR compatibility studies. Consider physical separation or alternative excipient selection.")
+                
+                solution = " ".join(solution_parts)
+                
+            elif status == "Warning":
+                # MODERATE severity — preventive recommendations
+                solution_parts = [f"Moderate risk detected between {mol1_short} and {mol2_short} (probability: {round(risk_probability*100)}%). Combination may be viable with precautions:"]
+                
+                if 'LogP Solubility Difference' in top2_features:
+                    solution_parts.append(f"Add wetting agent (e.g. SLS 0.5-2% or Polysorbate 80) to improve interfacial compatibility between {mol1_short} and {mol2_short}.")
+                
+                if 'Molecular Weight Imbalance' in top2_features:
+                    solution_parts.append(f"Extend blending time by 50% and verify content uniformity (RSD < 5%) across 10 sampling points.")
+                
+                if 'Polar Surface Area Mismatch' in top2_features:
+                    solution_parts.append(f"Monitor moisture uptake during stability studies. Consider adding desiccant in packaging.")
+                
+                if 'Hydrogen Bond Instability' in top2_features:
+                    solution_parts.append(f"Run 4-week accelerated stability (40°C/75% RH) to confirm no degradation products form from H-bond interaction.")
+                
+                if 'Thermal Sensitivity' in top2_features:
+                    solution_parts.append(f"Maintain processing temperature below 60°C during manufacturing. Standard room temperature storage should be adequate.")
+                
+                if len(solution_parts) == 1:
+                    solution_parts.append("Run short-term accelerated stability testing (ICH Q1A) before proceeding to scale-up.")
+                
+                solution = " ".join(solution_parts)
+                
             else:
+                # Compatible — informative, not just "proceed"
+                solution_parts = [f"{mol1_short} and {mol2_short} show favorable physicochemical alignment (risk: {round(risk_probability*100)}%)."]
+                
+                if logP_diff < 1.5:
+                    solution_parts.append("Solubility profiles are well-matched, supporting uniform drug release kinetics.")
+                if mw_ratio < 2.0:
+                    solution_parts.append("Similar molecular sizes favor homogeneous blending without segregation risk.")
+                if psa_diff < 30:
+                    solution_parts.append("Compatible surface polarity ensures stable interfacial interactions.")
+                
                 if "Injeksi" in dosage_form:
-                    solution = "Solution properties predicted stable. Ensure pH and isotonicity are adjusted before final sterilization."
+                    solution_parts.append("Verify pH compatibility (target 4.0-8.0) and isotonicity before terminal sterilization.")
+                elif "Krim" in dosage_form:
+                    solution_parts.append("Emulsion stability predicted favorable. Confirm via centrifuge stress test (3000 rpm, 30 min).")
                 else:
-                    solution = "Proceed to standard formulation and accelerated stability testing. Physicochemical properties predicted to be mutually supportive without significant degradation."
+                    solution_parts.append("Proceed to standard formulation. Recommended: 3-month accelerated stability study per ICH Q1A guidelines.")
+                
+                solution = " ".join(solution_parts)
         else:
             status = "Compatible"
             score = round(random.uniform(0.85, 0.98), 2)
