@@ -10,6 +10,7 @@ export default function Sidebar() {
     { name: 'Knowledge Base', icon: 'menu_book', path: '/knowledge-base' },
     { name: 'New Prediction', icon: 'query_stats', path: '/new-prediction' },
     { name: 'Projects', icon: 'folder_open', path: '/projects' },
+    { name: 'Lab Validation', icon: 'biotech', path: '/lab-validation' },
     { name: 'Molecule Database', icon: 'science', path: '/molecules' },
     { name: 'History / Reports', icon: 'analytics', path: '/report' },
     { name: 'Model Insights', icon: 'psychology', path: '/model-insights' },
