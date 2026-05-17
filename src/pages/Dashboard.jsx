@@ -84,7 +84,7 @@ export default function Dashboard() {
                 Start New Session
               </Link>
             </div>
-
+          </div>
         </div>
 
         {/* Right Column (Validations Widget) */}
