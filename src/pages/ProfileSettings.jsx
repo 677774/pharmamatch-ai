@@ -24,9 +24,11 @@ export default function ProfileSettings() {
     setIsDark(newDarkState);
     
     if (newDarkState) {
+      document.documentElement.classList.add('dark');
       document.documentElement.classList.add('dark-mode-hack');
       localStorage.setItem('theme', 'dark');
     } else {
+      document.documentElement.classList.remove('dark');
       document.documentElement.classList.remove('dark-mode-hack');
       localStorage.setItem('theme', 'light');
     }

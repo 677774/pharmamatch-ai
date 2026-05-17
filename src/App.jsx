@@ -19,6 +19,7 @@ export default function App() {
     // Persist Dark Mode Globally
     const isDarkMode = localStorage.getItem('theme') === 'dark';
     if (isDarkMode) {
+      document.documentElement.classList.add('dark');
       document.documentElement.classList.add('dark-mode-hack');
       if (!document.getElementById('dark-mode-style')) {
         const style = document.createElement('style');

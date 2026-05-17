@@ -7,9 +7,21 @@ export default function Header() {
   useEffect(() => {
     if (isDark) {
       document.documentElement.classList.add('dark');
+      document.documentElement.classList.add('dark-mode-hack');
       localStorage.setItem('theme', 'dark');
+      
+      if (!document.getElementById('dark-mode-style')) {
+        const style = document.createElement('style');
+        style.id = 'dark-mode-style';
+        style.innerHTML = `
+          .dark-mode-hack { filter: invert(1) hue-rotate(180deg) contrast(0.9); }
+          .dark-mode-hack img, .dark-mode-hack video { filter: invert(1) hue-rotate(180deg); }
+        `;
+        document.head.appendChild(style);
+      }
     } else {
       document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove('dark-mode-hack');
       localStorage.setItem('theme', 'light');
     }
   }, [isDark]);
