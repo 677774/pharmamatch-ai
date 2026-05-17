@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { recentProjects, recentValidations } from '../data/dummyData'
 
 export default function Dashboard() {
   const [stats, setStats] = useState([]);

@@ -5,6 +5,7 @@ import { ProjectSkeleton } from '../components/ui/Skeleton';
 
 export default function Projects() {
   const [projects, setProjects] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -53,6 +54,8 @@ export default function Projects() {
             className="w-full bg-white border border-outline-variant/50 rounded-lg pl-10 pr-4 py-2 text-sm font-body text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-transparent transition-all" 
             placeholder="Search projects by name or ID..." 
             type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <Link 
@@ -66,13 +69,18 @@ export default function Projects() {
 
       {/* Projects Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
-        {isLoading ? (
+        {(() => {
+          const filteredProjects = projects.filter(p =>
+            p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            String(p.id).includes(searchTerm)
+          );
+          return isLoading ? (
           <>
             <ProjectSkeleton />
             <ProjectSkeleton />
             <ProjectSkeleton />
           </>
-        ) : projects.length > 0 ? projects.map((project) => (
+        ) : filteredProjects.length > 0 ? filteredProjects.map((project) => (
           <Link 
             key={project.id}
             to="/report"
@@ -190,17 +198,20 @@ export default function Projects() {
           </Link>
         )) : (
           <div className="col-span-1 md:col-span-2 xl:col-span-3 text-center py-20 bg-surface-container-lowest/50 border border-outline-variant/50 rounded-xl">
-            <span className="material-symbols-outlined text-5xl text-outline mb-4">folder_off</span>
-            <h3 className="text-xl font-bold font-headline text-on-surface">No Projects Found</h3>
-            <p className="text-on-surface-variant mt-2 mb-6">You haven't run any predictions yet. Create a new project to get started.</p>
-            <Link 
-              to="/new-prediction"
-              className="inline-flex bg-[#004251] hover:bg-[#005b6f] text-white px-5 py-2.5 rounded-lg font-body text-sm font-medium items-center justify-center gap-2 transition-colors duration-150 shadow-sm"
-            >
-              Start New Prediction
-            </Link>
+            <span className="material-symbols-outlined text-5xl text-outline mb-4">{searchTerm ? 'search_off' : 'folder_off'}</span>
+            <h3 className="text-xl font-bold font-headline text-on-surface">{searchTerm ? `No results for "${searchTerm}"` : 'No Projects Found'}</h3>
+            <p className="text-on-surface-variant mt-2 mb-6">{searchTerm ? 'Try a different search term.' : 'You haven\'t run any predictions yet. Create a new project to get started.'}</p>
+            {!searchTerm && (
+              <Link 
+                to="/new-prediction"
+                className="inline-flex bg-[#004251] hover:bg-[#005b6f] text-white px-5 py-2.5 rounded-lg font-body text-sm font-medium items-center justify-center gap-2 transition-colors duration-150 shadow-sm"
+              >
+                Start New Prediction
+              </Link>
+            )}
           </div>
-        )}
+        );
+        })()}
       </div>
     </div>
   );

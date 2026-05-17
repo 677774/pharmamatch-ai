@@ -1,4 +1,5 @@
 import { useNavigate, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -20,18 +21,16 @@ export default function Login() {
       const data = await response.json();
       
       if (data.status === 'success') {
-        localStorage.setItem('token', data.token);
+        localStorage.setItem('pharmamatch_token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        alert(`Welcome, ${data.user.name}! Login berhasil dengan JWT Token.`);
+        toast.success(`Welcome, ${data.user.name}!`);
         navigate('/dashboard');
       } else {
-        alert('Login Gagal: Email atau Password salah.');
+        toast.error('Login failed: Invalid email or password.');
       }
     } catch (error) {
-      alert(`Error: Backend FastAPI belum berjalan atau tidak merespons.\nDetail: ${error.message}`);
+      toast.error('Backend is starting up, please try again in a moment.');
       console.error(error);
-      // Fallback for development if backend is not running
-      navigate('/dashboard');
     }
   };
 

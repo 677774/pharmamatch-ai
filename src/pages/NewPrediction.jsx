@@ -59,7 +59,7 @@ export default function NewPrediction() {
 
   const handlePredict = async () => {
     if (excipientsList.length === 0 || !apiName.trim() || !projectName.trim()) {
-      alert("Harap isi Nama Proyek, API, dan minimal 1 Eksipien!");
+      alert("Please fill in the Project Name, API, and at least 1 Excipient.");
       return;
     }
     
@@ -156,12 +156,12 @@ export default function NewPrediction() {
                     type="text" 
                     value={projectName}
                     onChange={(e) => setProjectName(e.target.value)}
-                    placeholder="Ketik nama proyek (misal: Aspirin V2)"
+                    placeholder="Enter project name (e.g. Aspirin V2)"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-on-surface mb-2 font-label">Bentuk Sediaan (Dosage Form)</label>
+                <label className="block text-sm font-semibold text-on-surface mb-2 font-label">Dosage Form</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <span className="material-symbols-outlined text-outline text-[18px]">medication</span>
@@ -211,7 +211,7 @@ export default function NewPrediction() {
                   }}
                   onBlur={() => setTimeout(() => setShowApiSuggestions(false), 200)}
                   onFocus={(e) => e.target.value.length >= 3 && setShowApiSuggestions(true)}
-                  placeholder="Ketik nama API di sini (min. 3 huruf)..."
+                  placeholder="Type API name here (min. 3 characters)..."
                 />
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                   <span className="material-symbols-outlined text-[#003a7f] text-[18px]">check_circle</span>
@@ -240,7 +240,7 @@ export default function NewPrediction() {
                 <div className="relative flex-1">
                   <input 
                     className="w-full px-3 py-2 border border-outline-variant rounded bg-white text-sm focus:ring-2 focus:ring-primary outline-none"
-                    placeholder="Ketik nama Eksipien..."
+                    placeholder="Type excipient name..."
                     value={excipientInput}
                     onChange={async (e) => {
                       const val = e.target.value;
@@ -297,7 +297,7 @@ export default function NewPrediction() {
                 <button 
                   onClick={() => { handleAddExcipient(); setShowExcSuggestions(false); }}
                   className="bg-primary-container text-on-primary-container px-3 py-2 rounded text-sm font-medium hover:bg-[#005b6f] transition-colors flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[16px]">add</span> Tambah
+                  <span className="material-symbols-outlined text-[16px]">add</span> Add
                 </button>
               </div>
               
@@ -336,7 +336,7 @@ export default function NewPrediction() {
                     </li>
                   )})}
                   {excipientsList.length === 0 && (
-                    <li className="p-4 text-center text-sm text-outline">Belum ada eksipien. Silakan tambah di atas.</li>
+                    <li className="p-4 text-center text-sm text-outline">No excipients added yet. Add one above.</li>
                   )}
                 </ul>
               </div>

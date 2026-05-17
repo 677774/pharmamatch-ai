@@ -1,8 +1,8 @@
 import { useLocation, Link } from 'react-router-dom';
-import { modelVersions } from '../data/dummyData';
+import { jsPDF } from 'jspdf';
+import toast from 'react-hot-toast';
 
 export default function ModelInsights() {
-  const activeModel = modelVersions[0]; // Active version
   const location = useLocation();
   const { predictionItem, apiName } = location.state || {};
 
@@ -239,7 +239,78 @@ export default function ModelInsights() {
                 )}
               </div>
 
-              <button className={`w-full mt-6 py-2.5 rounded font-label text-sm font-bold transition-colors duration-150 flex items-center justify-center gap-2 shadow-sm ${isWarning ? 'bg-error text-white hover:bg-[#93000a]' : 'bg-[#004251] text-white hover:bg-[#005b6f]'}`}>
+              <button 
+                onClick={() => {
+                  try {
+                    const doc = new jsPDF('p', 'mm', 'a4');
+                    const pageW = doc.internal.pageSize.getWidth();
+                    const margin = 15;
+                    let y = 15;
+
+                    // Header
+                    doc.setFillColor(0, 66, 81);
+                    doc.rect(0, 0, pageW, 32, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(16);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('PharmaMatch AI — SHAP Insight Report', margin, 14);
+                    doc.setFontSize(9);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text(`Generated: ${new Date().toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' })}`, margin, 22);
+                    doc.text(`Target: ${displayedTarget}`, margin, 28);
+                    y = 40;
+
+                    // Status
+                    doc.setTextColor(0, 66, 81);
+                    doc.setFontSize(12);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text(`Status: ${predictionItem.status}`, margin, y);
+                    y += 8;
+                    doc.setFontSize(9);
+                    doc.setFont('helvetica', 'normal');
+                    doc.setTextColor(60, 60, 60);
+                    const reasonLines = doc.splitTextToSize(`Analysis: ${predictionItem.reason}`, pageW - margin * 2);
+                    doc.text(reasonLines, margin, y);
+                    y += reasonLines.length * 4 + 6;
+
+                    if (predictionItem.solution) {
+                      const solLines = doc.splitTextToSize(`Recommendation: ${predictionItem.solution}`, pageW - margin * 2);
+                      doc.text(solLines, margin, y);
+                      y += solLines.length * 4 + 6;
+                    }
+
+                    // Feature Importance
+                    doc.setTextColor(0, 66, 81);
+                    doc.setFontSize(11);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Feature Importance Breakdown', margin, y);
+                    y += 7;
+                    featureList.forEach(f => {
+                      doc.setFontSize(9);
+                      doc.setFont('helvetica', 'normal');
+                      doc.setTextColor(60, 60, 60);
+                      doc.text(`${f.feature.replace(/_/g, ' ')}: ${f.importance.toFixed(1)}%`, margin, y);
+                      // Bar
+                      doc.setFillColor(isWarning ? 186 : 0, isWarning ? 26 : 66, isWarning ? 26 : 81);
+                      doc.rect(margin + 80, y - 3, (pageW - margin * 2 - 80) * (f.importance / 100), 3, 'F');
+                      y += 6;
+                    });
+
+                    // Footer
+                    doc.setFontSize(7);
+                    doc.setTextColor(130, 130, 130);
+                    doc.setFont('helvetica', 'italic');
+                    doc.text('PharmaMatch AI — Computational prediction. Verify experimentally.', margin, doc.internal.pageSize.getHeight() - 8);
+
+                    doc.save(`SHAP_Report_${displayedTarget.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
+                    toast.success('SHAP Report downloaded!');
+                  } catch (err) {
+                    console.error(err);
+                    toast.error('Failed to generate report');
+                  }
+                }}
+                className={`w-full mt-6 py-2.5 rounded font-label text-sm font-bold transition-colors duration-150 flex items-center justify-center gap-2 shadow-sm ${isWarning ? 'bg-error text-white hover:bg-[#93000a]' : 'bg-[#004251] text-white hover:bg-[#005b6f]'}`}
+              >
                 <span className="material-symbols-outlined text-[18px]">download</span>
                 Download SHAP Report
               </button>
