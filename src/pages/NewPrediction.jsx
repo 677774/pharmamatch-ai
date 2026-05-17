@@ -9,7 +9,7 @@ export default function NewPrediction() {
   const { setPredictionResult } = usePrediction();
 
   const [projectName, setProjectName] = useState('');
-  const [dosageForm, setDosageForm] = useState('Tablet / Kapsul');
+  const [dosageForm, setDosageForm] = useState('Tablet / Capsule');
   const [apiName, setApiName] = useState('');
   const [excipientInput, setExcipientInput] = useState('');
   const [excipientsList, setExcipientsList] = useState([]);
@@ -171,11 +171,11 @@ export default function NewPrediction() {
                     value={dosageForm}
                     onChange={(e) => setDosageForm(e.target.value)}
                   >
-                    <option value="Tablet / Kapsul">Tablet / Kapsul (Solid)</option>
-                    <option value="Suspensi / Sirup">Suspensi / Sirup (Liquid Oral)</option>
-                    <option value="Injeksi / IV">Injeksi / IV (Parenteral)</option>
-                    <option value="Krim / Salep">Krim / Salep (Topikal)</option>
-                    <option value="Suppositoria">Suppositoria</option>
+                    <option value="Tablet / Capsule">Tablet / Capsule (Solid)</option>
+                    <option value="Suspension / Syrup">Suspension / Syrup (Liquid Oral)</option>
+                    <option value="Injection / IV">Injection / IV (Parenteral)</option>
+                    <option value="Cream / Ointment">Cream / Ointment (Topical)</option>
+                    <option value="Suppository">Suppository</option>
                   </select>
                   <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                     <span className="material-symbols-outlined text-outline text-[18px]">expand_more</span>

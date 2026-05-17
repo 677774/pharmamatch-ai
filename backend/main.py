@@ -218,7 +218,7 @@ def run_ml_prediction(request: PredictionRequest):
     # --- Dosage Form Suitability Rules ---
     dosage_form_blacklist = {
         "Injection / IV": {
-            "blocked": ["paraffin", "wax", "stearate", "talc", "vaseline", "cellulose", "crospovidone", "starch", "silicon", "shellac", "carnauba", "beeswax", "magnesium stearate", "croscarmellose", "pregelatinized"],
+            "blocked": ["paraffin", "wax", "stearate", "talc", "vaseline", "cellulose", "mcc", "hpmc", "crospovidone", "starch", "silicon", "shellac", "carnauba", "beeswax", "magnesium stearate", "croscarmellose", "pregelatinized", "lactose", "avicel", "kollidon", "povidone", "pvp", "tablet", "capsule", "mannitol", "sorbitol powder", "dicalcium phosphate", "calcium phosphate"],
             "reason": "This component cannot be used in Injection/IV dosage forms. Solid, waxy, or hydrophobic materials are insoluble in water and risk causing vascular embolism, thrombophlebitis, or anaphylactic reactions in parenteral administration.",
             "solution": "Replace with injection-grade excipients (e.g. NaCl 0.9%, Dextrose 5%, Polysorbate 80 injection grade, Propylene Glycol, PEG 300/400, or phosphate/citrate buffers). Ensure all materials meet USP/EP parenteral standards."
         },
