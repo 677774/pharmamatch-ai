@@ -393,7 +393,7 @@ def run_ml_prediction(request: PredictionRequest):
                 solution_parts = [f"⚠️ Critical: {mol1_short} and {mol2_short} show high interaction risk ({round(risk_probability*100)}%)."]
                 
                 if 'LogP Solubility Difference' in top2_features:
-                    if "Injeksi" in dosage_form:
+                    if "Injection" in dosage_form:
                         solution_parts.append(f"The lipophilicity gap between {mol1_short} and {mol2_short} is too large for aqueous parenteral vehicles. Use co-solvents (PEG 400, Propylene Glycol) or lipid-based nano-emulsions.")
                     else:
                         solution_parts.append(f"Consider solid dispersion or hot-melt extrusion to overcome the solubility mismatch. Alternatively, replace {mol2_short} with a more hydrophilic equivalent.")
@@ -405,7 +405,7 @@ def run_ml_prediction(request: PredictionRequest):
                     solution_parts.append(f"Surface polarity difference may cause interfacial instability. Apply HPMC or PVP coating on {mol1_short} granules to mediate surface interaction.")
                 
                 if 'Hydrogen Bond Instability' in top2_features:
-                    if "Injeksi" in dosage_form or "Suspensi" in dosage_form:
+                    if "Injection" in dosage_form or "Suspension" in dosage_form:
                         solution_parts.append(f"H-bond competition in aqueous media accelerates degradation. Adjust pH to 4.5-6.5 or separate components into dual-chamber packaging.")
                     else:
                         solution_parts.append(f"Risk of irreversible complexation via H-bonding. Use bilayer tablet design or physical barrier coating to prevent direct contact.")
@@ -453,9 +453,9 @@ def run_ml_prediction(request: PredictionRequest):
                 if psa_diff < 30:
                     solution_parts.append("Compatible surface polarity ensures stable interfacial interactions.")
                 
-                if "Injeksi" in dosage_form:
+                if "Injection" in dosage_form:
                     solution_parts.append("Verify pH compatibility (target 4.0-8.0) and isotonicity before terminal sterilization.")
-                elif "Krim" in dosage_form:
+                elif "Cream" in dosage_form:
                     solution_parts.append("Emulsion stability predicted favorable. Confirm via centrifuge stress test (3000 rpm, 30 min).")
                 else:
                     solution_parts.append("Proceed to standard formulation. Recommended: 3-month accelerated stability study per ICH Q1A guidelines.")
@@ -464,9 +464,9 @@ def run_ml_prediction(request: PredictionRequest):
         else:
             status = "Compatible"
             score = round(random.uniform(0.85, 0.98), 2)
-            reason = "Simulasi: Aman digunakan berdasarkan heuristik."
-            solution = "Lanjutkan ke pengujian standar laboratorium."
-            feature_importance_dict = {"Simulasi Default": 100.0}
+            reason = "Simulation mode: Compatible based on heuristic analysis."
+            solution = "Proceed to standard laboratory testing."
+            feature_importance_dict = {"Simulation Default": 100.0}
             
         return {
             "excipient": display_name,
