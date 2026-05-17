@@ -52,7 +52,7 @@ export default function Login() {
             Accelerate <br/> Clinical Discovery.
           </h1>
           <p className="text-primary-fixed text-lg font-medium leading-relaxed mb-8">
-            PharmaMatch AI leverages Random Forest algorithms and deep learning to predict formulation compatibility with 98.4% accuracy.
+            PharmaMatch AI leverages Random Forest algorithms and molecular descriptor analysis to predict drug-excipient formulation compatibility.
           </p>
 
         </div>

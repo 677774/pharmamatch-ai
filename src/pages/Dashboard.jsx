@@ -84,43 +84,7 @@ export default function Dashboard() {
                 Start New Session
               </Link>
             </div>
-          </div>
 
-          {/* Model Fidelity Legend Panel */}
-          <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6">
-            <h3 className="font-headline text-lg font-bold text-on-surface mb-4">Model Fidelity Index</h3>
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="flex-1 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-primary"></div>
-                    <span className="font-label text-sm text-on-surface">High Confidence (&gt;90%)</span>
-                  </div>
-                  <span className="font-label text-xs text-outline">Clinical phase readiness</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-tertiary-container"></div>
-                    <span className="font-label text-sm text-on-surface">Moderate (70-89%)</span>
-                  </div>
-                  <span className="font-label text-xs text-outline">Requires further simulation</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-outline"></div>
-                    <span className="font-label text-sm text-on-surface">Low Confidence (&lt;70%)</span>
-                  </div>
-                  <span className="font-label text-xs text-outline">Structural review needed</span>
-                </div>
-              </div>
-              <div className="hidden md:block w-px bg-outline-variant/30"></div>
-              <div className="flex-1 flex flex-col justify-center">
-                <p className="font-label text-xs text-on-surface-variant leading-relaxed">
-                  The Random Forest (RF) algorithm bases confidence scoring on structural similarity to known stable compounds, molecular weight constraints, and predicted receptor binding affinity.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Right Column (Validations Widget) */}

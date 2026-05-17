@@ -239,7 +239,7 @@ export default function CompatibilityReport() {
                     <th className="font-label text-xs uppercase tracking-wider font-semibold text-on-surface-variant bg-surface-container-low px-4 py-3 rounded-tl-lg border-b-2 border-outline-variant/30">Excipient</th>
                     <th className="font-label text-xs uppercase tracking-wider font-semibold text-on-surface-variant bg-surface-container-low px-4 py-3 border-b-2 border-outline-variant/30">Class</th>
                     <th className="font-label text-xs uppercase tracking-wider font-semibold text-on-surface-variant bg-surface-container-low px-4 py-3 border-b-2 border-outline-variant/30 text-center">Status</th>
-                    <th className="font-label text-xs uppercase tracking-wider font-semibold text-on-surface-variant bg-surface-container-low px-4 py-3 rounded-tr-lg border-b-2 border-outline-variant/30 text-right">Confidence</th>
+                    <th className="font-label text-xs uppercase tracking-wider font-semibold text-on-surface-variant bg-surface-container-low px-4 py-3 rounded-tr-lg border-b-2 border-outline-variant/30 text-right">Score</th>
                   </tr>
                 </thead>
                 <tbody className="font-body text-sm divide-y divide-outline-variant/20">
@@ -291,23 +291,41 @@ export default function CompatibilityReport() {
             </div>
           </div>
 
-          {/* Legend Section */}
-          <div className="flex flex-col md:flex-row gap-4 p-4 rounded-lg bg-surface border border-outline-variant/40 text-sm shadow-sm">
-            <div className="flex flex-col gap-1 md:w-1/2">
-              <div className="flex items-center gap-2 font-semibold text-on-surface mb-1">
-                <span className="material-symbols-outlined text-[18px] text-[#003a7f]">check_circle</span>
-                KB (Validated)
-              </div>
-              <p className="text-on-surface-variant text-xs leading-relaxed">Knowledge Base entries represent historically validated, physically tested interactions confirmed by established pharmacological literature or empirical laboratory results.</p>
+          {/* Compatibility Score Guide */}
+          <div className="bg-surface-container-lowest rounded-xl border border-outline-variant/40 overflow-hidden shadow-sm">
+            <div className="px-5 py-3 border-b border-outline-variant/30 bg-surface">
+              <h3 className="font-headline font-bold text-on-surface text-sm flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary-container text-[18px]">info</span>
+                Compatibility Score Guide
+              </h3>
             </div>
-            <div className="hidden md:block w-px bg-outline-variant/30"></div>
-            <div className="md:hidden h-px bg-outline-variant/30 w-full"></div>
-            <div className="flex flex-col gap-1 md:w-1/2">
-              <div className="flex items-center gap-2 font-semibold text-on-surface mb-1">
-                <span className="material-symbols-outlined text-[18px] text-tertiary">psychology</span>
-                ML (Prediction)
+            <div className="p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#2e7d32]"></div>
+                  <span className="font-label text-xs text-on-surface font-medium">Compatible (0.60 – 1.00)</span>
+                </div>
+                <span className="font-label text-xs text-outline">Proceed to formulation</span>
               </div>
-              <p className="text-on-surface-variant text-xs leading-relaxed">Machine Learning predictions are generated via molecular structural analysis algorithms. These indicate potential compatibility levels that require physical validation.</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-tertiary-container"></div>
+                  <span className="font-label text-xs text-on-surface font-medium">Warning (0.35 – 0.59)</span>
+                </div>
+                <span className="font-label text-xs text-outline">Requires lab validation</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-error"></div>
+                  <span className="font-label text-xs text-on-surface font-medium">Incompatible (0.00 – 0.34)</span>
+                </div>
+                <span className="font-label text-xs text-outline">Consider alternative</span>
+              </div>
+              <div className="pt-3 mt-2 border-t border-outline-variant/30 flex gap-4 text-xs text-on-surface-variant">
+                <div className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[14px] text-[#003a7f]">check_circle</span> <strong>KB</strong> = Lab Validated</div>
+                <div className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[14px] text-tertiary">psychology</span> <strong>ML</strong> = AI Predicted</div>
+                <div className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[14px] text-error">block</span> <strong>FORM</strong> = Dosage Rule</div>
+              </div>
             </div>
           </div>
         </div>

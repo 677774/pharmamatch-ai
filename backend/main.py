@@ -142,7 +142,7 @@ def get_dashboard_stats():
         "data": [
             {"id": 1, "icon": "hub", "label": "Total Molecules Analyzed", "value": "4", "tag": "Global Registry", "color": "primary"},
             {"id": 2, "icon": "query_stats", "label": "Recent Predictions", "value": "0", "tag": "Last 24 Hours", "color": "primary"},
-            {"id": 3, "icon": "model_training", "label": "Random Forest Accuracy", "value": "98.4%", "tag": "Model Metrics", "color": "primary"},
+            {"id": 3, "icon": "model_training", "label": "Prediction Engine", "value": "Active", "tag": "Random Forest", "color": "primary"},
             {"id": 4, "icon": "verified", "label": "Lab Validated Results", "value": "0", "tag": "Knowledge Base", "color": "tertiary"}
         ]
     }
