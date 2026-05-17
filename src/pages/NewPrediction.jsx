@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { usePrediction } from '../context/PredictionContext';
 
@@ -18,6 +18,8 @@ export default function NewPrediction() {
   const [showApiSuggestions, setShowApiSuggestions] = useState(false);
   const [excSuggestions, setExcSuggestions] = useState([]);
   const [showExcSuggestions, setShowExcSuggestions] = useState(false);
+  const apiDebounceRef = useRef(null);
+  const excDebounceRef = useRef(null);
 
   // Fetch KB Data for Smart Check
   useEffect(() => {
@@ -195,16 +197,19 @@ export default function NewPrediction() {
                   className="block w-full pl-10 pr-3 py-2.5 border border-outline-variant rounded bg-white text-on-surface text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-shadow" 
                   type="text" 
                   value={apiName}
-                  onChange={async (e) => {
+                  onChange={(e) => {
                     const val = e.target.value;
                     setApiName(val);
+                    clearTimeout(apiDebounceRef.current);
                     if (val.length >= 3) {
-                      try {
-                        const res = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound/${val}/json?limit=5`);
-                        const data = await res.json();
-                        setApiSuggestions(data.dictionary_terms?.compound || []);
-                        setShowApiSuggestions(true);
-                      } catch(e){}
+                      apiDebounceRef.current = setTimeout(async () => {
+                        try {
+                          const res = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound/${val}/json?limit=5`);
+                          const data = await res.json();
+                          setApiSuggestions(data.dictionary_terms?.compound || []);
+                          setShowApiSuggestions(true);
+                        } catch(e){}
+                      }, 300);
                     } else {
                       setShowApiSuggestions(false);
                     }
@@ -242,22 +247,25 @@ export default function NewPrediction() {
                     className="w-full px-3 py-2 border border-outline-variant rounded bg-white text-sm focus:ring-2 focus:ring-primary outline-none"
                     placeholder="Type excipient name..."
                     value={excipientInput}
-                    onChange={async (e) => {
+                    onChange={(e) => {
                       const val = e.target.value;
                       setExcipientInput(val);
+                      clearTimeout(excDebounceRef.current);
                       if (val.length >= 2) {
-                        const kbMatches = [...new Set(kbData.map(item => item.excipient))]
-                            .filter(exc => exc.toLowerCase().includes(val.toLowerCase()));
-                        let pubchemMatches = [];
-                        if (kbMatches.length < 5) {
-                            try {
-                              const res = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound/${val}/json?limit=5`);
-                              const data = await res.json();
-                              pubchemMatches = data.dictionary_terms?.compound || [];
-                            } catch(e){}
-                        }
-                        setExcSuggestions([...new Set([...kbMatches, ...pubchemMatches])].slice(0, 5));
-                        setShowExcSuggestions(true);
+                        excDebounceRef.current = setTimeout(async () => {
+                          const kbMatches = [...new Set(kbData.map(item => item.excipient))]
+                              .filter(exc => exc.toLowerCase().includes(val.toLowerCase()));
+                          let pubchemMatches = [];
+                          if (kbMatches.length < 5) {
+                              try {
+                                const res = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound/${val}/json?limit=5`);
+                                const data = await res.json();
+                                pubchemMatches = data.dictionary_terms?.compound || [];
+                              } catch(e){}
+                          }
+                          setExcSuggestions([...new Set([...kbMatches, ...pubchemMatches])].slice(0, 5));
+                          setShowExcSuggestions(true);
+                        }, 300);
                       } else {
                         setShowExcSuggestions(false);
                       }
