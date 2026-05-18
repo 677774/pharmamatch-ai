@@ -358,7 +358,25 @@ def run_ml_prediction(request: PredictionRequest):
             importances = rf_model.feature_importances_
             feature_importance_dict = {}
             for i, f_name in enumerate(rf_features):
-                impact = importances[i] * feature_array[0][i]
+                raw_val = feature_array[0][i]
+                # Normalize raw values based on training scale to prevent PSA (100+) from dominating unscaled multiplication
+                if f_name == "PSA_Mismatch":
+                    scaled_val = min(1.0, raw_val / 150.0)
+                elif f_name == "pKa_Difference":
+                    scaled_val = min(1.0, raw_val / 5.0)
+                elif f_name == "Tanimoto_Similarity":
+                    # For risk, mismatch matters (1 - Tanimoto), for compatible similarity matters
+                    scaled_val = min(1.0, (1.0 - raw_val)) if risk_probability > 0.40 else raw_val
+                elif f_name == "HBD_HBA_Imbalance":
+                    scaled_val = min(1.0, raw_val / 10.0)
+                elif f_name == "LogP_Difference":
+                    scaled_val = min(1.0, raw_val / 5.0)
+                elif f_name == "MW_Imbalance":
+                    scaled_val = min(1.0, abs(raw_val - 1.0) / 4.0)
+                else: # Reactive_Group_Flag (is already 0 or 1)
+                    scaled_val = raw_val
+                
+                impact = importances[i] * scaled_val
                 human_name = feature_explanation_map.get(f_name, f_name.replace('_', ' '))
                 feature_importance_dict[human_name] = float(impact)
                 
