@@ -54,7 +54,8 @@ def get_db():
         db.close()
 
 # --- Load Model ML Asli (Jika Ada) ---
-MODEL_PATH = "rf_model.pkl"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "rf_model.pkl")
 rf_model = None
 if os.path.exists(MODEL_PATH):
     with open(MODEL_PATH, "rb") as f:
