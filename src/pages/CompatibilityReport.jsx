@@ -11,10 +11,24 @@ export default function CompatibilityReport() {
   const { predictionResult: contextPrediction, setPredictionResult } = usePrediction();
   const [isExporting, setIsExporting] = useState(false);
   
-  const predictionResult = location.state?.predictionData || contextPrediction;
+  // Load from route state, context, or fallback to the latest saved project in localStorage
+  let predictionResult = location.state?.predictionData || contextPrediction;
+  let projectName = location.state?.projectName;
+  let dosageForm = location.state?.dosageForm;
   
-  const projectName = location.state?.projectName || "Custom Analysis";
-  const dosageForm = location.state?.dosageForm || "Tablet / Kapsul";
+  if (!predictionResult) {
+    const savedProjects = JSON.parse(localStorage.getItem('pharmamatch_projects') || '[]');
+    if (savedProjects.length > 0) {
+      const latestProject = savedProjects[0];
+      predictionResult = latestProject.predictionData;
+      projectName = latestProject.name;
+      dosageForm = latestProject.dosage_form;
+    }
+  }
+
+  // Final fallbacks if absolutely no data exists
+  projectName = projectName || "Custom Analysis";
+  dosageForm = dosageForm || "Tablet / Kapsul";
 
   const exportPDF = () => {
     if (!predictionResult || !predictionResult.predictions) {
@@ -405,11 +419,17 @@ export default function CompatibilityReport() {
           </div>
             );
           })()
+          ) : predictionResult?.predictions ? (
+            <div className="bg-[#e8f5e9] border border-[#a5d6a7] p-5 rounded-xl shadow-sm">
+               <h3 className="text-[#2e7d32] font-bold flex items-center gap-2 mb-2"><span className="material-symbols-outlined">check_circle</span> All Clear!</h3>
+               <p className="text-sm text-[#1b5e20]">No interaction warnings detected for this formulation. All excipients are predicted safe.</p>
+            </div>
           ) : (
-          <div className="bg-[#e8f5e9] border border-[#a5d6a7] p-5 rounded-xl shadow-sm">
-             <h3 className="text-[#2e7d32] font-bold flex items-center gap-2 mb-2"><span className="material-symbols-outlined">check_circle</span> All Clear!</h3>
-             <p className="text-sm text-[#1b5e20]">No interaction warnings detected for this formulation. All excipients are predicted safe.</p>
-          </div>
+            <div className="bg-surface-container-low border border-outline-variant p-5 rounded-xl shadow-sm text-center">
+               <span className="material-symbols-outlined text-4xl text-outline mb-2">search_off</span>
+               <h3 className="font-bold text-on-surface mb-1">No Analysis Data</h3>
+               <p className="text-sm text-on-surface-variant">Please configure a new formulation and click Predict first.</p>
+            </div>
           )}
 
           {/* Action Bar Card */}
