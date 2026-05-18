@@ -112,7 +112,7 @@ export default function NewPrediction() {
       }
     } catch (err) {
       console.error(err);
-      navigate('/report', { state: { projectName: projectName.trim(), dosageForm: dosageForm } });
+      alert(`Prediction failed! \n\nError details: ${err.message || err}\n\nPlease check if your Hugging Face Space is active/Running and that you have a stable internet connection.`);
     }
     setIsLoading(false);
     setIsModalOpen(false);
