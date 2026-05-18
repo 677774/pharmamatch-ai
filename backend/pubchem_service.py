@@ -6,10 +6,143 @@ from rdkit.Chem import Descriptors, AllChem
 from rdkit import DataStructs
 import random
 
+LOCAL_MOLECULES = {
+    "hpmc": {
+        "name": "HPMC",
+        "cid": 57363,
+        "formula": "C36H70O19",
+        "weight": "384.4 g/mol",
+        "logp": "-1.5",
+        "smiles": "COCC1OC(OC2C(C(OC(C)O)C(OC)C2OC)CO)C(O)C(OC)C1O",
+        "tpsa": 149.7,
+        "h_donors": 4,
+        "h_acceptors": 19,
+        "status": "Inactive Binder (Polymer)",
+        "statusColor": "green",
+        "img": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/57363/PNG"
+    },
+    "hydroxypropyl methylcellulose": {
+        "name": "HPMC",
+        "cid": 57363,
+        "formula": "C36H70O19",
+        "weight": "384.4 g/mol",
+        "logp": "-1.5",
+        "smiles": "COCC1OC(OC2C(C(OC(C)O)C(OC)C2OC)CO)C(O)C(OC)C1O",
+        "tpsa": 149.7,
+        "h_donors": 4,
+        "h_acceptors": 19,
+        "status": "Inactive Binder (Polymer)",
+        "statusColor": "green",
+        "img": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/57363/PNG"
+    },
+    "magnesium stearate": {
+        "name": "Magnesium Stearate",
+        "cid": 11177,
+        "formula": "C36H70MgO4",
+        "weight": "591.3 g/mol",
+        "logp": "14.3",
+        "smiles": "CCCCCCCCCCCCCCCCCC(=O)[O-].CCCCCCCCCCCCCCCCCC(=O)[O-].[Mg+2]",
+        "tpsa": 80.3,
+        "h_donors": 0,
+        "h_acceptors": 4,
+        "status": "Lubricant",
+        "statusColor": "blue",
+        "img": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/11177/PNG"
+    },
+    "pvp": {
+        "name": "PVP",
+        "cid": 2522330,
+        "formula": "C6H9NO",
+        "weight": "111.14 g/mol",
+        "logp": "0.4",
+        "smiles": "C1CCN(C1=O)C=C",
+        "tpsa": 20.3,
+        "h_donors": 0,
+        "h_acceptors": 1,
+        "status": "Binder",
+        "statusColor": "green",
+        "img": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/2522330/PNG"
+    },
+    "povidone": {
+        "name": "PVP",
+        "cid": 2522330,
+        "formula": "C6H9NO",
+        "weight": "111.14 g/mol",
+        "logp": "0.4",
+        "smiles": "C1CCN(C1=O)C=C",
+        "tpsa": 20.3,
+        "h_donors": 0,
+        "h_acceptors": 1,
+        "status": "Binder",
+        "statusColor": "green",
+        "img": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/2522330/PNG"
+    },
+    "starch": {
+        "name": "Starch",
+        "cid": 24836924,
+        "formula": "C18H32O16",
+        "weight": "504.4 g/mol",
+        "logp": "-5.2",
+        "smiles": "C(C1C(C(C(C(O1)OC2C(OC(C(C2O)O)OC3C(OC(C(C3O)O)O)CO)CO)O)O)O)O",
+        "tpsa": 242.0,
+        "h_donors": 9,
+        "h_acceptors": 16,
+        "status": "Diluent / Disintegrant",
+        "statusColor": "blue",
+        "img": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/24836924/PNG"
+    },
+    "lactose": {
+        "name": "Lactose",
+        "cid": 6134,
+        "formula": "C12H22O11",
+        "weight": "342.3 g/mol",
+        "logp": "-5.0",
+        "smiles": "C1C(C(C(C(O1)OC2C(OC(C(C2O)O)O)CO)O)O)O",
+        "tpsa": 189.5,
+        "h_donors": 8,
+        "h_acceptors": 11,
+        "status": "Diluent",
+        "statusColor": "blue",
+        "img": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/6134/PNG"
+    },
+    "microcrystalline cellulose": {
+        "name": "Microcrystalline Cellulose (MCC)",
+        "cid": 14055,
+        "formula": "C6H10O5",
+        "weight": "162.14 g/mol",
+        "logp": "-3.0",
+        "smiles": "C1C(C(C(C(O1)O)O)O)CO",
+        "tpsa": 99.4,
+        "h_donors": 3,
+        "h_acceptors": 5,
+        "status": "Filler-Binder",
+        "statusColor": "blue",
+        "img": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/14055/PNG"
+    },
+    "mcc": {
+        "name": "Microcrystalline Cellulose (MCC)",
+        "cid": 14055,
+        "formula": "C6H10O5",
+        "weight": "162.14 g/mol",
+        "logp": "-3.0",
+        "smiles": "C1C(C(C(C(O1)O)O)O)CO",
+        "tpsa": 99.4,
+        "h_donors": 3,
+        "h_acceptors": 5,
+        "status": "Filler-Binder",
+        "statusColor": "blue",
+        "img": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/14055/PNG"
+    }
+}
+
 def search_molecule_pubchem(name: str):
     """
     Searches PubChem for a molecule by name and returns its properties.
     """
+    cleaned_name = name.strip().lower()
+    if cleaned_name in LOCAL_MOLECULES:
+        return LOCAL_MOLECULES[cleaned_name]
+
     encoded_name = urllib.parse.quote(name)
     base_url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{encoded_name}/property/MolecularWeight,XLogP,IsomericSMILES,CanonicalSMILES,MolecularFormula,TPSA,HBondDonorCount,HBondAcceptorCount/JSON"
     
