@@ -465,8 +465,8 @@ def run_ml_prediction(request: PredictionRequest):
                 
                 if interaction_features["LogP_Difference"] < 1.5:
                     solution_parts.append("Solubility profiles are well-matched, supporting uniform drug release kinetics.")
-                if interaction_features["Rotatable_Bonds_Diff"] < 5:
-                    solution_parts.append("Similar structural flexibility favors homogeneous blending without segregation risk.")
+                if interaction_features["MW_Imbalance"] < 2.0:
+                    solution_parts.append("Balanced molecular weight ratios favor homogeneous blending without segregation risk.")
                 if interaction_features["PSA_Mismatch"] < 30:
                     solution_parts.append("Compatible surface polarity ensures stable interfacial interactions.")
                 
