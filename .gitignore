@@ -22,3 +22,22 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+.env
+.venv
+venv/
+
+# Large ML / Data Files (tracked via Git LFS or excluded)
+backend/rf_model.pkl
+backend/clinical_dataset.csv
+backend/feature_correlation.png
+backend/pharmamatch.db
+backend/*.db
+
+# Source Copy folders
+src - Copy/

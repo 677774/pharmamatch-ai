@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 import bcrypt
 from jose import JWTError, jwt
 from database import SessionLocal, engine, Molecule, User
-from pubchem_service import search_molecule_pubchem, fetch_features_for_prediction
+from pubchem_service import search_molecule_pubchem, fetch_features_for_prediction, calculate_interaction_features
 
 # JWT & Password Config
 SECRET_KEY = "pharmamatch-super-secret-key-72"
@@ -64,7 +64,7 @@ if os.path.exists(MODEL_PATH):
             rf_features = model_data['features']
         else:
             rf_model = model_data
-            rf_features = ['LogP_Difference', 'Molecular_Weight_Ratio', 'PSA_Difference', 'HBond_Mismatch', 'Temp_Stability_Celsius']
+            rf_features = ['pKa_Difference', 'PSA_Mismatch', 'Tanimoto_Similarity', 'Reactive_Group_Flag', 'HBD_HBA_Imbalance', 'LogP_Difference', 'MW_Imbalance']
     print("Model ML Asli Berhasil Di-load!")
 else:
     print("Model ML belum ditraining. Menjalankan mode simulasi.")
@@ -208,11 +208,13 @@ def run_ml_prediction(request: PredictionRequest):
             pass
 
     feature_explanation_map = {
+        'pKa_Difference': 'Ionic Interaction (pKa Gap)',
+        'PSA_Mismatch': 'Polar Surface Area Mismatch',
+        'Tanimoto_Similarity': 'Chemical Miscibility (Hansen/Tanimoto)',
+        'Reactive_Group_Flag': 'Chemical Reactivity Flag',
+        'HBD_HBA_Imbalance': 'Hydrogen Bond Instability',
         'LogP_Difference': 'LogP Solubility Difference',
-        'Molecular_Weight_Ratio': 'Molecular Weight Imbalance',
-        'PSA_Difference': 'Polar Surface Area Mismatch',
-        'HBond_Mismatch': 'Hydrogen Bond Instability',
-        'Temp_Stability_Celsius': 'Thermal Sensitivity'
+        'MW_Imbalance': 'Molecular Weight Imbalance'
     }
 
     # --- Dosage Form Suitability Rules (Comprehensive) ---
@@ -335,16 +337,19 @@ def run_ml_prediction(request: PredictionRequest):
         mol1_features = fetch_features_for_prediction(mol1_name)
         mol2_features = fetch_features_for_prediction(mol2_name)
         
-        logP_diff = abs(mol1_features['logp'] - mol2_features['logp'])
-        mw_ratio = max(mol1_features['mw'], mol2_features['mw']) / max(min(mol1_features['mw'], mol2_features['mw']), 1.0)
-        psa_diff = abs(mol1_features['psa'] - mol2_features['psa'])
-        h_mismatch = abs(mol1_features['h_donors'] - mol2_features['h_acceptors']) + abs(mol1_features['h_acceptors'] - mol2_features['h_donors'])
-        # Estimate thermal sensitivity from MW difference (heavier molecules = lower thermal tolerance)
-        temp_stability = max(20.0, min(80.0, 100.0 - (mw_ratio * 10.0) - (logP_diff * 3.0)))
+        interaction_features = calculate_interaction_features(mol1_features['smiles'], mol2_features['smiles'])
         
-        if rf_model is not None and len(rf_features) == 5:
+        if rf_model is not None and len(rf_features) == 7:
             import numpy as np
-            feature_array = np.array([[logP_diff, mw_ratio, psa_diff, h_mismatch, temp_stability]])
+            feature_array = np.array([[
+                interaction_features["pKa_Difference"],
+                interaction_features["PSA_Mismatch"],
+                interaction_features["Tanimoto_Similarity"],
+                interaction_features["Reactive_Group_Flag"],
+                interaction_features["HBD_HBA_Imbalance"],
+                interaction_features["LogP_Difference"],
+                interaction_features["MW_Imbalance"]
+            ]])
             
             # Use predict_proba for nuanced risk assessment instead of binary predict
             risk_probability = rf_model.predict_proba(feature_array)[0][1]  # Probability of class 1 (risk)
@@ -392,14 +397,20 @@ def run_ml_prediction(request: PredictionRequest):
                 # HIGH severity — urgent, actionable solutions with specific names
                 solution_parts = [f"⚠️ Critical: {mol1_short} and {mol2_short} show high interaction risk ({round(risk_probability*100)}%)."]
                 
+                if 'Chemical Reactivity Flag' in top2_features:
+                    solution_parts.append(f"Chemical incompatibility detected (e.g. Esterification, Maillard, Oxidation). Ensure strict moisture control, avoid heat processing, or use protective coating.")
+                    
+                if 'Ionic Interaction (pKa Gap)' in top2_features:
+                    solution_parts.append(f"Significant pKa difference may cause acid-base reaction or salt precipitation. Adjust micro-environmental pH using buffers or separating layers.")
+                    
                 if 'LogP Solubility Difference' in top2_features:
                     if "Injection" in dosage_form:
                         solution_parts.append(f"The lipophilicity gap between {mol1_short} and {mol2_short} is too large for aqueous parenteral vehicles. Use co-solvents (PEG 400, Propylene Glycol) or lipid-based nano-emulsions.")
                     else:
                         solution_parts.append(f"Consider solid dispersion or hot-melt extrusion to overcome the solubility mismatch. Alternatively, replace {mol2_short} with a more hydrophilic equivalent.")
                 
-                if 'Molecular Weight Imbalance' in top2_features:
-                    solution_parts.append(f"The MW ratio indicates potential segregation during blending. Use high-shear granulation or micronization of the heavier component to ensure uniform distribution.")
+                if 'Structural Flexibility Mismatch' in top2_features or 'Aromaticity & Pi-Pi Stacking Gap' in top2_features:
+                    solution_parts.append(f"Structural and conformational mismatch indicates potential segregation during blending. Use high-shear granulation or micronization to ensure uniform distribution.")
                 
                 if 'Polar Surface Area Mismatch' in top2_features:
                     solution_parts.append(f"Surface polarity difference may cause interfacial instability. Apply HPMC or PVP coating on {mol1_short} granules to mediate surface interaction.")
@@ -410,8 +421,8 @@ def run_ml_prediction(request: PredictionRequest):
                     else:
                         solution_parts.append(f"Risk of irreversible complexation via H-bonding. Use bilayer tablet design or physical barrier coating to prevent direct contact.")
                 
-                if 'Thermal Sensitivity' in top2_features:
-                    solution_parts.append(f"Thermal analysis suggests degradation risk above 40°C. Avoid wet granulation; use direct compression and store at 2-8°C (cold chain).")
+                if 'Chemical Miscibility (Tanimoto)' in top2_features:
+                    solution_parts.append(f"Low structural similarity limits miscibility. Avoid direct compression; use wet granulation with a neutral binder to mediate the phase boundaries.")
                 
                 if len(solution_parts) == 1:
                     solution_parts.append("Conduct DSC and FTIR compatibility studies. Consider physical separation or alternative excipient selection.")
@@ -422,10 +433,15 @@ def run_ml_prediction(request: PredictionRequest):
                 # MODERATE severity — preventive recommendations
                 solution_parts = [f"Moderate risk detected between {mol1_short} and {mol2_short} (probability: {round(risk_probability*100)}%). Combination may be viable with precautions:"]
                 
+                if 'Chemical Reactivity Flag' in top2_features:
+                    solution_parts.append("Monitor for color changes or degradation. Store below 25°C and protect from moisture.")
+                elif 'Ionic Interaction (pKa Gap)' in top2_features:
+                    solution_parts.append("Monitor for micro-environmental pH changes that could alter drug dissolution rates.")
+                
                 if 'LogP Solubility Difference' in top2_features:
                     solution_parts.append(f"Add wetting agent (e.g. SLS 0.5-2% or Polysorbate 80) to improve interfacial compatibility between {mol1_short} and {mol2_short}.")
                 
-                if 'Molecular Weight Imbalance' in top2_features:
+                if 'Structural Flexibility Mismatch' in top2_features:
                     solution_parts.append(f"Extend blending time by 50% and verify content uniformity (RSD < 5%) across 10 sampling points.")
                 
                 if 'Polar Surface Area Mismatch' in top2_features:
@@ -434,8 +450,8 @@ def run_ml_prediction(request: PredictionRequest):
                 if 'Hydrogen Bond Instability' in top2_features:
                     solution_parts.append(f"Run 4-week accelerated stability (40°C/75% RH) to confirm no degradation products form from H-bond interaction.")
                 
-                if 'Thermal Sensitivity' in top2_features:
-                    solution_parts.append(f"Maintain processing temperature below 60°C during manufacturing. Standard room temperature storage should be adequate.")
+                if 'Chemical Miscibility (Tanimoto)' in top2_features:
+                    solution_parts.append(f"Verify physical compatibility via DSC to ensure no eutectic melting point depression occurs.")
                 
                 if len(solution_parts) == 1:
                     solution_parts.append("Run short-term accelerated stability testing (ICH Q1A) before proceeding to scale-up.")
@@ -446,11 +462,11 @@ def run_ml_prediction(request: PredictionRequest):
                 # Compatible — informative, not just "proceed"
                 solution_parts = [f"{mol1_short} and {mol2_short} show favorable physicochemical alignment (risk: {round(risk_probability*100)}%)."]
                 
-                if logP_diff < 1.5:
+                if interaction_features["LogP_Difference"] < 1.5:
                     solution_parts.append("Solubility profiles are well-matched, supporting uniform drug release kinetics.")
-                if mw_ratio < 2.0:
-                    solution_parts.append("Similar molecular sizes favor homogeneous blending without segregation risk.")
-                if psa_diff < 30:
+                if interaction_features["Rotatable_Bonds_Diff"] < 5:
+                    solution_parts.append("Similar structural flexibility favors homogeneous blending without segregation risk.")
+                if interaction_features["PSA_Mismatch"] < 30:
                     solution_parts.append("Compatible surface polarity ensures stable interfacial interactions.")
                 
                 if "Injection" in dosage_form:

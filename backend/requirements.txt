@@ -7,3 +7,6 @@ python-multipart
 scikit-learn
 pandas
 requests
+rdkit
+seaborn
+matplotlib
