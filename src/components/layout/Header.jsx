@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { currentUser } from '../../data/dummyData'
 
 export default function Header() {
@@ -74,9 +75,9 @@ export default function Header() {
           </span>
         </button>
  
-        <button className="w-9 h-9 rounded-full overflow-hidden border border-outline-variant/30 hover:border-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary-container">
+        <Link to="/profile" className="w-9 h-9 rounded-full overflow-hidden border border-outline-variant/30 hover:border-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary-container" title="Go to Profile Settings">
           <img alt="User Avatar" className="w-full h-full object-cover" src={avatar} />
-        </button>
+        </Link>
       </div>
     </header>
   )
