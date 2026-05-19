@@ -237,6 +237,16 @@ export default function ModelInsights() {
                     const margin = 15;
                     let y = 15;
 
+                    // Helper to strip emojis/unsupported characters causing jsPDF encoding corruption
+                    const cleanText = (text) => {
+                      if (!text) return "";
+                      return text
+                        .replace(/⚠️/g, "[!]")
+                        .replace(/⛔/g, "[X]")
+                        .replace(/[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD00-\uDFFF]/g, '')
+                        .trim();
+                    };
+
                     // Header
                     doc.setFillColor(0, 66, 81);
                     doc.rect(0, 0, pageW, 32, 'F');
@@ -247,24 +257,24 @@ export default function ModelInsights() {
                     doc.setFontSize(9);
                     doc.setFont('helvetica', 'normal');
                     doc.text(`Generated: ${new Date().toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' })}`, margin, 22);
-                    doc.text(`Target: ${displayedTarget}`, margin, 28);
+                    doc.text(`Target: ${cleanText(displayedTarget)}`, margin, 28);
                     y = 40;
 
                     // Status
                     doc.setTextColor(0, 66, 81);
                     doc.setFontSize(12);
                     doc.setFont('helvetica', 'bold');
-                    doc.text(`Status: ${predictionItem.status}`, margin, y);
+                    doc.text(`Status: ${cleanText(predictionItem.status)}`, margin, y);
                     y += 8;
                     doc.setFontSize(9);
                     doc.setFont('helvetica', 'normal');
                     doc.setTextColor(60, 60, 60);
-                    const reasonLines = doc.splitTextToSize(`Analysis: ${predictionItem.reason}`, pageW - margin * 2);
+                    const reasonLines = doc.splitTextToSize(`Analysis: ${cleanText(predictionItem.reason)}`, pageW - margin * 2);
                     doc.text(reasonLines, margin, y);
                     y += reasonLines.length * 4 + 6;
 
                     if (predictionItem.solution) {
-                      const solLines = doc.splitTextToSize(`Recommendation: ${predictionItem.solution}`, pageW - margin * 2);
+                      const solLines = doc.splitTextToSize(`Recommendation: ${cleanText(predictionItem.solution)}`, pageW - margin * 2);
                       doc.text(solLines, margin, y);
                       y += solLines.length * 4 + 6;
                     }
@@ -279,7 +289,7 @@ export default function ModelInsights() {
                       doc.setFontSize(9);
                       doc.setFont('helvetica', 'normal');
                       doc.setTextColor(60, 60, 60);
-                      doc.text(`${f.feature.replace(/_/g, ' ')}: ${f.importance.toFixed(1)}%`, margin, y);
+                      doc.text(`${cleanText(f.feature.replace(/_/g, ' '))}: ${f.importance.toFixed(1)}%`, margin, y);
                       // Bar
                       doc.setFillColor(isWarning ? 186 : 0, isWarning ? 26 : 66, isWarning ? 26 : 81);
                       doc.rect(margin + 80, y - 3, (pageW - margin * 2 - 80) * (f.importance / 100), 3, 'F');

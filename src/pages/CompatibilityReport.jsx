@@ -38,6 +38,16 @@ export default function CompatibilityReport() {
     
     setIsExporting(true);
 
+    // Helper to strip emojis/unsupported characters causing jsPDF encoding corruption
+    const cleanText = (text) => {
+      if (!text) return "";
+      return text
+        .replace(/⚠️/g, "[!]")
+        .replace(/⛔/g, "[X]")
+        .replace(/[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD00-\uDFFF]/g, '')
+        .trim();
+    };
+
     // Use setTimeout to allow the UI to update (show loading) before heavy PDF generation
     setTimeout(() => {
       try {
@@ -75,9 +85,9 @@ export default function CompatibilityReport() {
       bodyStyles: { fontSize: 8 },
       head: [['Parameter', 'Value']],
       body: [
-        ['Project Name', projectName],
-        ['Active Pharmaceutical Ingredient (API)', predictionResult.api_name || '-'],
-        ['Dosage Form', dosageForm],
+        ['Project Name', cleanText(projectName)],
+        ['Active Pharmaceutical Ingredient (API)', cleanText(predictionResult.api_name || '-')],
+        ['Dosage Form', cleanText(dosageForm)],
         ['Number of Excipients Tested', String(predictionResult.predictions.length)],
         ['Analysis Date', new Date().toLocaleDateString('id-ID')],
         ['Analysis Engine', 'Random Forest + RDKit Descriptors + Knowledge Base'],
@@ -92,8 +102,8 @@ export default function CompatibilityReport() {
     doc.text('2. Excipient Compatibility Matrix', margin, y);
     y += 7;
     const tableBody = predictionResult.predictions.map(p => [
-      p.excipient,
-      p.status,
+      cleanText(p.excipient),
+      cleanText(p.status),
       String(p.compatibility_score),
       p.source?.includes('Knowledge Base') ? 'KB' : p.source?.includes('Suitability') ? 'FORM' : 'ML',
     ]);
@@ -119,7 +129,7 @@ export default function CompatibilityReport() {
     y = doc.lastAutoTable.finalY + 10;
 
     // --- DETAILED ANALYSIS ---
-    if (y > 240) { doc.addPage(); y = 20; }
+    if (y > 230) { doc.addPage(); y = 20; }
     doc.setTextColor(0, 66, 81);
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
@@ -127,25 +137,26 @@ export default function CompatibilityReport() {
     y += 7;
 
     predictionResult.predictions.forEach((p, i) => {
-      if (y > 245) { doc.addPage(); y = 20; }
+      // Improved spacing threshold check to prevent orphaned excipient headers at the bottom of the page
+      if (y > 225) { doc.addPage(); y = 20; }
       doc.setFontSize(8);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(0, 66, 81);
-      doc.text(`3.${i + 1}  ${p.excipient}`, margin, y);
+      doc.text(`3.${i + 1}  ${cleanText(p.excipient)}`, margin, y);
       y += 5;
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(60, 60, 60);
-      const reasonLines = doc.splitTextToSize(`Analisis: ${p.reason}`, pageW - margin * 2);
+      const reasonLines = doc.splitTextToSize(`Analisis: ${cleanText(p.reason)}`, pageW - margin * 2);
       doc.text(reasonLines, margin, y);
       y += reasonLines.length * 3.5 + 2;
       if (p.solution) {
-        const solLines = doc.splitTextToSize(`Rekomendasi: ${p.solution}`, pageW - margin * 2);
+        const solLines = doc.splitTextToSize(`Rekomendasi: ${cleanText(p.solution)}`, pageW - margin * 2);
         doc.text(solLines, margin, y);
         y += solLines.length * 3.5 + 2;
       }
       if (p.feature_importance) {
         const fiText = Object.entries(p.feature_importance).map(([k,v]) => `${k}: ${v}%`).join(', ');
-        const fiLines = doc.splitTextToSize(`Feature Importance: ${fiText}`, pageW - margin * 2);
+        const fiLines = doc.splitTextToSize(`Feature Importance: ${cleanText(fiText)}`, pageW - margin * 2);
         doc.setTextColor(100, 100, 100);
         doc.text(fiLines, margin, y);
         y += fiLines.length * 3.5;
@@ -154,7 +165,8 @@ export default function CompatibilityReport() {
     });
 
     // --- SIGNATURE BLOCK ---
-    if (y > 220) { doc.addPage(); y = 20; }
+    // Change to y > 200 to give the signature block (which takes ~74mm height) enough page budget
+    if (y > 200) { doc.addPage(); y = 20; }
     y += 5;
     doc.setTextColor(0, 66, 81);
     doc.setFontSize(11);
