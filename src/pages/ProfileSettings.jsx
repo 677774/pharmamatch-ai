@@ -1,19 +1,32 @@
 import { useState, useEffect } from 'react';
 import { currentUser } from '../data/dummyData';
+import toast from 'react-hot-toast';
 
 export default function ProfileSettings() {
-  const [user, setUser] = useState(currentUser);
+  const [user, setUser] = useState({ ...currentUser });
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
     // Load real user data from localStorage
     const savedUser = localStorage.getItem('user');
+    const savedAvatar = localStorage.getItem('user_avatar');
+    
+    let baseUser = { ...currentUser };
     if (savedUser) {
       try {
         const parsed = JSON.parse(savedUser);
-        setUser({ ...currentUser, name: parsed.name, role: 'Chief Researcher', department: parsed.email });
+        baseUser = { 
+          ...baseUser, 
+          name: parsed.name, 
+          role: 'Chief Researcher', 
+          department: parsed.email,
+          avatar: savedAvatar || parsed.avatar || currentUser.avatar
+        };
       } catch(e) {}
+    } else if (savedAvatar) {
+      baseUser.avatar = savedAvatar;
     }
+    setUser(baseUser);
     
     // Check if dark mode is already active
     setIsDark(localStorage.getItem('theme') === 'dark');
@@ -50,7 +63,7 @@ export default function ProfileSettings() {
   };
 
   const handleSavePreferences = () => {
-    alert('Preferences saved successfully!');
+    toast.success('Preferences saved successfully!');
   };
 
   const handleUpdatePhoto = () => {
@@ -58,9 +71,62 @@ export default function ProfileSettings() {
     if (newName) {
       const updatedUser = { ...user, name: newName };
       setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify({ name: newName, email: user.department }));
-      alert("Nama berhasil diubah!");
+      localStorage.setItem('user', JSON.stringify({ name: newName, email: user.department, avatar: user.avatar }));
+      toast.success("Nama berhasil diubah!");
     }
+  };
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error("Ukuran gambar terlalu besar! Maksimal 2MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64String = event.target.result;
+        setUser(prev => {
+          const updated = { ...prev, avatar: base64String };
+          localStorage.setItem('user_avatar', base64String);
+          
+          const savedUser = localStorage.getItem('user');
+          if (savedUser) {
+            try {
+              const parsed = JSON.parse(savedUser);
+              localStorage.setItem('user', JSON.stringify({ ...parsed, avatar: base64String }));
+            } catch(err) {}
+          }
+          
+          // Dispatch custom event to notify Header
+          window.dispatchEvent(new Event('avatar_changed'));
+          return updated;
+        });
+        toast.success("Foto profil berhasil diunggah!");
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    setUser(prev => {
+      const updated = { ...prev, avatar: currentUser.avatar };
+      localStorage.removeItem('user_avatar');
+      
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) {
+        try {
+          const parsed = JSON.parse(savedUser);
+          const { avatar, ...rest } = parsed;
+          localStorage.setItem('user', JSON.stringify(rest));
+        } catch(err) {}
+      }
+      
+      // Dispatch custom event to notify Header
+      window.dispatchEvent(new Event('avatar_changed'));
+      return updated;
+    });
+    toast.success("Foto profil berhasil dihapus!");
   };
 
   return (
@@ -73,17 +139,31 @@ export default function ProfileSettings() {
 
       {/* Profile Header Card (Glass Panel) */}
       <section className="bg-surface-container-lowest/85 backdrop-blur-[12px] border border-outline-variant/50 rounded-xl p-6 mb-8 flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left shadow-sm">
-        <div className="relative group cursor-pointer">
+        <div 
+          onClick={() => document.getElementById('avatar-upload').click()} 
+          className="relative group cursor-pointer"
+          title="Click to change avatar"
+        >
           <img 
-            alt={currentUser.name} 
+            alt={user.name} 
             className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-surface-container-lowest shadow-sm" 
-            src={currentUser.avatar}
+            src={user.avatar || currentUser.avatar}
           />
           {/* Upload Overlay */}
           <div className="absolute inset-0 bg-primary-container/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <span className="material-symbols-outlined text-white text-2xl">photo_camera</span>
           </div>
         </div>
+        
+        {/* Hidden File Input */}
+        <input 
+          type="file" 
+          id="avatar-upload" 
+          accept="image/*" 
+          className="hidden" 
+          onChange={handleAvatarChange}
+        />
+
         <div className="flex-1 space-y-2">
           <h3 className="font-headline text-xl font-bold text-on-surface">{user.name}</h3>
           <div className="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-4 text-sm font-label text-on-surface-variant">
@@ -102,7 +182,7 @@ export default function ProfileSettings() {
               <span className="material-symbols-outlined text-[18px]">edit</span>
               Edit Profile
             </button>
-            <button className="border border-primary-container text-primary-container text-sm font-label px-4 py-2 rounded flex items-center gap-2 hover:bg-surface-variant transition-colors duration-150">
+            <button onClick={handleRemovePhoto} className="border border-primary-container text-primary-container text-sm font-label px-4 py-2 rounded flex items-center gap-2 hover:bg-surface-variant transition-colors duration-150">
               Remove
             </button>
           </div>

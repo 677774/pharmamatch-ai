@@ -3,6 +3,27 @@ import { currentUser } from '../../data/dummyData'
 
 export default function Header() {
   const [isDark, setIsDark] = useState(localStorage.getItem('theme') === 'dark');
+  const [avatar, setAvatar] = useState(currentUser.avatar);
+
+  useEffect(() => {
+    const loadAvatar = () => {
+      const savedAvatar = localStorage.getItem('user_avatar');
+      if (savedAvatar) {
+        setAvatar(savedAvatar);
+      } else {
+        setAvatar(currentUser.avatar);
+      }
+    };
+
+    loadAvatar();
+    window.addEventListener('storage', loadAvatar);
+    window.addEventListener('avatar_changed', loadAvatar);
+
+    return () => {
+      window.removeEventListener('storage', loadAvatar);
+      window.removeEventListener('avatar_changed', loadAvatar);
+    };
+  }, []);
 
   useEffect(() => {
     if (isDark) {
@@ -52,9 +73,9 @@ export default function Header() {
             {isDark ? 'light_mode' : 'dark_mode'}
           </span>
         </button>
-
+ 
         <button className="w-9 h-9 rounded-full overflow-hidden border border-outline-variant/30 hover:border-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary-container">
-          <img alt="User Avatar" className="w-full h-full object-cover" src={currentUser.avatar} />
+          <img alt="User Avatar" className="w-full h-full object-cover" src={avatar} />
         </button>
       </div>
     </header>
